@@ -1,17 +1,21 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import ProductCard from '../components/productCard';
+import _publicSectionLayout_ from '../layouts/PublicSection.layout';
 
 
 const Home: NextPage = () => {
    return (
-      <div>
+      <>
          <Head>
             <title>master-project-app</title>
             <meta name="description" content="" />
-            {/* <link rel="icon" href="/favicon.ico" /> */}
          </Head>
-         <div>Hello world</div>
-      </div>
+
+         <_publicSectionLayout_>
+            <ProductCard />
+         </_publicSectionLayout_>
+      </>
    );
 };
 
