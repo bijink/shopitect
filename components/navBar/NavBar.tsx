@@ -16,6 +16,7 @@ import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 
+
 const Search = styled('div')(({ theme }) => ({
    position: 'relative',
    borderRadius: theme.shape.borderRadius,
@@ -44,20 +45,20 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
    color: 'inherit',
+   width: '100%',
    '& .MuiInputBase-input': {
       padding: theme.spacing(1, 1, 1, 0),
       // vertical padding + font size from searchIcon
       paddingLeft: `calc(1em + ${theme.spacing(4)})`,
       transition: theme.transitions.create('width'),
       width: '100%',
-      [theme.breakpoints.up('md')]: {
-         width: '20ch',
-      },
+      // [theme.breakpoints.up('md')]: {
+      //    width: '20ch',
+      // },
    },
 }));
 
-// export default function PrimarySearchAppBar() {
-export default function MUi_navBar() {
+const NavBar = () => {
    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
       React.useState<null | HTMLElement>(null);
@@ -157,11 +158,9 @@ export default function MUi_navBar() {
    );
 
    return (
-      // <>
       <Box sx={{ flexGrow: 1 }}>
-         {/* <AppBar position="static" > */}
          <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }} >
-            <Toolbar>
+            <Toolbar >
                <IconButton
                   size="large"
                   edge="start"
@@ -177,9 +176,10 @@ export default function MUi_navBar() {
                   component="div"
                   sx={{ display: { xs: 'none', sm: 'block' } }}
                >
-                  appName
+                  shopName
                </Typography>
-               <Search>
+               <Box sx={{ flexGrow: 1 }} />
+               <Search sx={{ flexGrow: 2 }}>
                   <SearchIconWrapper>
                      <SearchIcon />
                   </SearchIconWrapper>
@@ -232,7 +232,8 @@ export default function MUi_navBar() {
          </AppBar>
          {renderMobileMenu}
          {renderMenu}
-         {/* </> */}
-      </Box>
+      </Box >
    );
-}
+};
+
+export default NavBar;

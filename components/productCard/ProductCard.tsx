@@ -1,5 +1,5 @@
 import { Box, Stack } from "@mui/material";
-import MUi_card from "../ui_components/MUi_card";
+import MUi_card from "../ui.components/MUi_card";
 
 const ProductCard = () => {
    return (

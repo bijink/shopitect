@@ -1,7 +1,6 @@
+import { Typography } from '@mui/material';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import ProductCard from '../components/productCard';
-import _publicSectionLayout_ from '../layouts/PublicSection.layout';
 
 
 const Home: NextPage = () => {
@@ -12,9 +11,9 @@ const Home: NextPage = () => {
             <meta name="description" content="" />
          </Head>
 
-         <_publicSectionLayout_>
-            <ProductCard />
-         </_publicSectionLayout_>
+         <Typography variant='h1' height={'100vh'} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            Application Welcome Page
+         </Typography>
       </>
    );
 };

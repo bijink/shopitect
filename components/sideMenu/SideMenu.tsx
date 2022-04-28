@@ -12,7 +12,7 @@ import MailIcon from '@mui/icons-material/Mail';
 
 const drawerWidth = 240;
 
-export default function MUi_permenentDrawer() {
+export default function SideBar() {
    return (
       <>
          <Drawer
@@ -26,7 +26,7 @@ export default function MUi_permenentDrawer() {
             <Toolbar />
             <Box sx={{ overflow: 'auto' }}>
                <List>
-                  {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+                  {['Products', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
                      <ListItem button key={text}>
                         <ListItemIcon>
                            {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
