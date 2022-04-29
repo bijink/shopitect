@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
@@ -13,57 +12,29 @@ import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { Avatar } from '@mui/material';
+import { collection, DocumentData, onSnapshot } from 'firebase/firestore';
+import { database } from '../../config/firebase.config';
+import { useEffect, useState } from 'react';
+import { ProdDetailsProps, ProdDetailsTypes } from './product.types';
 
 
-function createData(
-   name: string,
-   calories: number,
-   fat: number,
-   carbs: number,
-   protein: number,
-   price: number,
-) {
-   return {
-      name,
-      calories,
-      fat,
-      carbs,
-      protein,
-      price,
-      history: [
-         {
-            date: '2020-01-05',
-            customerId: '11091700',
-            amount: 3,
-         },
-         {
-            date: '2020-01-02',
-            customerId: 'Anonymous',
-            amount: 1,
-         },
-      ],
-      img: 'https://images.unsplash.com/photo-1648993219624-2d3535fc6443?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTA2ODE2Nw&ixlib=rb-1.2.1&q=80&w=1080',
-   };
-}
+const Row = ({ prodName, prodCategory, prodCompany, prodImg, quantity, getPrice, sellPrice }: ProdDetailsProps) => {
+   const [open, setOpen] = useState(false);
 
-function Row(props: { row: ReturnType<typeof createData>; }) {
-   const { row } = props;
-   const [open, setOpen] = React.useState(false);
 
    return (
-      <React.Fragment>
+      <>
          <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
             <TableCell component="th" scope="row">
-               <Typography variant='body2' >{row.name}</Typography>
-               {/* <Typography variant='body2' color='GrayText' >{'category'}</Typography> */}
+               <Typography variant='body2' >{prodName}</Typography>
             </TableCell>
             <TableCell>
-               <Avatar alt="product" src={row.img} variant="rounded" />
+               <Avatar alt="product" src={prodImg} variant="rounded" />
             </TableCell>
-            <TableCell align="right">{'catagory'}</TableCell>
-            <TableCell align="right">{row.protein}</TableCell>
-            <TableCell align="right" sx={{ fontWeight: 'light' }}>{row.carbs}</TableCell>
-            <TableCell align="right" sx={{ fontWeight: 'bold' }} >{row.calories}</TableCell>
+            <TableCell align="right">{prodCategory}</TableCell>
+            <TableCell align="right">{quantity}</TableCell>
+            <TableCell align="right" sx={{ fontWeight: 'light' }}>{getPrice}</TableCell>
+            <TableCell align="right" sx={{ fontWeight: 'bold' }} >{sellPrice}</TableCell>
             <TableCell align="center">
                <IconButton
                   aria-label="expand row"
@@ -90,7 +61,7 @@ function Row(props: { row: ReturnType<typeof createData>; }) {
                               <TableCell align="right">Total price ($)</TableCell>
                            </TableRow>
                         </TableHead>
-                        <TableBody>
+                        {/* <TableBody>
                            {row.history.map((historyRow) => (
                               <TableRow key={historyRow.date}>
                                  <TableCell component="th" scope="row">
@@ -103,34 +74,33 @@ function Row(props: { row: ReturnType<typeof createData>; }) {
                                  </TableCell>
                               </TableRow>
                            ))}
-                        </TableBody>
+                        </TableBody> */}
                      </Table>
                   </Box>
                </Collapse>
             </TableCell>
          </TableRow>
-      </React.Fragment>
+      </>
    );
-}
+};
 
-const rows = [
-   createData('Frozen yoghurt', 159, 6.0, 24, 4, 3.99),
-   createData('Cupcake', 305, 3.7, 67, 4, 2.5),
-   createData('Munch', 262, 16.0, 24, 12, 3.79),
-   createData('Ice cream sandwich', 237, 9, 37, 4, 4.99),
-   createData('Dark Fantasy', 305, 3.7, 67, 4, 2.5),
-   createData('Eclair', 262, 16.0, 24, 16, 3.79),
-   createData('KitKat', 356, 16.0, 49, 3, 1.5),
-   createData('Gingerbread', 356, 16.0, 49, 3, 1.5),
-];
 
-export default function ProductTable() {
+const ProductTable = () => {
+   const [prodDetails, setProdDetails] = useState<DocumentData>([]);
+
+   useEffect(() => {
+      onSnapshot(collection(database, 'products'), (snapshot) => {
+         setProdDetails(snapshot.docs);
+      });
+   }, [database]);
+
+
    return (
       <TableContainer component={Paper}>
          <Table aria-label="collapsible table">
             <TableHead>
                <TableRow>
-                  <TableCell>Product</TableCell>
+                  <TableCell>Name</TableCell>
                   <TableCell align="left">Image</TableCell>
                   <TableCell align="right">Catagory</TableCell>
                   <TableCell align="right">Quantity</TableCell>
@@ -140,11 +110,22 @@ export default function ProductTable() {
                </TableRow>
             </TableHead>
             <TableBody>
-               {rows.map((row, index) => (
-                  <Row key={index} row={row} />
+               {prodDetails.map((prod: ProdDetailsTypes, index: number) => (
+                  <Row
+                     key={index}
+                     prodName={prod.data().prodName}
+                     prodImg={'https://images.unsplash.com/photo-1648993219624-2d3535fc6443?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTA2ODE2Nw&ixlib=rb-1.2.1&q=80&w=1080'}
+                     prodCompany={prod.data().prodCompany}
+                     prodCategory={prod.data().prodCategory}
+                     quantity={prod.data().quantity}
+                     getPrice={prod.data().getPrice}
+                     sellPrice={prod.data().sellPrice}
+                  />
                ))}
             </TableBody>
          </Table>
       </TableContainer>
    );
-}
+};
+
+export default ProductTable;

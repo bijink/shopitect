@@ -4,9 +4,10 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { CardActionArea } from '@mui/material';
+import { ProdDetailsProps } from './ui.types';
 
 
-export default function MUi_card() {
+export default function MUi_card({ prodName, prodCategory, prodCompany, prodImg, quantity, getPrice, sellPrice }: ProdDetailsProps) {
    return (
       <Card sx={{ maxWidth: 250 }}>
          <CardActionArea>
@@ -14,18 +15,18 @@ export default function MUi_card() {
                component="img"
                height="140"
                // image="https://source.unsplash.com/random"
-               image="https://images.unsplash.com/photo-1648993219624-2d3535fc6443?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTA2ODE2Nw&ixlib=rb-1.2.1&q=80&w=1080"
-               alt="green iguana"
+               image={prodImg}
+               alt={prodName}
             />
             <CardContent>
                <Typography gutterBottom variant="h5" component="div">
-                  productName
+                  {prodName}
                </Typography>
                <Typography variant="subtitle1" component="div">
-                  categoryName
+                  {prodCategory}
                </Typography>
                <Typography variant="h6" component="div">
-                  price
+                  {sellPrice}
                </Typography>
             </CardContent>
          </CardActionArea>

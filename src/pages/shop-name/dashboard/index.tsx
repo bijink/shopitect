@@ -16,7 +16,12 @@ const Dashboard: NextPage = () => {
             <>
                <Stack direction='row' spacing="auto" pb={2} sx={{ alignItems: 'center' }}>
                   <Typography variant="h4" component='div' >Product List</Typography>
-                  <Button variant='contained' >Add</Button>
+                  <Button
+                     variant='contained'
+                     onClick={() => { }}
+                  >
+                     Add
+                  </Button>
                </Stack>
                <ProductTable />
             </>
