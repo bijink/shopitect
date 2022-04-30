@@ -1,11 +1,14 @@
 import { Button, Stack, Typography } from '@mui/material';
 import { NextPage } from 'next';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import ProductTable from '../../../components/productTable/ProductTable';
 import ShopAdminSection_layout from '../../../layouts/ShopAdminSection.layout';
 
 
 const Dashboard: NextPage = () => {
+   const router = useRouter();
+
    return (
       <>
          <Head>
@@ -18,7 +21,7 @@ const Dashboard: NextPage = () => {
                   <Typography variant="h4" component='div' >Product List</Typography>
                   <Button
                      variant='contained'
-                     onClick={() => { }}
+                     onClick={() => router.push('dashboard/product-add')}
                   >
                      Add
                   </Button>

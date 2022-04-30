@@ -4,19 +4,19 @@ import Footer from '../components/footer';
 import NavBar from '../components/navBar';
 import SideMenu from '../components/sideMenu/SideMenu';
 
-import type { ShopAdminSectionTypes } from './layout.types';
+import type { LayoutTypes } from './layout.types';
 
 
-const ShopAdminSection_layout = ({ children }: ShopAdminSectionTypes) => {
+const ShopAdminSection_layout = ({ children }: LayoutTypes) => {
    return (
       <Box>
          <CssBaseline />
          <Box sx={{ display: 'flex' }}>
-            <Box component='nav' ><NavBar /></Box>
+            <Box component='header' ><NavBar /></Box>
             <Box component='aside' ><SideMenu /></Box>
             <Box component="main" sx={{ flexGrow: 1 }}>
                <Toolbar />
-               <Box p={3}>
+               <Box minHeight={'80.5vh'} p={3}>
                   {children}
                </Box>
                <Box component='footer' ><Footer /></Box>
