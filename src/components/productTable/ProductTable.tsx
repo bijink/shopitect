@@ -11,23 +11,22 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { Avatar } from '@mui/material';
+import { Avatar, Stack } from '@mui/material';
 import { collection, DocumentData, onSnapshot } from 'firebase/firestore';
 import { database } from '../../config/firebase.config';
 import { useEffect, useState } from 'react';
 import { ProdDetailsProps, ProdDetailsTypes } from './product.types';
 
 
-const Row = ({ prodName, prodCategory, prodCompany, prodImg, quantity, getPrice, sellPrice }: ProdDetailsProps) => {
+const Row = ({ prodName, prodCategory, companyName, prodImg, quantity, getPrice, sellPrice, createdAt }: ProdDetailsProps) => {
    const [open, setOpen] = useState(false);
+   // console.log(createdAt.toString().slice(0, 15));
 
 
    return (
       <>
-         <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-            <TableCell component="th" scope="row">
-               <Typography variant='body2' >{prodName}</Typography>
-            </TableCell>
+         <TableRow sx={{ '& > *': { borderBottom: 'unset', borderTop: '1.05px solid gray' } }}  >
+            <TableCell component="th" scope="row" sx={{ fontWeight: 'bold' }} >{prodName}</TableCell>
             <TableCell>
                <Avatar alt="product" src={prodImg} variant="rounded" />
             </TableCell>
@@ -46,23 +45,51 @@ const Row = ({ prodName, prodCategory, prodCompany, prodImg, quantity, getPrice,
             </TableCell>
          </TableRow>
          <TableRow>
-            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
+            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                <Collapse in={open} timeout="auto" unmountOnExit>
                   <Box sx={{ margin: 1 }}>
                      <Typography variant="h6" gutterBottom component="div">
-                        History
+                        More Details
                      </Typography>
                      <Table size="small" aria-label="purchases">
                         <TableHead>
                            <TableRow>
+                              <Stack>
+                                 <TableCell>
+                                    <Stack direction='row' justifyContent="space-between" >
+                                       <Typography>Date</Typography>
+                                       <Typography>Date</Typography>
+                                    </Stack>
+                                 </TableCell>
+                                 <TableCell>
+                                    <Stack direction='row' justifyContent="space-between" >
+                                       <Typography>Customer</Typography>
+                                       <Typography>Customer</Typography>
+                                    </Stack>
+                                 </TableCell>
+                                 <TableCell >
+                                    <Stack direction='row' justifyContent="space-between" >
+                                       <Typography>Company Name</Typography>
+                                       <Typography>{companyName}</Typography>
+                                    </Stack>
+                                 </TableCell>
+                                 <TableCell >
+                                    <Stack direction='row' justifyContent="space-between" >
+                                       <Typography>Product Added At</Typography>
+                                       <Typography>{createdAt}</Typography>
+                                    </Stack>
+                                 </TableCell>
+                              </Stack>
+                           </TableRow>
+                           {/* <TableCell>
                               <TableCell>Date</TableCell>
                               <TableCell>Customer</TableCell>
                               <TableCell align="right">Amount</TableCell>
                               <TableCell align="right">Total price ($)</TableCell>
-                           </TableRow>
+                           </TableCell> */}
                         </TableHead>
-                        {/* <TableBody>
-                           {row.history.map((historyRow) => (
+                        <TableBody>
+                           {/* {row.history.map((historyRow) => (
                               <TableRow key={historyRow.date}>
                                  <TableCell component="th" scope="row">
                                     {historyRow.date}
@@ -73,8 +100,8 @@ const Row = ({ prodName, prodCategory, prodCompany, prodImg, quantity, getPrice,
                                     {Math.round(historyRow.amount * row.price * 100) / 100}
                                  </TableCell>
                               </TableRow>
-                           ))}
-                        </TableBody> */}
+                           ))} */}
+                        </TableBody>
                      </Table>
                   </Box>
                </Collapse>
@@ -115,11 +142,12 @@ const ProductTable = () => {
                      key={index}
                      prodName={prod.data().prodName}
                      prodImg={'https://images.unsplash.com/photo-1648993219624-2d3535fc6443?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTA2ODE2Nw&ixlib=rb-1.2.1&q=80&w=1080'}
-                     prodCompany={prod.data().prodCompany}
+                     companyName={prod.data().companyName}
                      prodCategory={prod.data().prodCategory}
                      quantity={prod.data().quantity}
                      getPrice={prod.data().getPrice}
                      sellPrice={prod.data().sellPrice}
+                     createdAt={prod.data().createdAt.toDate().toString().slice(0, 15)}
                   />
                ))}
             </TableBody>
