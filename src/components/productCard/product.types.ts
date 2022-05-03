@@ -8,9 +8,11 @@ export interface ProdDetailsProps {
    quantity: number;
    getPrice: number;
    sellPrice: number;
+   prodId: string;
    // };
 };
 
 export type ProdDetailsTypes = {
+   id: string,
    data: () => ProdDetailsProps;
 };
