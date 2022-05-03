@@ -9,8 +9,6 @@ import { database } from "../../config/firebase.config";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import LoadingButton from '@mui/lab/LoadingButton';
 import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
-// import DatePicker from "react-datepicker";
-// import 'react-datepicker/dist/react-datepicker.css';
 
 
 const ProductInputForm = () => {
@@ -181,20 +179,14 @@ const ProductInputForm = () => {
                      onInput={(e: any) => setQuantity(e.target.value)}
                      required
                   />
-                  {/* <TextField
-                     label="Expire Date"
+                  <TextField
                      size="small"
-                     type="number"
+                     type="date"
                      sx={{ width: '34.7%' }}
                      value={quantity}
                      onInput={(e: any) => setQuantity(e.target.value)}
                   // required
-                  /> */}
-                  {/* <DatePicker
-                     selected={date}
-                     onChange={(date: Date) => setDate(date)}
-                     dateFormat='dd/MM/yyyy'
-                  /> */}
+                  />
                </Stack>
                <Box>
                   <Stack direction="row" spacing="auto" pb={1} sx={{ alignItems: 'center' }}>
