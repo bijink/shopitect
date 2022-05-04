@@ -16,6 +16,8 @@ import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import { useRouter } from 'next/router';
+import { auth, database } from '../../config/firebase.config';
+import { collection, DocumentData, onSnapshot, query, where } from 'firebase/firestore';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -63,8 +65,9 @@ const NavBar = () => {
    const router = useRouter();
 
    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
-      React.useState<null | HTMLElement>(null);
+   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
+   const [shopDetails, setShopDetails] = React.useState<DocumentData>([]);
+
 
    const isMenuOpen = Boolean(anchorEl);
    const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -160,6 +163,18 @@ const NavBar = () => {
       </Menu>
    );
 
+
+   React.useEffect(() => {
+      auth.onAuthStateChanged(shop => {
+         onSnapshot(query(collection(database, 'shops'), where('shopId', '==', shop?.uid)), (snapshot) => {
+            snapshot.forEach(obj => {
+               setShopDetails(obj.data());
+            });
+         });
+      });
+   }, []);
+
+
    return (
       <Box sx={{ flexGrow: 1 }}>
          <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }} >
@@ -180,7 +195,7 @@ const NavBar = () => {
                   sx={{ display: { xs: 'none', sm: 'block' }, cursor: 'pointer' }}
                   onClick={() => router.push('/shop-name')}
                >
-                  shopName
+                  {shopDetails.shopName}
                </Typography>
                <Box sx={{ flexGrow: 1 }} />
                <Search sx={{ flexGrow: 2 }}>

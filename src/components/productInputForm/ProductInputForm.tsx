@@ -5,8 +5,8 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import { database } from "../../config/firebase.config";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { auth, database } from "../../config/firebase.config";
+import { addDoc, collection, DocumentData, onSnapshot, query, serverTimestamp, where } from "firebase/firestore";
 import LoadingButton from '@mui/lab/LoadingButton';
 import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
 
@@ -30,6 +30,7 @@ const ProductInputForm = () => {
    // const [checkCalc, setCheckCalc] = useState(false);
    const [calcMethod, setCalcMethod] = useState('method-1');
    const [loading, setLoading] = useState(false);
+   const [shopDetails, setShopDetails] = useState<DocumentData>([]);
 
 
    const calculate = () => {
@@ -84,7 +85,7 @@ const ProductInputForm = () => {
       e.preventDefault();
       setLoading(true);
 
-      addDoc(collection(database, 'products'), {
+      addDoc(collection(database, 'shops', shopDetails.docId, 'products'), {
          prodName: prodName,
          prodCode: prodCode,
          prodCategory: prodCategory,
@@ -126,6 +127,21 @@ const ProductInputForm = () => {
 
    useEffect(() => {
       inputFocusRef.current.focus();
+   }, []);
+
+   useEffect(() => {
+      auth.onAuthStateChanged(shop => {
+         // setUser(user);
+         // console.log(user?.displayName);
+         // console.log(shop?.uid);
+
+         onSnapshot(query(collection(database, 'shops'), where('shopId', '==', shop?.uid)), (snapshot) => {
+            snapshot.forEach(obj => {
+               // console.log(obj.data());
+               setShopDetails(obj.data());
+            });
+         });
+      });
    }, []);
 
 
@@ -179,14 +195,14 @@ const ProductInputForm = () => {
                      onInput={(e: any) => setQuantity(e.target.value)}
                      required
                   />
-                  <TextField
+                  {/* <TextField
                      size="small"
                      type="date"
                      sx={{ width: '34.7%' }}
                      value={quantity}
                      onInput={(e: any) => setQuantity(e.target.value)}
                   // required
-                  />
+                  /> */}
                </Stack>
                <Box>
                   <Stack direction="row" spacing="auto" pb={1} sx={{ alignItems: 'center' }}>
