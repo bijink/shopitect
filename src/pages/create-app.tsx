@@ -1,18 +1,13 @@
 import { LoadingButton } from "@mui/lab";
 import { Box, Button, Container, Stack, TextareaAutosize, TextField, Typography } from "@mui/material";
-import { addDoc, collection, doc, onSnapshot, query, serverTimestamp, setDoc, updateDoc, where } from "firebase/firestore";
+import { collection, doc, onSnapshot, query, serverTimestamp, setDoc, where } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
-import { database, auth } from "../config/firebase.config";
+import { database } from "../config/firebase.config";
 import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
 import { useRouter } from "next/router";
-import { RecaptchaVerifier, signInWithPhoneNumber, updateProfile } from "firebase/auth";
 import { useSession } from "next-auth/react";
 
-declare const window: Window &
-   typeof globalThis & {
-      recaptchaVerifier: any;
-      confirmationResult: any;
-   };
+
 const Create_app = () => {
    const router = useRouter();
 
@@ -25,67 +20,43 @@ const Create_app = () => {
    const [shopOwnerName, setShopOwnerName] = useState('');
    const [shopEmail, setShopEmail] = useState('');
    const [shopAddress, setShopAddress] = useState('');
-   // const [password, setPassword] = useState('');
    const [shopUrlName, setShopUrlName] = useState('');
 
    const [loading, setLoading] = useState(false);
+   const [shopDocId, setShopDocId] = useState([] as Array<string>);
+   const [isShopUrlNameUnique, setIsShopUrlNameUnique] = useState(false);
 
 
-   const handleFormSubmit = async (e: any) => {
+   const handleFormSubmit = (e: any) => {
       e.preventDefault();
       setLoading(true);
 
-      // 
-      // onSnapshot(query(collection(database, 'shops'), where('shopId', '==', session?.user.uid)), (snapshot) => {
-      //    // snapshot.forEach(obj => {
-      //    //    // setShopDetails(obj.data());
-      //    //    console.log('obj:', obj.data());
-      //    // });
-      //    console.log(snapshot.docs);
-      // });
-      //
-
-      // const docRef = await addDoc(collection(database, 'shops', shopUrlName), {
-      //    shopId: session?.user.uid,
-      //    shopName,
-      //    shopCategory,
-      //    shopOwnerName,
-      //    shopEmail,
-      //    shopAddress,
-      //    shopUrlName,
-      //    createdAt: serverTimestamp()
-      // });
-
-      // const docRef = await setDoc(doc(database, 'shops', shopUrlName), {
       // *shopUrlName is used as documentID for uniqueness of each shopApps
       // *shopUrlName is used to identify the shopApp
-      await setDoc(doc(database, 'shops', shopUrlName), {
-         shopName,
-         shopUrlName,
-         shopCategory,
-         shopEmail,
-         shopAddress,
-         shopOwnerName,
-         shopAuthId: session?.user.uid,
-         createdAt: serverTimestamp()
-      }).then(() => {
+      if (isShopUrlNameUnique) {
+         setDoc(doc(database, 'shops', shopUrlName), {
+            shopName,
+            shopUrlName,
+            shopCategory,
+            shopEmail,
+            shopAddress,
+            shopOwnerName,
+            shopAuthId: session?.user.uid,
+            createdAt: serverTimestamp()
+         }).then(() => {
+            setShopName('');
+            setShopCategory('');
+            setShopOwnerName('');
+            // setShopEmail('');
+            setShopAddress('');
+            setShopUrlName('');
+            setLoading(false);
+            router.push(`/${session?.user.uid}`);
+         });
+      } else {
          setLoading(false);
-         // router.push(`/${session?.user.uid}`);
-      });
-
-      // await updateDoc(doc(database, 'shops', docRef.id), {
-      //    docId: docRef.id
-      // }).then(() => {
-      //    setShopName('');
-      //    setShopCategory('');
-      //    setShopOwnerName('');
-      //    setShopEmail('');
-      //    setShopAddress('');
-      //    setShopUrlName('');
-      // }).then(() => {
-      //    setLoading(false);
-      //    // router.push(`/${session?.user.uid}`);
-      // });
+         alert('Please enter all fields correctly');
+      }
    };
 
    const handleFormReset = () => {
@@ -98,53 +69,37 @@ const Create_app = () => {
    };
 
 
-
-   useEffect(() => {
-
-   }, [session]);
-
    useEffect(() => {
       inputFocusRef.current.focus();
-
       setShopEmail(session?.user.email!);
-      // console.log(session?.user);
-      // console.log(session);
 
       session && (
-         onSnapshot(query(collection(database, 'shops'), where('shopId', '==', session?.user.uid)), (snapshot) => {
-            // console.log(snapshot.docs);
-            if (snapshot.docs.length > 0) {
-               // router.push(`/${session?.user.uid}`);
-               // console.log(snapshot.docs);
+         onSnapshot(query(collection(database, 'shops'), where('shopAuthId', '==', session?.user.uid)), (snapshot) => {
+            let shopUrlNameRoute;
+            snapshot.forEach(obj => {
+               // console.log(obj.data().shopUrlName);
+               shopUrlNameRoute = obj.data().shopUrlName;
+            });
 
-               // router.push(`/${session?.user.uid}`);
+            if (snapshot.docs.length > 0) {
+               router.push(`/${shopUrlNameRoute}`);
             }
          })
       );
    }, [session]);
 
-   // const [datas, setDatas] = useState([]);
-
    useEffect(() => {
       onSnapshot(query(collection(database, 'shops')), (snapshot) => {
+         const arr: Array<string> = [];
          snapshot.forEach(obj => {
-            console.log(obj.id);
-            // console.log(obj.data());
-            // console.log(obj.data().shopName);
-            // setDatas(obj.data().shopName);
-
+            arr.push(obj.id);
          });
-         // console.log(snapshot.docs);
-
+         setShopDocId(arr);
       });
-      // }, [shopUrlName]);
 
-   }, []);
-
-   // useEffect(() => {
-   //    console.log(datas);
-
-   // }, [datas]);
+      // console.log(!(shopDocId.some(arr => arr == shopUrlName)));
+      setIsShopUrlNameUnique(!(shopDocId.some(arr => arr == shopUrlName)));
+   }, [shopUrlName]);
 
 
    return (
@@ -152,8 +107,6 @@ const Create_app = () => {
          <Container >
             <Typography variant="h4" component={'div'} gutterBottom>Create App</Typography>
             <form onSubmit={handleFormSubmit}>
-               {/* <form onSubmit={onSignInSubmit}> */}
-               <div id="recaptcha-container"></div>
                <Stack direction="column" spacing={3}>
                   <TextField
                      label="Shop Name"
@@ -168,10 +121,14 @@ const Create_app = () => {
                      label="Shop Url Name"
                      size="small"
                      fullWidth
-                     helperText="* This name is used in url for identifing your app. Make sure to enter a unique name"
+                     helperText={!(shopUrlName !== '') ?
+                        '* This name is used in url for identifing your app. Make sure to enter a unique name'
+                        : (isShopUrlNameUnique ? 'Url is unique' : 'Url is not unique')
+                     }
                      value={shopUrlName}
-                     onInput={(e: any) => setShopUrlName(e.target.value)}
+                     onInput={(e: any) => setShopUrlName(e.target.value.split(" ").join("").toLowerCase())}
                      required
+                     error={!isShopUrlNameUnique}
                   />
                   <TextField
                      label="Shop Category"
@@ -220,15 +177,6 @@ const Create_app = () => {
                         InputProps={{ readOnly: true }}
                      />
                   )}
-                  {/* <TextField
-                        label="Password"
-                        size="small"
-                        fullWidth
-                        type="password"
-                        value={password}
-                        onInput={(e: any) => setPassword(e.target.value)}
-                        required
-                     /> */}
                </Stack>
                <Stack direction={{ sm: 'column', md: 'row' }} spacing={{ sm: 1, md: 3 }} pt={4}>
                   <Button
