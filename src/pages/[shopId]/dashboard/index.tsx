@@ -8,6 +8,7 @@ import ShopAdminSection_layout from '../../../layouts/ShopAdminSection.layout';
 
 const Dashboard: NextPage = () => {
    const router = useRouter();
+   const { shopId } = router.query;
 
    return (
       <>
@@ -21,7 +22,7 @@ const Dashboard: NextPage = () => {
                   <Typography variant="h4" component='div' >Product List</Typography>
                   <Button
                      variant='contained'
-                     onClick={() => router.push('dashboard/product-add')}
+                     onClick={() => router.push(`/${shopId}/dashboard/product-add`)}
                   >
                      Add
                   </Button>

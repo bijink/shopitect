@@ -14,6 +14,8 @@ import customTheme from '../styles/customTheme';
 import { Provider } from 'react-redux';
 import { store } from '../redux/store';
 
+import { SessionProvider } from "next-auth/react";
+
 
 interface MyAppProps extends AppProps {
    emotionCache?: EmotionCache;
@@ -25,17 +27,19 @@ const theme = createTheme(customTheme);
 
 
 const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
-   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+   const { Component, emotionCache = clientSideEmotionCache, pageProps: { session, ...pageProps } } = props;
 
    return (
-      <Provider store={store}>
-         <CacheProvider value={emotionCache}>
-            <ThemeProvider theme={theme}>
-               <CssBaseline />
-               <Component {...pageProps} />
-            </ThemeProvider>
-         </CacheProvider>
-      </Provider>
+      <SessionProvider session={session}>
+         <Provider store={store}>
+            <CacheProvider value={emotionCache}>
+               <ThemeProvider theme={theme}>
+                  <CssBaseline />
+                  <Component {...pageProps} />
+               </ThemeProvider>
+            </CacheProvider>
+         </Provider>
+      </SessionProvider>
    );
 };
 

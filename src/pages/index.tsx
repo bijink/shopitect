@@ -17,7 +17,8 @@ const Home: NextPage = () => {
             </Typography>
 
             <Button variant='contained'>
-               <Link href="/create-app">Create App</Link>
+               {/* <Link href="/create-app">Create App</Link> */}
+               <Link href="/auth/signin">Create App</Link>
             </Button>
          </Stack>
       </>

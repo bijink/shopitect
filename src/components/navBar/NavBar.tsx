@@ -18,6 +18,7 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import { useRouter } from 'next/router';
 import { auth, database } from '../../config/firebase.config';
 import { collection, DocumentData, onSnapshot, query, where } from 'firebase/firestore';
+import { signOut } from 'firebase/auth';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -61,7 +62,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
    },
 }));
 
-const NavBar = () => {
+const NavBar = ({ shopName }) => {
    const router = useRouter();
 
    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -108,6 +109,16 @@ const NavBar = () => {
       >
          <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
          <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+         <MenuItem onClick={() => {
+            signOut(auth).then(() => {
+               // navigate('/');
+               router.push('/shop-name');
+            }).catch(err => {
+               console.log(err.message);
+            });
+
+            handleMenuClose();
+         }}>Sign Out</MenuItem>
       </Menu>
    );
 
@@ -166,11 +177,12 @@ const NavBar = () => {
 
    React.useEffect(() => {
       auth.onAuthStateChanged(shop => {
-         onSnapshot(query(collection(database, 'shops'), where('shopId', '==', shop?.uid)), (snapshot) => {
-            snapshot.forEach(obj => {
-               setShopDetails(obj.data());
+         shop &&
+            onSnapshot(query(collection(database, 'shops'), where('shopId', '==', shop?.uid)), (snapshot) => {
+               snapshot.forEach(obj => {
+                  setShopDetails(obj.data());
+               });
             });
-         });
       });
    }, []);
 
@@ -195,7 +207,8 @@ const NavBar = () => {
                   sx={{ display: { xs: 'none', sm: 'block' }, cursor: 'pointer' }}
                   onClick={() => router.push('/shop-name')}
                >
-                  {shopDetails.shopName}
+                  {/* {shopDetails?.shopName} */}
+                  {shopName}
                </Typography>
                <Box sx={{ flexGrow: 1 }} />
                <Search sx={{ flexGrow: 2 }}>

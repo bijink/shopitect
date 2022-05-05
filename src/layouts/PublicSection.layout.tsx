@@ -10,12 +10,12 @@ import SideMenu from '../components/sideMenu/SideMenu';
 import type { LayoutTypes } from './layout.types';
 
 
-const PublicSection_layout = ({ children }: LayoutTypes) => {
+const PublicSection_layout = ({ children, shopDetails }: LayoutTypes) => {
    return (
       <Box>
          <CssBaseline />
          <Box sx={{ display: 'flex' }}>
-            <Box component='header' ><NavBar /></Box>
+            <Box component='header' ><NavBar shopName={shopDetails.shopName} /></Box>
             <Box component='aside' ><SideMenu /></Box>
             <Box component="main" sx={{ flexGrow: 1 }}>
                <Toolbar />
