@@ -4,10 +4,10 @@ import Footer from '../components/footer';
 import NavBar from '../components/navBar';
 import SideMenu from '../components/sideMenu/SideMenu';
 
-import type { LayoutTypes } from './layout.types';
+import type { ShopAdminSectionLayoutTypes } from './layout.types';
 
 
-const ShopAdminSection_layout = ({ children }: LayoutTypes) => {
+const ShopAdminSection_layout = ({ children, shopDetails }: ShopAdminSectionLayoutTypes) => {
    return (
       <Box>
          <CssBaseline />

@@ -19,6 +19,8 @@ import { useRouter } from 'next/router';
 import { auth, database } from '../../config/firebase.config';
 import { collection, DocumentData, onSnapshot, query, where } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
+import { useAppSelector } from '../../redux/hooks';
+import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -62,12 +64,16 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
    },
 }));
 
-const NavBar = ({ shopName }) => {
+const NavBar = () => {
+   const shopDetails = useAppSelector(selectShopDetails);
+   // console.log(shopDetails);
+   // console.log(shopDetails.createdAt.toDate());
+
    const router = useRouter();
 
    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
-   const [shopDetails, setShopDetails] = React.useState<DocumentData>([]);
+   // const [shopDetails, setShopDetails] = React.useState<DocumentData>([]);
 
 
    const isMenuOpen = Boolean(anchorEl);
@@ -175,16 +181,16 @@ const NavBar = ({ shopName }) => {
    );
 
 
-   React.useEffect(() => {
-      auth.onAuthStateChanged(shop => {
-         shop &&
-            onSnapshot(query(collection(database, 'shops'), where('shopId', '==', shop?.uid)), (snapshot) => {
-               snapshot.forEach(obj => {
-                  setShopDetails(obj.data());
-               });
-            });
-      });
-   }, []);
+   // React.useEffect(() => {
+   //    auth.onAuthStateChanged(shop => {
+   //       shop &&
+   //          onSnapshot(query(collection(database, 'shops'), where('shopId', '==', shop?.uid)), (snapshot) => {
+   //             snapshot.forEach(obj => {
+   //                setShopDetails(obj.data());
+   //             });
+   //          });
+   //    });
+   // }, []);
 
 
    return (
@@ -205,10 +211,10 @@ const NavBar = ({ shopName }) => {
                   noWrap
                   component="div"
                   sx={{ display: { xs: 'none', sm: 'block' }, cursor: 'pointer' }}
-                  onClick={() => router.push('/shop-name')}
+                  onClick={() => router.push(`/${shopDetails?.shopUrlName}`)}
                >
-                  {/* {shopDetails?.shopName} */}
-                  {shopName}
+                  {shopDetails?.shopName}
+                  {/* {shopName} */}
                </Typography>
                <Box sx={{ flexGrow: 1 }} />
                <Search sx={{ flexGrow: 2 }}>

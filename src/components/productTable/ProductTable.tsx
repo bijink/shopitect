@@ -16,6 +16,8 @@ import { collection, DocumentData, onSnapshot } from 'firebase/firestore';
 import { database } from '../../config/firebase.config';
 import { useEffect, useState } from 'react';
 import { ProdDetailsProps, ProdDetailsTypes } from './product.types';
+import { useAppSelector } from '../../redux/hooks';
+import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
 
 
 const Row = ({ prodName, prodCategory, companyName, prodImg, quantity, getPrice, sellPrice, createdAt }: ProdDetailsProps) => {
@@ -113,13 +115,18 @@ const Row = ({ prodName, prodCategory, companyName, prodImg, quantity, getPrice,
 
 
 const ProductTable = () => {
+   const shopDetails = useAppSelector(selectShopDetails);
+
    const [prodDetails, setProdDetails] = useState<DocumentData>([]);
 
+
    useEffect(() => {
-      onSnapshot(collection(database, 'products'), (snapshot) => {
-         setProdDetails(snapshot.docs);
-      });
-   }, [database]);
+      (shopDetails.shopUrlName) && (
+         onSnapshot(collection(database, 'shops', shopDetails.shopUrlName, 'products'), (snapshot) => {
+            setProdDetails(snapshot.docs);
+         })
+      );
+   }, [database, shopDetails.shopUrlName]);
 
 
    return (

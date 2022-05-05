@@ -7,15 +7,15 @@ import Footer from '../components/footer';
 import NavBar from '../components/navBar';
 import SideMenu from '../components/sideMenu/SideMenu';
 
-import type { LayoutTypes } from './layout.types';
+import type { PublicSectionLayoutTypes } from './layout.types';
 
 
-const PublicSection_layout = ({ children, shopDetails }: LayoutTypes) => {
+const PublicSection_layout = ({ children, shopDetails }: PublicSectionLayoutTypes) => {
    return (
       <Box>
          <CssBaseline />
          <Box sx={{ display: 'flex' }}>
-            <Box component='header' ><NavBar shopName={shopDetails.shopName} /></Box>
+            <Box component='header' ><NavBar /></Box>
             <Box component='aside' ><SideMenu /></Box>
             <Box component="main" sx={{ flexGrow: 1 }}>
                <Toolbar />

@@ -1,3 +1,4 @@
+// *Product View Page
 import { Box } from "@mui/material";
 import { NextPage } from "next";
 import Head from "next/head";
@@ -8,27 +9,45 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { CardActionArea } from '@mui/material';
 import { useEffect, useState } from "react";
-import { DocumentData } from "firebase/firestore";
+import { collection, DocumentData, onSnapshot, query, where } from "firebase/firestore";
 import { database } from "../../config/firebase.config";
 import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/router";
+import { useAppSelector } from "../../redux/hooks";
+import { selectShopDetails } from "../../redux/slices/shopDetails.slice";
 
 
 const Product: NextPage = () => {
    const router = useRouter();
-   const { id } = router.query;
+   const { id, shopAppId } = router.query;
+   // console.log(id, shopAppId);
 
-   const [prodDetails, setProdDetails] = useState<DocumentData | any>([]);
+   // const shopDetails = useAppSelector(selectShopDetails);
+   // console.log(shopDetails);
+
+   const [shopDetails, setShopDetails] = useState<DocumentData>([]);
+   // const [prodDetails, setProdDetails] = useState<DocumentData | any>([]);
+   const [prodDetails, setProdDetails] = useState<DocumentData>([]);
 
 
    useEffect(() => {
-      if (id) {
-         getDoc(doc(database, 'products', id)).then((snap) => {
+      shopAppId &&
+         onSnapshot(query(collection(database, 'shops'), where('shopUrlName', '==', shopAppId)), (snapshot) => {
+            snapshot.forEach(obj => {
+               setShopDetails(obj.data());
+               // dispatch(setAppShopDetails(obj.data()));
+            });
+         });
+   }, [shopAppId]);
+
+   useEffect(() => {
+      if (id && shopDetails.shopUrlName) {
+         getDoc(doc(database, 'shops', shopDetails.shopUrlName, 'products', id)).then((snap) => {
             // console.log(snap.data());
             setProdDetails(snap.data());
          });
       }
-   }, [id]);
+   }, [id, shopDetails.shopUrlName]);
 
 
    return (

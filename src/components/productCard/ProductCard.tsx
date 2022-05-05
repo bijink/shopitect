@@ -9,16 +9,19 @@ import { useEffect, useState } from "react";
 import { database } from "../../config/firebase.config";
 import { ProdDetailsProps, ProdDetailsTypes } from "../productCard/product.types";
 import { useRouter } from 'next/router';
+import { useAppSelector } from '../../redux/hooks';
+import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
 
 
-const Cards = ({ prodId, prodName, prodCategory, prodCompany, prodImg, quantity, getPrice, sellPrice }: ProdDetailsProps) => {
+const Cards = ({ shopUrlName, prodId, prodName, prodCategory, prodCompany, prodImg, quantity, getPrice, sellPrice }: ProdDetailsProps) => {
    const router = useRouter();
 
 
    return (
       <Box p={1.5} onClick={() => {
          router.push({
-            pathname: '/shop-name/product',
+            // pathname: '/shop-name/product',
+            pathname: `/${shopUrlName}/product`,
             query: { id: prodId },
          });
       }}>
@@ -50,13 +53,27 @@ const Cards = ({ prodId, prodName, prodCategory, prodCompany, prodImg, quantity,
 
 
 const ProductCard = () => {
+   // const [prodDetails, setProdDetails] = useState<DocumentData>([]);
+
+   // useEffect(() => {
+   //    onSnapshot(collection(database, 'products'), (snapshot) => {
+   //       setProdDetails(snapshot.docs);
+   //    });
+   // }, [database]);
+
+
+   const shopDetails = useAppSelector(selectShopDetails);
+
    const [prodDetails, setProdDetails] = useState<DocumentData>([]);
 
+
    useEffect(() => {
-      onSnapshot(collection(database, 'products'), (snapshot) => {
-         setProdDetails(snapshot.docs);
-      });
-   }, [database]);
+      (shopDetails.shopUrlName) && (
+         onSnapshot(collection(database, 'shops', shopDetails.shopUrlName, 'products'), (snapshot) => {
+            setProdDetails(snapshot.docs);
+         })
+      );
+   }, [database, shopDetails.shopUrlName]);
 
 
    return (
@@ -67,6 +84,7 @@ const ProductCard = () => {
          {prodDetails.map((prod: ProdDetailsTypes, index: number) => (
             <Cards
                key={index}
+               shopUrlName={shopDetails?.shopUrlName}
                // prodDetails={prod.data()}
                prodId={prod.id}
                prodName={prod.data().prodName}

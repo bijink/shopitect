@@ -6,34 +6,40 @@ import { useEffect, useState } from 'react';
 import ProductCard from '../../components/productCard';
 import { database } from '../../config/firebase.config';
 import PublicSection_layout from '../../layouts/PublicSection.layout';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { selectShopDetails, setAppShopDetails } from '../../redux/slices/shopDetails.slice';
 
 
 const Shop: NextPage = () => {
    const router = useRouter();
-   const { shopId } = router.query;
-   // console.log('shopId : ', shopId);
-   // console.log(router.query.shopId);
+   const { shopAppId } = router.query;
+
+   const dispatch = useAppDispatch();
+   const shopDetails = useAppSelector(selectShopDetails);
+   // console.log(shopDetails);
 
 
-   const [shopDetails, setShopDetails] = useState<DocumentData>([]);
+   // const [shopDetails, setShopDetails] = useState<DocumentData>([]);
 
 
    useEffect(() => {
-      shopId &&
-         onSnapshot(query(collection(database, 'shops'), where('shopId', '==', shopId)), (snapshot) => {
+      shopAppId &&
+         onSnapshot(query(collection(database, 'shops'), where('shopUrlName', '==', shopAppId)), (snapshot) => {
             snapshot.forEach(obj => {
-               setShopDetails(obj.data());
+               // setShopDetails(obj.data());
+               dispatch(setAppShopDetails(obj.data()));
             });
          });
-   }, [shopId]);
+   }, [shopAppId]);
+
 
    return (
       <>
          <Head>
-            <title>shopName</title>
+            <title>{shopDetails?.shopName ? shopDetails?.shopName : '·'}</title>
             <meta name="description" content="" />
          </Head>
-         <PublicSection_layout shopDetails={shopDetails}>
+         <PublicSection_layout >
             <ProductCard />
          </PublicSection_layout>
       </>
