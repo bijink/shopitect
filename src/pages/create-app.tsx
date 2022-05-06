@@ -42,7 +42,8 @@ const Create_app = () => {
             shopAddress,
             shopOwnerName,
             shopAuthId: session?.user.uid,
-            createdAt: serverTimestamp()
+            // createdAt: new Date().toLocaleDateString(),
+            createdAt: new Date(new Date().getTime()).toString(),
          }).then(() => {
             setShopName('');
             setShopCategory('');
@@ -51,7 +52,7 @@ const Create_app = () => {
             setShopAddress('');
             setShopUrlName('');
             setLoading(false);
-            router.push(`/${session?.user.uid}`);
+            router.push(`/${shopUrlName}`);
          });
       } else {
          setLoading(false);

@@ -1,14 +1,14 @@
+// *Dashboard page
 import { Button, Stack, Typography } from '@mui/material';
-import { collection, DocumentData, onSnapshot, query, where } from 'firebase/firestore';
 import { NextPage } from 'next';
+import { getSession, signIn, useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import ProductTable from '../../../components/productTable/ProductTable';
-import { database } from '../../../config/firebase.config';
 import ShopAdminSection_layout from '../../../layouts/ShopAdminSection.layout';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { selectShopDetails, setAppShopDetails } from '../../../redux/slices/shopDetails.slice';
+import { selectShopDetails, setAppShopDetailsAsync } from '../../../redux/slices/shopDetails.slice';
 
 
 const Dashboard: NextPage = () => {
@@ -18,24 +18,32 @@ const Dashboard: NextPage = () => {
    const dispatch = useAppDispatch();
    const shopDetails = useAppSelector(selectShopDetails);
 
-   // const [shopDetails, setShopDetails] = useState<DocumentData>([]);
+   const [loading, setLoading] = useState(true);
 
 
    useEffect(() => {
-      shopAppId &&
-         onSnapshot(query(collection(database, 'shops'), where('shopUrlName', '==', shopAppId)), (snapshot) => {
-            snapshot.forEach(obj => {
-               // setShopDetails(obj.data());
-               dispatch(setAppShopDetails(obj.data()));
-            });
-         });
+      const securePage = async () => {
+         const session = await getSession();
+
+         if (!session) {
+            setLoading(true);
+            shopAppId && router.push(`/${shopAppId}`);
+         } else {
+            setLoading(false);
+         }
+      };
+      securePage();
+   }, [shopAppId]);
+
+   useEffect(() => {
+      dispatch(setAppShopDetailsAsync(shopAppId));
    }, [shopAppId]);
 
 
-   return (
+   if (loading) return (<Head><title>{`${shopDetails?.shopName ? shopDetails?.shopName : '·'}`}</title></Head>);
+   else return (
       <>
          <Head>
-            {/* <title>Dashboard · shopName</title> */}
             <title>{`Dashboard · ${shopDetails?.shopName ? shopDetails?.shopName : '·'}`}</title>
          </Head>
 

@@ -16,9 +16,12 @@ const Home: NextPage = () => {
                Application Welcome Page
             </Typography>
 
+
             <Button variant='contained'>
-               {/* <Link href="/create-app">Create App</Link> */}
                <Link href="/auth/signin">Create App</Link>
+            </Button>
+            <Button variant='text' color="success" size='small'>
+               <Link href="/auth/signin?isApp=true">Already Have One</Link>
             </Button>
          </Stack>
       </>

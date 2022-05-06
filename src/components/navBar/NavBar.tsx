@@ -16,11 +16,13 @@ import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import { useRouter } from 'next/router';
-import { auth, database } from '../../config/firebase.config';
+import { database } from '../../config/firebase.config';
 import { collection, DocumentData, onSnapshot, query, where } from 'firebase/firestore';
-import { signOut } from 'firebase/auth';
+// import { signOut } from 'firebase/auth';
 import { useAppSelector } from '../../redux/hooks';
 import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
+import { getSession, signIn, signOut, useSession } from 'next-auth/react';
+import { Button } from '@mui/material';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -65,11 +67,16 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const NavBar = () => {
+   const { data: session } = useSession();
+   // console.log(session);
+
+
    const shopDetails = useAppSelector(selectShopDetails);
    // console.log(shopDetails);
    // console.log(shopDetails.createdAt.toDate());
 
    const router = useRouter();
+   const { shopId } = router.query;
 
    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -115,16 +122,23 @@ const NavBar = () => {
       >
          <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
          <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-         <MenuItem onClick={() => {
-            signOut(auth).then(() => {
-               // navigate('/');
-               router.push('/shop-name');
-            }).catch(err => {
-               console.log(err.message);
-            });
+         {session ?
+            <MenuItem onClick={(e: any) => {
+               e.preventDefault();
+               signOut().then(() => {
+                  router.push(`/${shopDetails.shopUrlName}`);
+               });
 
-            handleMenuClose();
-         }}>Sign Out</MenuItem>
+               handleMenuClose();
+            }}>Sign Out</MenuItem>
+            :
+            <MenuItem onClick={(e: any) => {
+               e.preventDefault();
+               signIn('google');
+
+               handleMenuClose();
+            }}>Sign In</MenuItem>
+         }
       </Menu>
    );
 
@@ -227,6 +241,9 @@ const NavBar = () => {
                   />
                </Search>
                <Box sx={{ flexGrow: 1 }} />
+               <Button variant='contained' color='secondary' onClick={() => {
+                  router.push(`/${shopDetails?.shopUrlName}/dashboard`);
+               }}>Dash</Button>
                <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                   <IconButton size="large" aria-label="show 4 new mails" color="inherit">
                      <Badge badgeContent={4} color="error">

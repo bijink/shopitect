@@ -7,10 +7,11 @@ import { Box, Stack } from "@mui/material";
 import { collection, DocumentData, onSnapshot } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { database } from "../../config/firebase.config";
-import { ProdDetailsProps, ProdDetailsTypes } from "../productCard/product.types";
 import { useRouter } from 'next/router';
 import { useAppSelector } from '../../redux/hooks';
 import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
+
+import type { ProdDetailsProps, ProdDetailsTypes } from "../productCard/product.types";
 
 
 const Cards = ({ shopUrlName, prodId, prodName, prodCategory, prodCompany, prodImg, quantity, getPrice, sellPrice }: ProdDetailsProps) => {
@@ -71,6 +72,10 @@ const ProductCard = () => {
       (shopDetails.shopUrlName) && (
          onSnapshot(collection(database, 'shops', shopDetails.shopUrlName, 'products'), (snapshot) => {
             setProdDetails(snapshot.docs);
+            // snapshot.forEach(element => {
+            //    console.log(element.data());
+
+            // });
          })
       );
    }, [database, shopDetails.shopUrlName]);

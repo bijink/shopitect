@@ -1,13 +1,12 @@
+// *Product-add Page
 import { Stack, Typography } from "@mui/material";
 import Head from "next/head";
 import ProductInputForm from "../../../components/productInputForm";
 import ShopAdminSection_layout from "../../../layouts/ShopAdminSection.layout";
-import { collection, DocumentData, onSnapshot, query, where } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
-import { database } from '../../../config/firebase.config';
+import { useEffect } from 'react';
 import { useRouter } from "next/router";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { selectShopDetails, setAppShopDetails } from "../../../redux/slices/shopDetails.slice";
+import { selectShopDetails, setAppShopDetailsAsync } from "../../../redux/slices/shopDetails.slice";
 
 const Product_add = () => {
    const router = useRouter();
@@ -17,17 +16,8 @@ const Product_add = () => {
    const shopDetails = useAppSelector(selectShopDetails);
 
 
-   // const [shopDetails, setShopDetails] = useState<DocumentData>([]);
-
-
    useEffect(() => {
-      shopAppId &&
-         onSnapshot(query(collection(database, 'shops'), where('shopUrlName', '==', shopAppId)), (snapshot) => {
-            snapshot.forEach(obj => {
-               // setShopDetails(obj.data());
-               dispatch(setAppShopDetails(obj.data()));
-            });
-         });
+      dispatch(setAppShopDetailsAsync(shopAppId));
    }, [shopAppId]);
 
 

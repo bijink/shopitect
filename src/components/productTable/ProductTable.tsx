@@ -78,7 +78,7 @@ const Row = ({ prodName, prodCategory, companyName, prodImg, quantity, getPrice,
                                  <TableCell >
                                     <Stack direction='row' justifyContent="space-between" >
                                        <Typography>Product Added At</Typography>
-                                       <Typography>{createdAt}</Typography>
+                                       {/* <Typography>{createdAt}</Typography> */}
                                     </Stack>
                                  </TableCell>
                               </Stack>
@@ -154,7 +154,7 @@ const ProductTable = () => {
                      quantity={prod.data().quantity}
                      getPrice={prod.data().getPrice}
                      sellPrice={prod.data().sellPrice}
-                     createdAt={prod.data().createdAt.toDate().toString().slice(0, 15)}
+                  // createdAt={prod.data().createdAt.toDate().toString().slice(0, 15)}
                   />
                ))}
             </TableBody>

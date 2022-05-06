@@ -9,35 +9,28 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { CardActionArea } from '@mui/material';
 import { useEffect, useState } from "react";
-import { collection, DocumentData, onSnapshot, query, where } from "firebase/firestore";
+import { collection, DocumentData, DocumentSnapshot, onSnapshot, query, where } from "firebase/firestore";
 import { database } from "../../config/firebase.config";
 import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/router";
-import { useAppSelector } from "../../redux/hooks";
-import { selectShopDetails } from "../../redux/slices/shopDetails.slice";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { selectShopDetails, setAppShopDetailsAsync } from "../../redux/slices/shopDetails.slice";
 
 
 const Product: NextPage = () => {
    const router = useRouter();
    const { id, shopAppId } = router.query;
-   // console.log(id, shopAppId);
 
-   // const shopDetails = useAppSelector(selectShopDetails);
-   // console.log(shopDetails);
+   const dispatch = useAppDispatch();
+   const shopDetails = useAppSelector(selectShopDetails);
 
-   const [shopDetails, setShopDetails] = useState<DocumentData>([]);
-   // const [prodDetails, setProdDetails] = useState<DocumentData | any>([]);
-   const [prodDetails, setProdDetails] = useState<DocumentData>([]);
+   // const [prodDetails, setProdDetails] = useState<DocumentData>([]);
+   // const [prodDetails, setProdDetails] = useState({} as  DocumentSnapshot<DocumentData>);
+   const [prodDetails, setProdDetails] = useState<any>({});
 
 
    useEffect(() => {
-      shopAppId &&
-         onSnapshot(query(collection(database, 'shops'), where('shopUrlName', '==', shopAppId)), (snapshot) => {
-            snapshot.forEach(obj => {
-               setShopDetails(obj.data());
-               // dispatch(setAppShopDetails(obj.data()));
-            });
-         });
+      dispatch(setAppShopDetailsAsync(shopAppId));
    }, [shopAppId]);
 
    useEffect(() => {
@@ -53,7 +46,7 @@ const Product: NextPage = () => {
    return (
       <>
          <Head>
-            <title>shopName</title>
+            <title>{shopDetails?.shopName ? shopDetails?.shopName : '·'}</title>
             <meta name="description" content="" />
          </Head>
          <PublicSection_layout>

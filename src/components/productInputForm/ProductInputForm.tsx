@@ -5,7 +5,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import { auth, database } from "../../config/firebase.config";
+import { database } from "../../config/firebase.config";
 import { addDoc, collection, DocumentData, onSnapshot, query, serverTimestamp, where } from "firebase/firestore";
 import LoadingButton from '@mui/lab/LoadingButton';
 import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
@@ -99,7 +99,8 @@ const ProductInputForm = () => {
          sellPrice: (sellPriceInput === '') ? sellPriceInput : parseFloat(sellPriceInput),
          profitAmount: (profitAmountInput === '') ? profitAmountInput : parseFloat(profitAmountInput),
          profitPercentage: (profitPercentageInput === '') ? profitPercentageInput : parseFloat(profitPercentageInput),
-         createdAt: serverTimestamp()
+         // createdAt: serverTimestamp(),
+         // createdAt: new Date().getTime(),
       }).then(() => {
          setProdName('');
          setProdCode('');

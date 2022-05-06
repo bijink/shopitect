@@ -1,4 +1,5 @@
 export interface ProdDetailsProps {
+   shopUrlName: string,
    // id: "CgSFEnzLpFNsGtQBHMom";
    // product: {
    prodName: string;
