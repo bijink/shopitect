@@ -1,4 +1,4 @@
-// *Signin confirm page
+// *Signup confirm page
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -8,7 +8,7 @@ import { database } from "../../../config/firebase.config";
 import { useSession } from "next-auth/react";
 
 
-const ShopUrlConfirm = () => {
+const SignupConfirm = () => {
    const router = useRouter();
 
    const { data: session } = useSession();
@@ -47,7 +47,7 @@ const ShopUrlConfirm = () => {
    if (isAlreadyHaveAccount) return (
       <>
          <Head>
-            <title>Sign In - master-project</title>
+            <title>Signup - master-project</title>
          </Head>
 
          <Box
@@ -61,7 +61,7 @@ const ShopUrlConfirm = () => {
             >
                <Stack spacing={3} alignItems="center">
                   <Typography variant="h4" component="h1" >My Master Project Name</Typography>
-                  <Typography variant="h5" component="div">Sign In</Typography>
+                  <Typography variant="h5" component="div">Confirm Account</Typography>
                   <Box>
                      <Typography variant="body1" component="p">
                         We found that you already have an account from this Gmail.
@@ -80,7 +80,7 @@ const ShopUrlConfirm = () => {
                         </Typography>
                         <Stack direction="row" spacing={2}>
                            <Button variant="contained" size='small' color="error" onClick={() => {
-                              router.push(`/auth/signin`);
+                              router.push(`/auth/signup`);
                            }}>no</Button>
                            <Button variant="contained" size='small' color="primary" onClick={() => {
                               router.push(`/${shopUrlName}`);
@@ -93,7 +93,7 @@ const ShopUrlConfirm = () => {
          </Box>
       </>
    );
-   return (<Head> <title>Sign In - master-project</title></Head>);
+   return (<Head> <title>Signup - master-project</title></Head>);
 };
 
-export default ShopUrlConfirm;
+export default SignupConfirm;

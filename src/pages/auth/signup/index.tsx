@@ -1,17 +1,17 @@
-// *Signin page
+// *Signup page
 import type { GetServerSideProps, NextPage } from "next";
-import type { GoogleProviderTypes } from "../../../types/pages/signin.types";
+import type { GoogleProviderTypes } from "../../../types/pages/auth.types";
 
 import Head from "next/head";
 import { getProviders, signIn as signInToProvider } from "next-auth/react";
 import { Box, Button, Stack, Typography } from "@mui/material";
 
 
-const Signin: NextPage<GoogleProviderTypes> = ({ providers }) => {
+const Signup: NextPage<GoogleProviderTypes> = ({ providers }) => {
    return (
       <>
          <Head>
-            <title>Sign In - master-project</title>
+            <title>Signup - master-project</title>
          </Head>
 
          <Box
@@ -25,17 +25,17 @@ const Signin: NextPage<GoogleProviderTypes> = ({ providers }) => {
             >
                <Stack spacing={3} alignItems="center">
                   <Typography variant="h4" component="h1">My Master Project Name</Typography>
-                  <Typography variant="h5" component="div">Sign In</Typography>
+                  <Typography variant="h5" component="div">Signup</Typography>
                   <Box>
                      {Object.values(providers).map((provider) => (
                         <Box key={provider.name}>
                            <Button
                               variant="contained"
                               onClick={() => {
-                                 signInToProvider(provider.id, { callbackUrl: `/auth/signin/confirm` });
+                                 signInToProvider(provider.id, { callbackUrl: `/auth/signup/confirm` });
                               }}
                            >
-                              Sign in with {provider.name}
+                              Signup with {provider.name}
                            </Button>
                         </Box>
                      ))}
@@ -54,4 +54,4 @@ export const getServerSideProps: GetServerSideProps = async () => {
    return { props: { providers } };
 };
 
-export default Signin;
+export default Signup;

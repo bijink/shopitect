@@ -18,10 +18,10 @@ const Home: NextPage = () => {
 
 
             <Button variant='contained'>
-               <Link href="/auth/signin">Create App</Link>
+               <Link href="/auth/signup">Create App</Link>
             </Button>
             <Button variant='text' color="success" size='small'>
-               <Link href="/auth/signin?isApp=true">Already Have One</Link>
+               <Link href="/auth/login">Already Have One</Link>
             </Button>
          </Stack>
       </>
