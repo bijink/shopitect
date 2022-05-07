@@ -1,4 +1,4 @@
-// *ShopUrlName confirm
+// *Signin confirm page
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -10,32 +10,41 @@ import { useSession } from "next-auth/react";
 
 const ShopUrlConfirm = () => {
    const router = useRouter();
-   const { url } = router.query;
 
    const { data: session } = useSession();
+   // console.log(session?.user);
 
-   const [shopUrlNameWithSession, setShopUrlNameWithSession] = useState('');
-   const [haveToComfirm, setHaveToComfirm] = useState(false);
+   const [delayOver, setDelayOver] = useState(false);
+   const [isAlreadyHaveAccount, setIsAlreadyHaveAccount] = useState(false);
+   // delayOver && console.log(isAlreadyHaveAccount);
+   const [shopUrlName, setShopUrlName] = useState('');
 
 
    useEffect(() => {
-      session &&
-         onSnapshot(query(collection(database, 'shops'), where('shopAuthId', '==', session.user.uid)), (snapshot) => {
-            snapshot.forEach(obj => {
-               setShopUrlNameWithSession(obj.data().shopUrlName);
-            });
+      session && onSnapshot(collection(database, 'shops'), (snapshot) => {
+         const shopAuthIds: Array<string> = [];
+         snapshot.forEach(obj => {
+            // console.log(obj.data().shopAuthId);
+            shopAuthIds.push(obj.data().shopAuthId);
          });
+         // console.log(shopAuthIds.some(arr => arr == session.user.uid));
+         setIsAlreadyHaveAccount(shopAuthIds.some(arr => arr == session.user.uid));
+         setDelayOver(true);
+      });
+
+      session && onSnapshot(query(collection(database, 'shops'), where('shopAuthId', '==', session.user.uid)), (snapshot) => {
+         snapshot.forEach(obj => {
+            setShopUrlName(obj.data().shopUrlName);
+         });
+      });
    }, [session]);
 
    useEffect(() => {
-      if (url && session) {
-         if (url == shopUrlNameWithSession) router.push(`/${shopUrlNameWithSession}`);
-         else setHaveToComfirm(true);
-      }
-   }, [shopUrlNameWithSession]);
+      if (delayOver && !isAlreadyHaveAccount) router.push('/create-app');
+   }, [isAlreadyHaveAccount, delayOver]);
 
 
-   if (haveToComfirm) return (
+   if (isAlreadyHaveAccount) return (
       <>
          <Head>
             <title>Sign In - master-project</title>
@@ -53,22 +62,30 @@ const ShopUrlConfirm = () => {
                <Stack spacing={3} alignItems="center">
                   <Typography variant="h4" component="h1" >My Master Project Name</Typography>
                   <Typography variant="h5" component="div">Sign In</Typography>
-
                   <Box>
                      <Typography variant="body1" component="p">
-                        We found a mismatch in your Google account with entered Shop Url Name
+                        We found that you already have an account from this Gmail.
                      </Typography>
-                     <Typography variant="body1" component="p">
-                        Correct Shop Url Name according with your Google account is
-                        <Typography component={'span'} sx={{ fontWeight: 'bold' }}> {shopUrlNameWithSession}</Typography>
-                     </Typography>
-                     <Stack pt={2} spacing={1} direction={'column'} alignItems="center">
-                        <Typography>Click OK to open
-                           <Typography component={'span'} sx={{ fontWeight: 'bold' }}> {shopUrlNameWithSession}</Typography>
+                     <Stack direction={'row'} alignItems="center" justifyContent={'center'}>
+                        <Typography variant="body1" component="p">
+                           With the 'Shop Url Name' :
                         </Typography>
-                        <Button variant="contained" size='small' onClick={() => {
-                           router.push(`/${shopUrlNameWithSession}`);
-                        }}>OK</Button>
+                        <Typography component={'span'} sx={{ fontWeight: 'bold' }} pl={1}>
+                           {shopUrlName}
+                        </Typography>
+                     </Stack>
+                     <Stack pt={2} spacing={1} direction={'column'} alignItems="center">
+                        <Typography>Do you want to go with
+                           <Typography component={'span'} sx={{ fontWeight: 'bold' }}> {shopUrlName} ?</Typography>
+                        </Typography>
+                        <Stack direction="row" spacing={2}>
+                           <Button variant="contained" size='small' color="error" onClick={() => {
+                              router.push(`/auth/signin`);
+                           }}>no</Button>
+                           <Button variant="contained" size='small' color="primary" onClick={() => {
+                              router.push(`/${shopUrlName}`);
+                           }}>yes</Button>
+                        </Stack>
                      </Stack>
                   </Box>
                </Stack>

@@ -68,7 +68,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const NavBar = () => {
    const { data: session } = useSession();
-   // console.log(session);
+   // console.log(session?.user);
+
 
 
    const shopDetails = useAppSelector(selectShopDetails);
@@ -134,6 +135,7 @@ const NavBar = () => {
             :
             <MenuItem onClick={(e: any) => {
                e.preventDefault();
+               // signIn('google', undefined, { login_hint: "kbijin528@gmail.com" });
                signIn('google');
 
                handleMenuClose();
