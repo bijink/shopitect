@@ -16,13 +16,14 @@ import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import { useRouter } from 'next/router';
-import { database } from '../../config/firebase.config';
+import { auth, database } from '../../config/firebase.config';
 import { collection, DocumentData, onSnapshot, query, where } from 'firebase/firestore';
 // import { signOut } from 'firebase/auth';
 import { useAppSelector } from '../../redux/hooks';
 import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
-import { getSession, signIn, signOut, useSession } from 'next-auth/react';
+import { getSession, signIn, signOut as signOutFromProvider, useSession } from 'next-auth/react';
 import { Button } from '@mui/material';
+import { signOut } from 'firebase/auth';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -68,16 +69,16 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const NavBar = () => {
    const { data: session } = useSession();
+
+   const router = useRouter();
+   const { shopId } = router.query;
    // console.log(session?.user);
 
-
+   const user = auth.currentUser;
 
    const shopDetails = useAppSelector(selectShopDetails);
    // console.log(shopDetails);
    // console.log(shopDetails.createdAt.toDate());
-
-   const router = useRouter();
-   const { shopId } = router.query;
 
    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -126,8 +127,10 @@ const NavBar = () => {
          {session ?
             <MenuItem onClick={(e: any) => {
                e.preventDefault();
-               signOut().then(() => {
-                  router.push(`/${shopDetails.shopUrlName}`);
+               signOutFromProvider().then(() => {
+                  signOut(auth).then(() => {
+                     router.push(`/${shopDetails.shopUrlName}`);
+                  });
                });
 
                handleMenuClose();
@@ -230,7 +233,6 @@ const NavBar = () => {
                   onClick={() => router.push(`/${shopDetails?.shopUrlName}`)}
                >
                   {shopDetails?.shopName}
-                  {/* {shopName} */}
                </Typography>
                <Box sx={{ flexGrow: 1 }} />
                <Search sx={{ flexGrow: 2 }}>
@@ -261,7 +263,7 @@ const NavBar = () => {
                         <NotificationsIcon />
                      </Badge>
                   </IconButton>
-                  <IconButton
+                  {/* <IconButton
                      size="large"
                      edge="end"
                      aria-label="account of current user"
@@ -271,7 +273,19 @@ const NavBar = () => {
                      color="inherit"
                   >
                      <AccountCircle />
-                  </IconButton>
+                  </IconButton> */}
+                  {user && (
+                     <Button
+                        size="large"
+                        aria-label="account of current user"
+                        aria-controls={menuId}
+                        aria-haspopup="true"
+                        onClick={handleProfileMenuOpen}
+                        color="inherit"
+                     >
+                        <img style={{ width: '40px', borderRadius: '50%' }} src={user?.photoURL!} alt="" />
+                     </Button>
+                  )}
                </Box>
                <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
                   <IconButton

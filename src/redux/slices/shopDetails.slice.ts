@@ -6,7 +6,7 @@ import { fetchShopDetails } from '../../pages/api/shopDetailsAPI';
 export interface shopDeatilsState {
    // value: {
    //    shopAddress: string,
-   //    shopAuthId: string,
+   //    shopGoogleAuthId: string,
    //    shopCategory: string,
    //    shopEmail: string,
    //    shopName: string,
@@ -26,7 +26,7 @@ export interface shopDeatilsState {
 const initialState: shopDeatilsState = {
    value: {
       shopAddress: '',
-      shopAuthId: '',
+      shopGoogleAuthId: '',
       shopCategory: '',
       shopEmail: '',
       shopName: '',

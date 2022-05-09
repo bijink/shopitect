@@ -9,7 +9,7 @@ type LayoutTypes = {
 // export type PublicSectionLayoutTypes = LayoutTypes & {
 //    shopDetails: {
 //       shopAddress: string,
-//       shopAuthId: string,
+//       shopGoogleAuthId: string,
 //       shopCategory: string,
 //       shopEmail: string,
 //       shopName: string,

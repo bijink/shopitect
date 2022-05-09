@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
-import { database } from "../../../config/firebase.config";
+import { database } from "../../config/firebase.config";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 

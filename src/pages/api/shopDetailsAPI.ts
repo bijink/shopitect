@@ -3,7 +3,7 @@ import { database } from "../../config/firebase.config";
 
 // interface dataType {
 //    shopAddress: '',
-//    shopAuthId: '',
+//    shopGoogleAuthId: '',
 //    shopCategory: '',
 //    shopEmail: '',
 //    shopName: '',

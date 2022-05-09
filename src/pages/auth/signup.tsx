@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
-import { database } from "../../../config/firebase.config";
+import { database } from "../../config/firebase.config";
 import { useSession } from "next-auth/react";
 
 
@@ -22,17 +22,17 @@ const SignupConfirm = () => {
 
    useEffect(() => {
       session && onSnapshot(collection(database, 'shops'), (snapshot) => {
-         const shopAuthIds: Array<string> = [];
+         const shopGoogleAuthIds: Array<string> = [];
          snapshot.forEach(obj => {
-            // console.log(obj.data().shopAuthId);
-            shopAuthIds.push(obj.data().shopAuthId);
+            // console.log(obj.data().shopGoogleAuthId);
+            shopGoogleAuthIds.push(obj.data().shopGoogleAuthId);
          });
-         // console.log(shopAuthIds.some(arr => arr == session.user.uid));
-         setIsAlreadyHaveAccount(shopAuthIds.some(arr => arr == session.user.uid));
+         // console.log(shopGoogleAuthIds.some(arr => arr == session.user.uid));
+         setIsAlreadyHaveAccount(shopGoogleAuthIds.some(arr => arr == session.user.uid));
          setDelayOver(true);
       });
 
-      session && onSnapshot(query(collection(database, 'shops'), where('shopAuthId', '==', session.user.uid)), (snapshot) => {
+      session && onSnapshot(query(collection(database, 'shops'), where('shopGoogleAuthId', '==', session.user.uid)), (snapshot) => {
          snapshot.forEach(obj => {
             setShopUrlName(obj.data().shopUrlName);
          });
@@ -80,7 +80,7 @@ const SignupConfirm = () => {
                         </Typography>
                         <Stack direction="row" spacing={2}>
                            <Button variant="contained" size='small' color="error" onClick={() => {
-                              router.push(`/auth/signup`);
+                              router.push(`/`);
                            }}>no</Button>
                            <Button variant="contained" size='small' color="primary" onClick={() => {
                               router.push(`/${shopUrlName}`);

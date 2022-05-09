@@ -1,17 +1,22 @@
 import { LoadingButton } from "@mui/lab";
-import { Box, Button, Container, Stack, TextareaAutosize, TextField, Typography } from "@mui/material";
+import { Box, Button, Container, IconButton, InputAdornment, Stack, TextareaAutosize, TextField, Typography } from "@mui/material";
 import { collection, doc, onSnapshot, query, serverTimestamp, setDoc, where } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
-import { database } from "../config/firebase.config";
+import { database, auth } from "../config/firebase.config";
 import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 
 const Create_app = () => {
    const router = useRouter();
 
+   // console.log(auth.currentUser);
+
    const { data: session } = useSession();
+   // console.log(session?.user);
 
    const inputFocusRef = useRef<any>(null);
 
@@ -21,38 +26,56 @@ const Create_app = () => {
    const [shopEmail, setShopEmail] = useState('');
    const [shopAddress, setShopAddress] = useState('');
    const [shopUrlName, setShopUrlName] = useState('');
+   const [password, setPassword] = useState('');
 
    const [loading, setLoading] = useState(false);
    const [shopDocId, setShopDocId] = useState([] as Array<string>);
    const [isShopUrlNameUnique, setIsShopUrlNameUnique] = useState(false);
+   const [showPassword, setShowPassword] = useState(false);
+   // used to disable submit button
+   const [isAccountNotExist, setIsAccountNotExist] = useState(false);
 
 
    const handleFormSubmit = (e: any) => {
       e.preventDefault();
       setLoading(true);
 
-      // *shopUrlName is used as documentID for uniqueness of each shopApps
-      // *shopUrlName is used to identify the shopApp
-      if (isShopUrlNameUnique) {
-         setDoc(doc(database, 'shops', shopUrlName), {
-            shopName,
-            shopUrlName,
-            shopCategory,
-            shopEmail,
-            shopAddress,
-            shopOwnerName,
-            shopAuthId: session?.user.uid,
-            // createdAt: new Date().toLocaleDateString(),
-            createdAt: new Date(new Date().getTime()).toString(),
-         }).then(() => {
-            setShopName('');
-            setShopCategory('');
-            setShopOwnerName('');
-            // setShopEmail('');
-            setShopAddress('');
-            setShopUrlName('');
-            setLoading(false);
-            router.push(`/${shopUrlName}`);
+      // *shopUrlName is used as documentID in firebase firestore as a unique id
+      if (session && isShopUrlNameUnique && (password.length >= 8)) {
+         createUserWithEmailAndPassword(auth, shopEmail, password).then((userCredential) => {
+            // Signed in 
+            // const user = userCredential.user;
+            // ...
+            updateProfile(auth.currentUser!, { displayName: shopUrlName, photoURL: session.user.image }).then(() => {
+               // console.log(auth.currentUser);
+               setDoc(doc(database, 'shops', shopUrlName), {
+                  shopName,
+                  shopUrlName,
+                  shopCategory,
+                  shopOwnerName,
+                  shopAddress,
+                  shopEmail,
+                  // shopGoogleAuthId means 'Google auth user uid (integrated using firebase and nextAuth)'
+                  shopGoogleAuthId: session?.user.uid,
+                  // shopId means 'firebase auth user uid'
+                  shopId: auth.currentUser?.uid,
+                  createdAt: new Date(new Date().getTime()).toString(),
+               }).then(() => {
+                  setShopName('');
+                  setShopUrlName('');
+                  setShopCategory('');
+                  setShopOwnerName('');
+                  setShopAddress('');
+
+                  setLoading(false);
+                  router.push(`/${shopUrlName}`);
+               });
+            });
+         }).catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // ..
+            console.log(errorCode, ' : ', errorMessage);
          });
       } else {
          setLoading(false);
@@ -64,7 +87,6 @@ const Create_app = () => {
       setShopName('');
       setShopCategory('');
       setShopOwnerName('');
-      // setShopEmail('');
       setShopAddress('');
       setShopUrlName('');
    };
@@ -75,7 +97,7 @@ const Create_app = () => {
       setShopEmail(session?.user.email!);
 
       session && (
-         onSnapshot(query(collection(database, 'shops'), where('shopAuthId', '==', session?.user.uid)), (snapshot) => {
+         onSnapshot(query(collection(database, 'shops'), where('shopGoogleAuthId', '==', session?.user.uid)), (snapshot) => {
             let shopUrlNameRoute;
             snapshot.forEach(obj => {
                // console.log(obj.data().shopUrlName);
@@ -84,6 +106,8 @@ const Create_app = () => {
 
             if (snapshot.docs.length > 0) {
                router.push(`/${shopUrlNameRoute}`);
+            } else {
+               setIsAccountNotExist(true);
             }
          })
       );
@@ -153,8 +177,8 @@ const Create_app = () => {
                      minRows={5}
                      maxRows={5}
                      style={{
-                        minWidth: '49%',
-                        maxWidth: '49%',
+                        // minWidth: '49%',
+                        // maxWidth: '49%',
                         fontSize: '15px',
                         padding: '12px',
                         borderRadius: '4px',
@@ -166,17 +190,37 @@ const Create_app = () => {
                      required
                   />
                   {session && (
-                     <TextField
-                        label="Email Address"
-                        size="small"
-                        fullWidth
-                        type="email"
-                        defaultValue={session?.user.email}
-                        // value={shopEmail}
-                        // onInput={(e: any) => setShopEmail(e.target.value)}
-                        // required
-                        InputProps={{ readOnly: true }}
-                     />
+                     <>
+                        <TextField
+                           label="Email Address"
+                           size="small"
+                           fullWidth
+                           type="email"
+                           color="warning"
+                           defaultValue={session?.user.email}
+                           InputProps={{ readOnly: true }}
+                        />
+                        <TextField
+                           label="Password"
+                           size="small"
+                           fullWidth
+                           type={showPassword ? 'text' : 'password'}
+                           value={password}
+                           onInput={(e: any) => setPassword(e.target.value)}
+                           InputProps={{
+                              endAdornment: <InputAdornment position="end">
+                                 <IconButton
+                                    aria-label="toggle password visibility"
+                                    onClick={() => setShowPassword(prev => !prev)}
+                                    edge="end"
+                                 >
+                                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                                 </IconButton>
+                              </InputAdornment>
+                           }}
+                           required
+                        />
+                     </>
                   )}
                </Stack>
                <Stack direction={{ sm: 'column', md: 'row' }} spacing={{ sm: 1, md: 3 }} pt={4}>
@@ -192,6 +236,7 @@ const Create_app = () => {
                      type="submit"
                      size='large'
                      fullWidth
+                     disabled={!isAccountNotExist}
                      loading={loading}
                      loadingPosition="start"
                      startIcon={<PublishRoundedIcon />}
