@@ -5,19 +5,22 @@ import { useEffect, useState } from "react";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { database } from "../../config/firebase.config";
-import { useSession } from "next-auth/react";
+import { signOut as signOutFromProvider, useSession } from "next-auth/react";
+import LoginIcon from '@mui/icons-material/Login';
+import { LoadingButton } from "@mui/lab";
 
 
 const SignupConfirm = () => {
    const router = useRouter();
 
-   const { data: session } = useSession();
+   const { data: session, status } = useSession();
    // console.log(session?.user);
+
+   const [shopUrlName, setShopUrlName] = useState('');
 
    const [delayOver, setDelayOver] = useState(false);
    const [isAlreadyHaveAccount, setIsAlreadyHaveAccount] = useState(false);
-   // delayOver && console.log(isAlreadyHaveAccount);
-   const [shopUrlName, setShopUrlName] = useState('');
+   const [loading, setLoading] = useState(false);
 
 
    useEffect(() => {
@@ -42,6 +45,10 @@ const SignupConfirm = () => {
    useEffect(() => {
       if (delayOver && !isAlreadyHaveAccount) router.push('/create-app');
    }, [isAlreadyHaveAccount, delayOver]);
+
+   useEffect(() => {
+      if (status == 'unauthenticated') router.push('/');
+   }, [session]);
 
 
    if (isAlreadyHaveAccount) return (
@@ -75,16 +82,26 @@ const SignupConfirm = () => {
                         </Typography>
                      </Stack>
                      <Stack pt={2} spacing={1} direction={'column'} alignItems="center">
-                        <Typography>Do you want to go with
+                        <Typography>Do you want to login into
                            <Typography component={'span'} sx={{ fontWeight: 'bold' }}> {shopUrlName} ?</Typography>
                         </Typography>
                         <Stack direction="row" spacing={2}>
                            <Button variant="contained" size='small' color="error" onClick={() => {
-                              router.push(`/`);
-                           }}>no</Button>
-                           <Button variant="contained" size='small' color="primary" onClick={() => {
-                              router.push(`/${shopUrlName}`);
-                           }}>yes</Button>
+                              signOutFromProvider({ redirect: false, callbackUrl: "/" });
+                           }}>cancel</Button>
+                           <LoadingButton
+                              variant="contained"
+                              size='small'
+                              loading={loading}
+                              loadingPosition="end"
+                              endIcon={<LoginIcon />}
+                              onClick={() => {
+                                 setLoading(true);
+                                 router.push('/auth/login').then(() => {
+                                    setLoading(false);
+                                 });
+                              }}
+                           >login</LoadingButton>
                         </Stack>
                      </Stack>
                   </Box>
@@ -93,7 +110,7 @@ const SignupConfirm = () => {
          </Box>
       </>
    );
-   return (<Head> <title>Signup - master-project</title></Head>);
+   return (<Head><title>Signup - master-project</title></Head>);
 };
 
 export default SignupConfirm;

@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { database, auth } from "../config/firebase.config";
 import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
+import { signOut as signOutFromProvider, useSession } from "next-auth/react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
@@ -15,7 +15,7 @@ const Create_app = () => {
 
    // console.log(auth.currentUser);
 
-   const { data: session } = useSession();
+   const { data: session, status } = useSession();
    // console.log(session?.user);
 
    const inputFocusRef = useRef<any>(null);
@@ -126,9 +126,13 @@ const Create_app = () => {
       setIsShopUrlNameUnique(!(shopDocId.some(arr => arr == shopUrlName)));
    }, [shopUrlName]);
 
+   useEffect(() => {
+      if (status == 'unauthenticated') router.push('/');
+   }, [session]);
+
 
    return (
-      <Box py={10} >
+      <Box py={3} >
          <Container >
             <Typography variant="h4" component={'div'} gutterBottom>Create App</Typography>
             <form onSubmit={handleFormSubmit}>
@@ -226,11 +230,20 @@ const Create_app = () => {
                <Stack direction={{ sm: 'column', md: 'row' }} spacing={{ sm: 1, md: 3 }} pt={4}>
                   <Button
                      variant="contained"
-                     onClick={handleFormReset}
+                     onClick={() => {
+                        signOutFromProvider({ redirect: false, callbackUrl: "/" });
+                     }}
                      size='large'
                      fullWidth
                      color="error"
-                  >Reset</Button>
+                  >cancel</Button>
+                  <Button
+                     variant="contained"
+                     onClick={handleFormReset}
+                     size='large'
+                     fullWidth
+                     color="warning"
+                  >reset</Button>
                   <LoadingButton
                      variant="contained"
                      type="submit"
@@ -240,7 +253,7 @@ const Create_app = () => {
                      loading={loading}
                      loadingPosition="start"
                      startIcon={<PublishRoundedIcon />}
-                  >Submit</LoadingButton>
+                  >submit</LoadingButton>
                </Stack>
             </form>
          </Container>

@@ -21,7 +21,7 @@ import { collection, DocumentData, onSnapshot, query, where } from 'firebase/fir
 // import { signOut } from 'firebase/auth';
 import { useAppSelector } from '../../redux/hooks';
 import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
-import { getSession, signIn, signOut as signOutFromProvider, useSession } from 'next-auth/react';
+import { getSession, signIn as signInToProvider, signOut as signOutFromProvider, useSession } from 'next-auth/react';
 import { Button } from '@mui/material';
 import { signOut } from 'firebase/auth';
 
@@ -127,19 +127,16 @@ const NavBar = () => {
          {session ?
             <MenuItem onClick={(e: any) => {
                e.preventDefault();
-               signOutFromProvider().then(() => {
-                  signOut(auth).then(() => {
-                     router.push(`/${shopDetails.shopUrlName}`);
-                  });
+               signOut(auth).then(() => {
+                  signOutFromProvider({ redirect: false, callbackUrl: `/${shopDetails.shopUrlName}` });
                });
-
                handleMenuClose();
             }}>Sign Out</MenuItem>
             :
             <MenuItem onClick={(e: any) => {
                e.preventDefault();
                // signIn('google', undefined, { login_hint: "kbijin528@gmail.com" });
-               signIn('google');
+               signInToProvider('google');
 
                handleMenuClose();
             }}>Sign In</MenuItem>
