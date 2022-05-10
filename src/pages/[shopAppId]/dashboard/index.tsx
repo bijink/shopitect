@@ -1,46 +1,38 @@
 // *Dashboard page
 import { Button, Stack, Typography } from '@mui/material';
+import { onSnapshot, query } from 'firebase/firestore';
 import { NextPage } from 'next';
 import { getSession, signIn, useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import ProductTable from '../../../components/productTable/ProductTable';
+import { auth } from '../../../config/firebase.config';
 import ShopAdminSection_layout from '../../../layouts/ShopAdminSection.layout';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { selectShopDetails, setAppShopDetailsAsync } from '../../../redux/slices/shopDetails.slice';
+import useSecurePage from '../../../hooks/useSecurePage';
 
 
 const Dashboard: NextPage = () => {
    const router = useRouter();
    const { shopAppId } = router.query;
 
+   const user = auth.currentUser;
+
    const dispatch = useAppDispatch();
    const shopDetails = useAppSelector(selectShopDetails);
 
-   const [loading, setLoading] = useState(true);
+   const isAdmin = useSecurePage(shopAppId);
+   // console.log(isAdmin);
 
-
-   useEffect(() => {
-      const securePage = async () => {
-         const session = await getSession();
-
-         if (!session) {
-            setLoading(true);
-            shopAppId && router.push(`/${shopAppId}`);
-         } else {
-            setLoading(false);
-         }
-      };
-      securePage();
-   }, [shopAppId]);
 
    useEffect(() => {
       dispatch(setAppShopDetailsAsync(shopAppId));
    }, [shopAppId]);
 
 
-   if (loading) return (<Head><title>{`${shopDetails?.shopName ? shopDetails?.shopName : '·'}`}</title></Head>);
+   if (!isAdmin) return (<Head><title>{`${shopDetails?.shopName ? shopDetails?.shopName : "~"}`}</title></Head>);
    else return (
       <>
          <Head>

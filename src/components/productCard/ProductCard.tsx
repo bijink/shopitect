@@ -84,7 +84,7 @@ const ProductCard = () => {
    return (
       <Stack
          direction={'row'}
-         sx={{ flexWrap: 'wrap', justifyContent: 'center' }}
+         sx={{ flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}
       >
          {prodDetails.map((prod: ProdDetailsTypes, index: number) => (
             <Cards

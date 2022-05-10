@@ -75,6 +75,9 @@ const NavBar = () => {
    // console.log(session?.user);
 
    const user = auth.currentUser;
+   // console.log(user);
+   // console.log(user?.photoURL);
+
 
    const shopDetails = useAppSelector(selectShopDetails);
    // console.log(shopDetails);
@@ -271,7 +274,7 @@ const NavBar = () => {
                   >
                      <AccountCircle />
                   </IconButton> */}
-                  {user && (
+                  {(user?.photoURL) && (
                      <Button
                         size="large"
                         aria-label="account of current user"
@@ -280,7 +283,7 @@ const NavBar = () => {
                         onClick={handleProfileMenuOpen}
                         color="inherit"
                      >
-                        <img style={{ width: '40px', borderRadius: '50%' }} src={user?.photoURL!} alt="" />
+                        <img style={{ width: '40px', borderRadius: '50%' }} src={user.photoURL!} alt="" />
                      </Button>
                   )}
                </Box>
