@@ -19,7 +19,7 @@ import { selectShopDetails, setAppShopDetailsAsync } from "../../redux/slices/sh
 
 const Product: NextPage = () => {
    const router = useRouter();
-   const { id, shopAppId } = router.query;
+   const { id: productId, shopAppId } = router.query;
 
    const dispatch = useAppDispatch();
    const shopDetails = useAppSelector(selectShopDetails);
@@ -30,17 +30,17 @@ const Product: NextPage = () => {
 
 
    useEffect(() => {
-      dispatch(setAppShopDetailsAsync(shopAppId));
+      shopAppId && dispatch(setAppShopDetailsAsync(shopAppId));
    }, [shopAppId]);
 
    useEffect(() => {
-      if (id && shopDetails.urlName) {
-         getDoc(doc(database, 'shops', shopDetails.urlName, 'products', id)).then((snap) => {
+      if (productId && shopDetails.urlName) {
+         getDoc(doc(database, 'shops', shopDetails.urlName, 'products', productId)).then((snap) => {
             // console.log(snap.data());
             setProdDetails(snap.data());
          });
       }
-   }, [id, shopDetails.urlName]);
+   }, [productId, shopDetails.urlName]);
 
 
    return (

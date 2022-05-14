@@ -24,6 +24,7 @@ import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
 import { getSession, signIn as signInProvider, signOut as signOutProvider, useSession } from 'next-auth/react';
 import { Button } from '@mui/material';
 import { signOut as signOutAccount } from 'firebase/auth';
+import useSecurePage from '../../hooks/useSecurePage';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -83,6 +84,8 @@ const NavBar = () => {
    // console.log(shopDetails);
    // console.log(shopDetails.createdAt.toDate());
 
+   const isAdmin = useSecurePage(shopAppId);
+
    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
    // const [shopDetails, setShopDetails] = React.useState<DocumentData>([]);
@@ -113,7 +116,7 @@ const NavBar = () => {
       <Menu
          anchorEl={anchorEl}
          anchorOrigin={{
-            vertical: 'top',
+            vertical: 'bottom',
             horizontal: 'right',
          }}
          id={menuId}
@@ -152,7 +155,7 @@ const NavBar = () => {
       <Menu
          anchorEl={mobileMoreAnchorEl}
          anchorOrigin={{
-            vertical: 'top',
+            vertical: 'bottom',
             horizontal: 'right',
          }}
          id={mobileMenuId}
@@ -245,59 +248,65 @@ const NavBar = () => {
                   />
                </Search>
                <Box sx={{ flexGrow: 1 }} />
-               <Button variant='contained' color='secondary' onClick={() => {
-                  router.push(`/${shopDetails?.urlName}/dashboard`);
-               }}>Dash</Button>
-               <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                  <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                     <Badge badgeContent={4} color="error">
-                        <MailIcon />
-                     </Badge>
-                  </IconButton>
-                  <IconButton
-                     size="large"
-                     aria-label="show 17 new notifications"
-                     color="inherit"
-                  >
-                     <Badge badgeContent={17} color="error">
-                        <NotificationsIcon />
-                     </Badge>
-                  </IconButton>
-                  {/* <IconButton
-                     size="large"
-                     edge="end"
-                     aria-label="account of current user"
-                     aria-controls={menuId}
-                     aria-haspopup="true"
-                     onClick={handleProfileMenuOpen}
-                     color="inherit"
-                  >
-                     <AccountCircle />
-                  </IconButton> */}
-                  {(user?.photoURL) && (
-                     <Button
-                        size="large"
-                        aria-label="account of current user"
-                        aria-controls={menuId}
-                        aria-haspopup="true"
-                        onClick={handleProfileMenuOpen}
-                        color="inherit"
-                     >
-                        <img style={{ width: '40px', borderRadius: '50%' }} src={user.photoURL!} alt="" />
-                     </Button>
+               <Box display="flex" justifyContent="center" alignItems="center">
+                  {isAdmin && (
+                     <>
+                        <Button variant='contained' color='secondary' onClick={() => {
+                           router.push(`/${shopDetails?.urlName}/dashboard`);
+                        }}>Dash</Button>
+                        <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+                           <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+                              <Badge badgeContent={4} color="error">
+                                 <MailIcon />
+                              </Badge>
+                           </IconButton>
+                           <IconButton
+                              size="large"
+                              aria-label="show 17 new notifications"
+                              color="inherit"
+                           >
+                              <Badge badgeContent={17} color="error">
+                                 <NotificationsIcon />
+                              </Badge>
+                           </IconButton>
+                           {/* <IconButton
+                              size="large"
+                              edge="end"
+                              aria-label="account of current user"
+                              aria-controls={menuId}
+                              aria-haspopup="true"
+                              onClick={handleProfileMenuOpen}
+                              color="inherit"
+                           >
+                              <AccountCircle />
+                           </IconButton> */}
+                           {(user?.photoURL) && (
+                              <Button
+                                 size="large"
+                                 aria-label="account of current user"
+                                 aria-controls={menuId}
+                                 aria-haspopup="true"
+                                 onClick={handleProfileMenuOpen}
+                                 color="inherit"
+                              >
+                                 <img style={{ width: '40px', borderRadius: '50%' }} src={user.photoURL!} alt="" />
+                              </Button>
+                           )}
+                        </Box>
+                        <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+                           <IconButton
+                              size="large"
+                              aria-label="show more"
+                              aria-controls={mobileMenuId}
+                              aria-haspopup="true"
+                              onClick={handleMobileMenuOpen}
+                              color="inherit"
+                           >
+                              <MoreIcon />
+                           </IconButton>
+                        </Box>
+                     </>
                   )}
-               </Box>
-               <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-                  <IconButton
-                     size="large"
-                     aria-label="show more"
-                     aria-controls={mobileMenuId}
-                     aria-haspopup="true"
-                     onClick={handleMobileMenuOpen}
-                     color="inherit"
-                  >
-                     <MoreIcon />
-                  </IconButton>
                </Box>
             </Toolbar>
          </AppBar>

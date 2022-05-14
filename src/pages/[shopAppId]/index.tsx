@@ -1,10 +1,12 @@
 // *shopApp homePage
 import type { NextPage } from 'next';
+
 import Head from 'next/head';
+import { doc, getDoc } from 'firebase/firestore';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import ProductCard from '../../components/productCard';
-import { auth } from '../../config/firebase.config';
+import { database } from '../../config/firebase.config';
 import PublicSection_layout from '../../layouts/PublicSection.layout';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { selectShopDetails, setAppShopDetailsAsync } from '../../redux/slices/shopDetails.slice';
@@ -21,6 +23,19 @@ const Shop: NextPage = () => {
    const shopDetails = useAppSelector(selectShopDetails);
    // console.log(shopDetails);
 
+   const [isShopExist, setIsShopExist] = useState(false);
+
+
+   useEffect(() => {
+      shopAppId && getDoc(doc(database, 'shops', shopAppId)).then((snap) => {
+         // console.log(snap.data());
+         if (snap.data()) {
+            setIsShopExist(true);
+         } else {
+            setIsShopExist(false);
+         }
+      });
+   }, [shopAppId]);
 
    useEffect(() => {
       dispatch(setAppShopDetailsAsync(shopAppId));
@@ -33,9 +48,12 @@ const Shop: NextPage = () => {
             <title>{shopDetails?.name ? shopDetails?.name : '·'}</title>
             <meta name="description" content="" />
          </Head>
-         <PublicSection_layout >
-            <ProductCard />
-         </PublicSection_layout>
+
+         {isShopExist && (
+            <PublicSection_layout >
+               <ProductCard />
+            </PublicSection_layout>
+         )}
       </>
    );
 };

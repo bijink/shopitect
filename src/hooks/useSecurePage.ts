@@ -23,8 +23,11 @@ const useSecurePage = (shopAppId: string | string[] | undefined) => {
             setIsAdmin(true);
          } else {
             setIsAdmin(false);
-            router.push(`/${shopAppId}`);
+            // router.push(`/${shopAppId}`);
          }
+      } else if (shopAppId && !user) {
+         setIsAdmin(false);
+         // router.push(`/${shopAppId}`);
       }
    }, [shopDetails, user]);
 

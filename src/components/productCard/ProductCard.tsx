@@ -21,12 +21,11 @@ const Cards = ({ shopUrlName, prodId, prodName, prodCategory, prodBrand, prodImg
    return (
       <Box p={1.5} onClick={() => {
          router.push({
-            // pathname: '/shop-name/product',
             pathname: `/${shopUrlName}/product`,
             query: { id: prodId },
          });
       }}>
-         <Card sx={{ maxWidth: 250 }}>
+         <Card sx={{ width: 220 }}>
             <CardActionArea>
                <CardMedia
                   component="img"

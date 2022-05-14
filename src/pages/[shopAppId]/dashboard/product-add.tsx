@@ -7,6 +7,8 @@ import { useEffect } from 'react';
 import { useRouter } from "next/router";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { selectShopDetails, setAppShopDetailsAsync } from "../../../redux/slices/shopDetails.slice";
+import useSecurePage from "../../../hooks/useSecurePage";
+
 
 const Product_add = () => {
    const router = useRouter();
@@ -14,6 +16,8 @@ const Product_add = () => {
 
    const dispatch = useAppDispatch();
    const shopDetails = useAppSelector(selectShopDetails);
+
+   const isAdmin = useSecurePage(shopAppId);
 
 
    useEffect(() => {
@@ -27,14 +31,16 @@ const Product_add = () => {
             <title>{`Product (add) · ${shopDetails?.name ? shopDetails?.name : '·'}`}</title>
          </Head>
 
-         <ShopAdminSection_layout>
-            <>
-               <Stack direction='row' spacing="auto" pb={2} sx={{ alignItems: 'center' }}>
-                  <Typography variant="h4" component='div' >Add Product Details</Typography>
-               </Stack>
-               <ProductInputForm />
-            </>
-         </ShopAdminSection_layout>
+         {isAdmin && (
+            <ShopAdminSection_layout>
+               <>
+                  <Stack direction='row' spacing="auto" pb={2} sx={{ alignItems: 'center' }}>
+                     <Typography variant="h4" component='div' >Add Product Details</Typography>
+                  </Stack>
+                  <ProductInputForm />
+               </>
+            </ShopAdminSection_layout>
+         )}
       </>
    );
 };
