@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
-import { database } from "../../config/firebase.config";
+import { auth, database } from "../../config/firebase.config";
 import { signOut as signOutFromProvider, signIn as signInToProvider, useSession } from "next-auth/react";
 import { LoadingButton } from "@mui/lab";
 import LoginIcon from '@mui/icons-material/Login';
@@ -17,11 +17,24 @@ const SignupConfirm = () => {
    const { data: session, status } = useSession();
    // console.log(session?.user);
 
+   const user = auth.currentUser;
+
    const [shopUrlName, setShopUrlName] = useState('');
 
    const [isAccountExist, setIsAccountExist] = useState(false);
    const [loading, setLoading] = useState(false);
 
+
+   useEffect(() => {
+      user && onSnapshot(query(collection(database, 'shops'), where("shopId", "==", user.uid)), (snapshot) => {
+         snapshot.forEach(obj => {
+            // console.log(obj.data());
+            if (status == 'authenticated') {
+               router.push(`/${obj.data().shopUrlName}`);
+            }
+         });
+      });
+   }, [user, status]);
 
    useEffect(() => {
       session && onSnapshot(query(collection(database, 'shops'), where('shopGoogleAuthId', '==', session.user.uid)), (snapshot) => {
@@ -39,6 +52,7 @@ const SignupConfirm = () => {
       });
    }, [session]);
 
+
    if (status == 'unauthenticated') return (
       <UnAuthProvider title="Signup" />
    );
@@ -48,7 +62,7 @@ const SignupConfirm = () => {
             <title>Signup - master-project</title>
          </Head>
 
-         {isAccountExist && (
+         {(isAccountExist && !user) && (
             <>
                <Box
                   height={'100vh'}

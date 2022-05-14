@@ -4,15 +4,25 @@ import type { GoogleProviderTypes } from "../types/pages/googleProvider.types";
 
 import Head from 'next/head';
 import { Box, Button, Stack, Typography } from '@mui/material';
-import { getProviders, signIn as signInProvider, signOut, useSession } from "next-auth/react";
+import { getProviders, signIn as signInProvider } from "next-auth/react";
+import { auth } from '../config/firebase.config';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { signOut as signOutAccount } from 'firebase/auth';
 
 
 const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
-   const { data: session } = useSession();
-   console.log(session);
+   const router = useRouter();
 
-   // signOut();
+   const [isUser, setIsUser] = useState(false);
 
+
+   useEffect(() => {
+      auth.onAuthStateChanged(user => {
+         // console.log(user);
+         user ? setIsUser(true) : setIsUser(false);
+      });
+   });
 
 
    return (
@@ -41,7 +51,9 @@ const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
                            variant="contained"
                            color="primary"
                            onClick={() => {
-                              signInProvider(provider.id, { redirect: false, callbackUrl: `/auth/signup` });
+                              signOutAccount(auth).then(() => {
+                                 signInProvider(provider.id, { redirect: false, callbackUrl: `/auth/signup` });
+                              });
                            }}
                         >
                            signup
@@ -50,7 +62,9 @@ const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
                            variant='contained'
                            color="info"
                            onClick={() => {
-                              signInProvider(provider.id, { redirect: false, callbackUrl: `/auth/login` });
+                              !isUser
+                                 ? signInProvider(provider.id, { redirect: false, callbackUrl: `/auth/login` })
+                                 : router.push(`/auth/login`);
                            }}
                         >
                            login

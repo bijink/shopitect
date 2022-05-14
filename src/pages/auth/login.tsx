@@ -19,6 +19,10 @@ const LoginConfirm = () => {
    const { data: session, status } = useSession();
    // console.log('session:', session, '; ', 'status:', status);
 
+   const user = auth.currentUser;
+   // console.log('user:', user?.uid);
+
+
    const [shopUrlNameInput, setShopUrlNameInput] = useState('');
    const [password, setPassword] = useState('');
 
@@ -52,6 +56,17 @@ const LoginConfirm = () => {
 
 
    useEffect(() => {
+      user && onSnapshot(query(collection(database, 'shops'), where("shopId", "==", user.uid)), (snapshot) => {
+         snapshot.forEach(obj => {
+            // console.log(obj.data());
+            if (status == 'authenticated') {
+               router.push(`/${obj.data().shopUrlName}`);
+            }
+         });
+      });
+   }, [user, status]);
+
+   useEffect(() => {
       session && onSnapshot(query(collection(database, 'shops'), where("shopEmail", "==", session?.user.email)), (snapshot) => {
          snapshot.forEach(obj => {
             // console.log(obj.data().shopUrlName);
@@ -78,7 +93,7 @@ const LoginConfirm = () => {
             <title>Login - master-project</title>
          </Head>
 
-         {(status == 'authenticated') && (
+         {((status == 'authenticated') && !user) && (
             <>
                <Box
                   height={'100vh'}
