@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { database, auth } from "../config/firebase.config";
 import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
 import { useRouter } from "next/router";
-import { signOut as signOutFromProvider, signIn as signInToProvider, useSession } from "next-auth/react";
+import { signOut as signOutProvider, signIn as signInProvider, useSession } from "next-auth/react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import Head from "next/head";
@@ -30,7 +30,7 @@ const Create_app = () => {
    const [password, setPassword] = useState('');
 
    const [loading, setLoading] = useState(false);
-   const [shopDocId, setShopDocId] = useState([] as Array<string>);
+   const [shopDocIds, setShopDocIds] = useState([] as Array<string>);
    const [isShopUrlNameUnique, setIsShopUrlNameUnique] = useState(false);
    const [showPassword, setShowPassword] = useState(false);
    const [isAccountNotExist, setIsAccountNotExist] = useState(false);
@@ -49,16 +49,16 @@ const Create_app = () => {
             updateProfile(auth.currentUser!, { displayName: shopUrlName, photoURL: session.user.image }).then(() => {
                // console.log(auth.currentUser);
                setDoc(doc(database, 'shops', shopUrlName), {
-                  shopName,
-                  shopUrlName,
-                  shopCategory,
-                  shopOwnerName,
-                  shopAddress,
-                  shopEmail,
-                  // #shopGoogleAuthId means 'Google auth user uid (integrated using firebase and nextAuth)'
-                  shopGoogleAuthId: session?.user.uid,
-                  // #shopId means 'firebase auth user uid'
-                  shopId: auth.currentUser?.uid,
+                  name: shopName,
+                  urlName: shopUrlName,
+                  category: shopCategory,
+                  ownerName: shopOwnerName,
+                  address: shopAddress,
+                  email: shopEmail,
+                  // # providerID means 'Google auth user uid (integrated using firebase and nextAuth)'
+                  providerID: session?.user.uid,
+                  // # accountID means 'firebase auth user uid'
+                  accountID: auth.currentUser?.uid,
                   createdAt: new Date(new Date().getTime()).toString(),
                }).then(() => {
                   setShopName('');
@@ -93,13 +93,13 @@ const Create_app = () => {
 
 
    useEffect(() => {
-      if (status == 'unauthenticated') signInToProvider('google', { callbackUrl: "/auth/signup" });
+      if (status == 'unauthenticated') signInProvider('google', { callbackUrl: "/auth/signup" });
 
-      session && onSnapshot(query(collection(database, 'shops'), where('shopGoogleAuthId', '==', session?.user.uid)), (snapshot) => {
+      session && onSnapshot(query(collection(database, 'shops'), where('providerID', '==', session?.user.uid)), (snapshot) => {
          if (snapshot.docs.length === 1) {
             // #if there is an existing account
             snapshot.forEach(obj => {
-               router.push(`/${obj.data().shopUrlName}`);
+               router.push(`/${obj.data().urlName}`);
             });
          } else {
             // #if there is no existing account
@@ -119,11 +119,11 @@ const Create_app = () => {
          snapshot.forEach(obj => {
             arr.push(obj.id);
          });
-         setShopDocId(arr);
+         setShopDocIds(arr);
       });
 
-      // console.log(!(shopDocId.some(arr => arr == shopUrlName)));
-      setIsShopUrlNameUnique(!(shopDocId.some(arr => arr == shopUrlName)));
+      // console.log(!(shopDocIds.some(arr => arr == shopUrlName)));
+      setIsShopUrlNameUnique(!(shopDocIds.some(arr => arr == shopUrlName)));
    }, [shopUrlName]);
 
 

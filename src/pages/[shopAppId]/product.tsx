@@ -34,19 +34,19 @@ const Product: NextPage = () => {
    }, [shopAppId]);
 
    useEffect(() => {
-      if (id && shopDetails.shopUrlName) {
-         getDoc(doc(database, 'shops', shopDetails.shopUrlName, 'products', id)).then((snap) => {
+      if (id && shopDetails.urlName) {
+         getDoc(doc(database, 'shops', shopDetails.urlName, 'products', id)).then((snap) => {
             // console.log(snap.data());
             setProdDetails(snap.data());
          });
       }
-   }, [id, shopDetails.shopUrlName]);
+   }, [id, shopDetails.urlName]);
 
 
    return (
       <>
          <Head>
-            <title>{shopDetails?.shopName ? shopDetails?.shopName : '·'}</title>
+            <title>{shopDetails?.name ? shopDetails?.name : '·'}</title>
             <meta name="description" content="" />
          </Head>
          <PublicSection_layout>
@@ -58,14 +58,14 @@ const Product: NextPage = () => {
                         height="140"
                         image='https://images.unsplash.com/photo-1648993219624-2d3535fc6443?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTA2ODE2Nw&ixlib=rb-1.2.1&q=80&w=1080'
                         // image={prodDetails.prodImg}
-                        alt={prodDetails.prodName}
+                        alt={prodDetails.name}
                      />
                      <CardContent>
                         <Typography gutterBottom variant="h5" component="div">
-                           {prodDetails.prodName}
+                           {prodDetails.name}
                         </Typography>
                         <Typography variant="subtitle1" component="div">
-                           {prodDetails.prodCategory}
+                           {prodDetails.category}
                         </Typography>
                         <Typography variant="h6" component="div">
                            {prodDetails.sellPrice}

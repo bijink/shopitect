@@ -3,8 +3,22 @@ export interface ProdDetailsProps {
    // id: "CgSFEnzLpFNsGtQBHMom";
    // product: {
    prodName: string;
-   prodCompany: string;
+   prodBrand: string;
    prodCategory: string;
+   prodImg: string;
+   quantity: number;
+   getPrice: number;
+   sellPrice: number;
+   prodId: string;
+   // };
+};
+interface ProdDetails {
+   shopUrlName: string,
+   // id: "CgSFEnzLpFNsGtQBHMom";
+   // product: {
+   name: string;
+   brand: string;
+   category: string;
    prodImg: string;
    quantity: number;
    getPrice: number;
@@ -15,5 +29,5 @@ export interface ProdDetailsProps {
 
 export type ProdDetailsTypes = {
    id: string,
-   data: () => ProdDetailsProps;
+   data: () => ProdDetails;
 };

@@ -5,13 +5,14 @@ import { fetchShopDetails } from '../../pages/api/shopDetailsAPI';
 
 export interface shopDeatilsState {
    // value: {
-   //    shopAddress: string,
-   //    shopGoogleAuthId: string,
-   //    shopCategory: string,
-   //    shopEmail: string,
-   //    shopName: string,
-   //    shopOwnerName: string,
-   //    shopUrlName: string,
+   //    address: string,
+   //    providerID: string,
+   //    accountID: string,
+   //    category: string,
+   //    email: string,
+   //    name: string,
+   //    ownerName: string,
+   //    urlName: string,
    //    createdAt: {
    //       nanoseconds: number,
    //       seconds: number,
@@ -25,13 +26,14 @@ export interface shopDeatilsState {
 
 const initialState: shopDeatilsState = {
    value: {
-      shopAddress: '',
-      shopGoogleAuthId: '',
-      shopCategory: '',
-      shopEmail: '',
-      shopName: '',
-      shopOwnerName: '',
-      shopUrlName: '',
+      address: '',
+      providerID: '',
+      accountID: '',
+      category: '',
+      email: '',
+      name: '',
+      ownerName: '',
+      urlName: '',
       createdAt: {
          nanoseconds: 0,
          seconds: 0,

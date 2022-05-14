@@ -14,7 +14,7 @@ import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
 import type { ProdDetailsProps, ProdDetailsTypes } from "../productCard/product.types";
 
 
-const Cards = ({ shopUrlName, prodId, prodName, prodCategory, prodCompany, prodImg, quantity, getPrice, sellPrice }: ProdDetailsProps) => {
+const Cards = ({ shopUrlName, prodId, prodName, prodCategory, prodBrand, prodImg, quantity, getPrice, sellPrice }: ProdDetailsProps) => {
    const router = useRouter();
 
 
@@ -69,8 +69,8 @@ const ProductCard = () => {
 
 
    useEffect(() => {
-      (shopDetails.shopUrlName) && (
-         onSnapshot(collection(database, 'shops', shopDetails.shopUrlName, 'products'), (snapshot) => {
+      (shopDetails.urlName) && (
+         onSnapshot(collection(database, 'shops', shopDetails.urlName, 'products'), (snapshot) => {
             setProdDetails(snapshot.docs);
             // snapshot.forEach(element => {
             //    console.log(element.data());
@@ -78,7 +78,7 @@ const ProductCard = () => {
             // });
          })
       );
-   }, [database, shopDetails.shopUrlName]);
+   }, [database, shopDetails.urlName]);
 
 
    return (
@@ -89,13 +89,13 @@ const ProductCard = () => {
          {prodDetails.map((prod: ProdDetailsTypes, index: number) => (
             <Cards
                key={index}
-               shopUrlName={shopDetails?.shopUrlName}
+               shopUrlName={shopDetails?.urlName}
                // prodDetails={prod.data()}
                prodId={prod.id}
-               prodName={prod.data().prodName}
+               prodName={prod.data().name}
                prodImg={'https://images.unsplash.com/photo-1648993219624-2d3535fc6443?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTA2ODE2Nw&ixlib=rb-1.2.1&q=80&w=1080'}
-               prodCompany={prod.data().prodCompany}
-               prodCategory={prod.data().prodCategory}
+               prodBrand={prod.data().brand}
+               prodCategory={prod.data().category}
                quantity={prod.data().quantity}
                getPrice={prod.data().getPrice}
                sellPrice={prod.data().sellPrice}

@@ -19,7 +19,7 @@ const useSecurePage = (shopAppId: string | string[] | undefined) => {
 
    useEffect(() => {
       if (shopAppId && shopDetails && user) {
-         if (user.uid === shopDetails.shopId) {
+         if (user.uid === shopDetails.accountID) {
             setIsAdmin(true);
          } else {
             setIsAdmin(false);

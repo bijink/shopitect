@@ -21,9 +21,9 @@ import { collection, DocumentData, onSnapshot, query, where } from 'firebase/fir
 // import { signOut } from 'firebase/auth';
 import { useAppSelector } from '../../redux/hooks';
 import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
-import { getSession, signIn as signInToProvider, signOut as signOutFromProvider, useSession } from 'next-auth/react';
+import { getSession, signIn as signInProvider, signOut as signOutProvider, useSession } from 'next-auth/react';
 import { Button } from '@mui/material';
-import { signOut } from 'firebase/auth';
+import { signOut as signOutAccount } from 'firebase/auth';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -71,7 +71,7 @@ const NavBar = () => {
    const { data: session } = useSession();
 
    const router = useRouter();
-   const { shopId } = router.query;
+   const { shopAppId } = router.query;
    // console.log(session?.user);
 
    const user = auth.currentUser;
@@ -130,8 +130,8 @@ const NavBar = () => {
          {session ?
             <MenuItem onClick={(e: any) => {
                e.preventDefault();
-               signOut(auth).then(() => {
-                  signOutFromProvider({ redirect: false, callbackUrl: `/${shopDetails.shopUrlName}` });
+               signOutAccount(auth).then(() => {
+                  signOutProvider({ redirect: false, callbackUrl: `/${shopDetails.urlName}` });
                });
                handleMenuClose();
             }}>Sign Out</MenuItem>
@@ -139,7 +139,7 @@ const NavBar = () => {
             <MenuItem onClick={(e: any) => {
                e.preventDefault();
                // signIn('google', undefined, { login_hint: "kbijin528@gmail.com" });
-               signInToProvider('google');
+               signInProvider('google');
 
                handleMenuClose();
             }}>Sign In</MenuItem>
@@ -203,7 +203,7 @@ const NavBar = () => {
    // React.useEffect(() => {
    //    auth.onAuthStateChanged(shop => {
    //       shop &&
-   //          onSnapshot(query(collection(database, 'shops'), where('shopId', '==', shop?.uid)), (snapshot) => {
+   //          onSnapshot(query(collection(database, 'shops'), where('accountID', '==', shop?.uid)), (snapshot) => {
    //             snapshot.forEach(obj => {
    //                setShopDetails(obj.data());
    //             });
@@ -230,9 +230,9 @@ const NavBar = () => {
                   noWrap
                   component="div"
                   sx={{ display: { xs: 'none', sm: 'block' }, cursor: 'pointer' }}
-                  onClick={() => router.push(`/${shopDetails?.shopUrlName}`)}
+                  onClick={() => router.push(`/${shopDetails?.urlName}`)}
                >
-                  {shopDetails?.shopName}
+                  {shopDetails?.name}
                </Typography>
                <Box sx={{ flexGrow: 1 }} />
                <Search sx={{ flexGrow: 2 }}>
@@ -246,7 +246,7 @@ const NavBar = () => {
                </Search>
                <Box sx={{ flexGrow: 1 }} />
                <Button variant='contained' color='secondary' onClick={() => {
-                  router.push(`/${shopDetails?.shopUrlName}/dashboard`);
+                  router.push(`/${shopDetails?.urlName}/dashboard`);
                }}>Dash</Button>
                <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                   <IconButton size="large" aria-label="show 4 new mails" color="inherit">

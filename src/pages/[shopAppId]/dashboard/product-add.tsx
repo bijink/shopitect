@@ -24,7 +24,7 @@ const Product_add = () => {
    return (
       <>
          <Head>
-            <title>{`Product (add) · ${shopDetails?.shopName ? shopDetails?.shopName : '·'}`}</title>
+            <title>{`Product (add) · ${shopDetails?.name ? shopDetails?.name : '·'}`}</title>
          </Head>
 
          <ShopAdminSection_layout>

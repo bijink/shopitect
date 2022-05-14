@@ -1,5 +1,5 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { Box, InputAdornment, Stack, TextField, Typography, Button, selectClasses } from "@mui/material";
+import { Box, InputAdornment, Stack, TextField, Typography, Button } from "@mui/material";
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -19,9 +19,9 @@ const ProductInputForm = () => {
    const inputFocusRef = useRef<any>(null);
 
    const [prodName, setProdName] = useState('');
-   const [prodCode, setProdCode] = useState('');
+   const [prodCodeName, setProdCodeName] = useState('');
    const [prodCategory, setProdCategory] = useState('');
-   const [companyName, setCompanyName] = useState('');
+   const [prodBrand, setProdBrand] = useState('');
    const [quantity, setQuantity] = useState('');
 
    // const [date, setDate] = useState<Date>(new Date());
@@ -89,11 +89,11 @@ const ProductInputForm = () => {
       e.preventDefault();
       setLoading(true);
 
-      addDoc(collection(database, 'shops', shopDetails.shopUrlName, 'products'), {
-         prodName: prodName,
-         prodCode: prodCode,
-         prodCategory: prodCategory,
-         companyName: companyName,
+      addDoc(collection(database, 'shops', shopDetails.urlName, 'products'), {
+         name: prodName,
+         codeName: prodCodeName,
+         category: prodCategory,
+         brand: prodBrand,
          quantity: parseFloat(quantity),
          getPrice: (getPriceInput === '') ? getPriceInput : parseFloat(getPriceInput),
          sellPrice: (sellPriceInput === '') ? sellPriceInput : parseFloat(sellPriceInput),
@@ -103,9 +103,9 @@ const ProductInputForm = () => {
          // createdAt: new Date().getTime(),
       }).then(() => {
          setProdName('');
-         setProdCode('');
+         setProdCodeName('');
          setProdCategory('');
-         setCompanyName('');
+         setProdBrand('');
          setQuantity('');
          setGetPriceInput('');
          setSellPriceInput('');
@@ -118,9 +118,9 @@ const ProductInputForm = () => {
 
    const handleFormReset = () => {
       setProdName('');
-      setProdCode('');
+      setProdCodeName('');
       setProdCategory('');
-      setCompanyName('');
+      setProdBrand('');
       setQuantity('');
       setGetPriceInput('');
       setSellPriceInput('');
@@ -140,7 +140,7 @@ const ProductInputForm = () => {
    //       // console.log(user?.displayName);
    //       // console.log(shop?.uid);
 
-   //       // onSnapshot(query(collection(database, 'shops'), where('shopId', '==', shop?.uid)), (snapshot) => {
+   //       // onSnapshot(query(collection(database, 'shops'), where('accountID', '==', shop?.uid)), (snapshot) => {
    //       //    snapshot.forEach(obj => {
    //       //       // console.log(obj.data());
    //       //       setShopDetails(obj.data());
@@ -167,17 +167,17 @@ const ProductInputForm = () => {
                   <TextField
                      label="Product Code"
                      size="small"
-                     value={prodCode}
-                     onInput={(e: any) => setProdCode(e.target.value)}
+                     value={prodCodeName}
+                     onInput={(e: any) => setProdCodeName(e.target.value)}
                   />
                </Stack>
                <Stack direction="row" spacing={3}>
                   <TextField
-                     label="Company Name"
+                     label="Brand"
                      size="small"
                      fullWidth
-                     value={companyName}
-                     onInput={(e: any) => setCompanyName(e.target.value)}
+                     value={prodBrand}
+                     onInput={(e: any) => setProdBrand(e.target.value)}
                      required
                   />
                   <TextField

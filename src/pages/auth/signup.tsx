@@ -26,24 +26,24 @@ const SignupConfirm = () => {
 
 
    useEffect(() => {
-      user && onSnapshot(query(collection(database, 'shops'), where("shopId", "==", user.uid)), (snapshot) => {
+      user && onSnapshot(query(collection(database, 'shops'), where("accountID", "==", user.uid)), (snapshot) => {
          snapshot.forEach(obj => {
             // console.log(obj.data());
             if (status == 'authenticated') {
-               router.push(`/${obj.data().shopUrlName}`);
+               router.push(`/${obj.data().urlName}`);
             }
          });
       });
    }, [user, status]);
 
    useEffect(() => {
-      session && onSnapshot(query(collection(database, 'shops'), where('shopGoogleAuthId', '==', session.user.uid)), (snapshot) => {
+      session && onSnapshot(query(collection(database, 'shops'), where('providerID', '==', session.user.uid)), (snapshot) => {
          // console.log('data:', snapshot.docs.length);
          if (snapshot.docs.length === 1) {
             // #if there is an existing account
             setIsAccountExist(true);
             snapshot.forEach(obj => {
-               setShopUrlName(obj.data().shopUrlName);
+               setShopUrlName(obj.data().urlName);
             });
          } else {
             // #if there is no existing account 

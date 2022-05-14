@@ -20,7 +20,7 @@ import { useAppSelector } from '../../redux/hooks';
 import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
 
 
-const Row = ({ prodName, prodCategory, companyName, prodImg, quantity, getPrice, sellPrice, createdAt }: ProdDetailsProps) => {
+const Row = ({ prodName, prodCategory, prodBrand, prodImg, quantity, getPrice, sellPrice }: ProdDetailsProps) => {
    const [open, setOpen] = useState(false);
    // console.log(createdAt.toString().slice(0, 15));
 
@@ -72,7 +72,7 @@ const Row = ({ prodName, prodCategory, companyName, prodImg, quantity, getPrice,
                                  <TableCell >
                                     <Stack direction='row' justifyContent="space-between" >
                                        <Typography>Company Name</Typography>
-                                       <Typography>{companyName}</Typography>
+                                       <Typography>{prodBrand}</Typography>
                                     </Stack>
                                  </TableCell>
                                  <TableCell >
@@ -121,12 +121,12 @@ const ProductTable = () => {
 
 
    useEffect(() => {
-      (shopDetails.shopUrlName) && (
-         onSnapshot(collection(database, 'shops', shopDetails.shopUrlName, 'products'), (snapshot) => {
+      (shopDetails.urlName) && (
+         onSnapshot(collection(database, 'shops', shopDetails.urlName, 'products'), (snapshot) => {
             setProdDetails(snapshot.docs);
          })
       );
-   }, [database, shopDetails.shopUrlName]);
+   }, [database, shopDetails.urlName]);
 
 
    return (
@@ -147,10 +147,10 @@ const ProductTable = () => {
                {prodDetails.map((prod: ProdDetailsTypes, index: number) => (
                   <Row
                      key={index}
-                     prodName={prod.data().prodName}
+                     prodName={prod.data().name}
                      prodImg={'https://images.unsplash.com/photo-1648993219624-2d3535fc6443?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTA2ODE2Nw&ixlib=rb-1.2.1&q=80&w=1080'}
-                     companyName={prod.data().companyName}
-                     prodCategory={prod.data().prodCategory}
+                     prodBrand={prod.data().brand}
+                     prodCategory={prod.data().category}
                      quantity={prod.data().quantity}
                      getPrice={prod.data().getPrice}
                      sellPrice={prod.data().sellPrice}

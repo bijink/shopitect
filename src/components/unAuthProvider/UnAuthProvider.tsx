@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { Box, Button, Stack, Typography } from "@mui/material";
-import { signIn as signInToProvider } from "next-auth/react";
+import { signIn as signInProvider } from "next-auth/react";
 
 interface PropsTypes {
    title: string;
@@ -27,7 +27,7 @@ const UnAuthProvider = ({ title }: PropsTypes) => {
                      router.push('/');
                   }}>go back</Button>
                   <Button variant="contained" size='small' color="primary" onClick={() => {
-                     signInToProvider('google');
+                     signInProvider('google');
                   }}>select</Button>
                </Stack>
             </Box>

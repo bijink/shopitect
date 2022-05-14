@@ -30,7 +30,7 @@ const Shop: NextPage = () => {
    return (
       <>
          <Head>
-            <title>{shopDetails?.shopName ? shopDetails?.shopName : '·'}</title>
+            <title>{shopDetails?.name ? shopDetails?.name : '·'}</title>
             <meta name="description" content="" />
          </Head>
          <PublicSection_layout >

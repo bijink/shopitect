@@ -2,7 +2,6 @@
 import { Button, Stack, Typography } from '@mui/material';
 import { onSnapshot, query } from 'firebase/firestore';
 import { NextPage } from 'next';
-import { getSession, signIn, useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -35,7 +34,7 @@ const Dashboard: NextPage = () => {
    return (
       <>
          <Head>
-            <title>{`Dashboard · ${shopDetails?.shopName ? shopDetails?.shopName : '·'}`}</title>
+            <title>{`Dashboard · ${shopDetails?.name ? shopDetails?.name : '·'}`}</title>
          </Head>
 
          {isAdmin && (

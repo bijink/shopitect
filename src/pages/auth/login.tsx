@@ -56,21 +56,21 @@ const LoginConfirm = () => {
 
 
    useEffect(() => {
-      user && onSnapshot(query(collection(database, 'shops'), where("shopId", "==", user.uid)), (snapshot) => {
+      user && onSnapshot(query(collection(database, 'shops'), where("accountID", "==", user.uid)), (snapshot) => {
          snapshot.forEach(obj => {
             // console.log(obj.data());
             if (status == 'authenticated') {
-               router.push(`/${obj.data().shopUrlName}`);
+               router.push(`/${obj.data().urlName}`);
             }
          });
       });
    }, [user, status]);
 
    useEffect(() => {
-      session && onSnapshot(query(collection(database, 'shops'), where("shopEmail", "==", session?.user.email)), (snapshot) => {
+      session && onSnapshot(query(collection(database, 'shops'), where("email", "==", session?.user.email)), (snapshot) => {
          snapshot.forEach(obj => {
-            // console.log(obj.data().shopUrlName);
-            if (shopUrlNameInput === obj.data().shopUrlName) {
+            // console.log(obj.data().urlName);
+            if (shopUrlNameInput === obj.data().urlName) {
                setIsUrlConfirmed(true);
             } else {
                setIsUrlConfirmed(false);

@@ -8,13 +8,14 @@ type LayoutTypes = {
 
 // export type PublicSectionLayoutTypes = LayoutTypes & {
 //    shopDetails: {
-//       shopAddress: string,
-//       shopGoogleAuthId: string,
-//       shopCategory: string,
-//       shopEmail: string,
-//       shopName: string,
-//       shopOwnerName: string,
-//       shopUrlName: string,
+//       address: string,
+//       providerID: string,
+//       accountID: string,
+//       category: string,
+//       email: string,
+//       name: string,
+//       ownerName: string,
+//       urlName: string,
 //       createdAt: {
 //          nanoseconds: number,
 //          seconds: number,
