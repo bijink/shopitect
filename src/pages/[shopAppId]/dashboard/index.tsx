@@ -32,27 +32,28 @@ const Dashboard: NextPage = () => {
    }, [shopAppId]);
 
 
-   if (!isAdmin) return (<Head><title>{`${shopDetails?.shopName ? shopDetails?.shopName : "~"}`}</title></Head>);
-   else return (
+   return (
       <>
          <Head>
             <title>{`Dashboard · ${shopDetails?.shopName ? shopDetails?.shopName : '·'}`}</title>
          </Head>
 
-         <ShopAdminSection_layout >
-            <>
-               <Stack direction='row' spacing="auto" pb={2} sx={{ alignItems: 'center' }}>
-                  <Typography variant="h4" component='div' >Product List</Typography>
-                  <Button
-                     variant='contained'
-                     onClick={() => router.push(`/${shopAppId}/dashboard/product-add`)}
-                  >
-                     Add
-                  </Button>
-               </Stack>
-               <ProductTable />
-            </>
-         </ShopAdminSection_layout>
+         {isAdmin && (
+            <ShopAdminSection_layout >
+               <>
+                  <Stack direction='row' spacing="auto" pb={2} sx={{ alignItems: 'center' }}>
+                     <Typography variant="h4" component='div' >Product List</Typography>
+                     <Button
+                        variant='contained'
+                        onClick={() => router.push(`/${shopAppId}/dashboard/product-add`)}
+                     >
+                        Add
+                     </Button>
+                  </Stack>
+                  <ProductTable />
+               </>
+            </ShopAdminSection_layout>
+         )}
       </>
    );
 };

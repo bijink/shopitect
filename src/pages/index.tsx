@@ -4,10 +4,17 @@ import type { GoogleProviderTypes } from "../types/pages/googleProvider.types";
 
 import Head from 'next/head';
 import { Box, Button, Stack, Typography } from '@mui/material';
-import { getProviders, signIn as signInToProvider, useSession } from "next-auth/react";
+import { getProviders, signIn as signInProvider, signOut, useSession } from "next-auth/react";
 
 
 const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
+   const { data: session } = useSession();
+   console.log(session);
+
+   // signOut();
+
+
+
    return (
       <>
          <Head>
@@ -34,7 +41,7 @@ const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
                            variant="contained"
                            color="primary"
                            onClick={() => {
-                              signInToProvider(provider.id, { redirect: false, callbackUrl: `/auth/signup` });
+                              signInProvider(provider.id, { redirect: false, callbackUrl: `/auth/signup` });
                            }}
                         >
                            signup
@@ -43,7 +50,7 @@ const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
                            variant='contained'
                            color="info"
                            onClick={() => {
-                              signInToProvider(provider.id, { redirect: false, callbackUrl: `/auth/login` });
+                              signInProvider(provider.id, { redirect: false, callbackUrl: `/auth/login` });
                            }}
                         >
                            login

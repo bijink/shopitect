@@ -10,6 +10,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import UnAuthProvider from "../../components/unAuthProvider";
 
 
 const LoginConfirm = () => {
@@ -68,108 +69,101 @@ const LoginConfirm = () => {
    }, [password]);
 
 
-   if (status == 'loading') return (<Head><title>Login - master-project</title></Head>);
-   else if (status == 'unauthenticated') return (
-      <>
-         <Head><title>Login - master-project</title></Head>
-         <h2>You didn't selected your google account</h2>
-         <Button variant="contained" size='small' color="error" onClick={() => {
-            // signOutFromProvider({ redirect: false, callbackUrl: "/" });
-            signOutFromProvider({ callbackUrl: "/" });
-         }}>go back</Button>
-         <Button variant="contained" size='small' color="primary" onClick={() => {
-            signInToProvider();
-         }}>select</Button>
-      </>
+   if (status == 'unauthenticated') return (
+      <UnAuthProvider title="Login" />
    );
-   else if (status == 'authenticated') return (
+   else return (
       <>
          <Head>
             <title>Login - master-project</title>
          </Head>
 
-         <Box
-            height={'100vh'}
-            display="flex" justifyContent="center" alignItems="center"
-         >
-            <Box
-               px={3} py={8}
-               borderRadius={1.5}
-               sx={{ backgroundColor: 'whitesmoke' }}
-            >
-               <Stack spacing={3} alignItems="center">
-                  <Typography variant="h4" component="h1">My Master Project Name</Typography>
-                  <Typography variant="h5" component="div">Login</Typography>
-                  <form onSubmit={handleSubmit}>
-                     <Stack spacing={2}>
-                        {session &&
-                           <TextField
-                              label="Shop Email"
-                              size="small"
-                              color="warning"
-                              type='email'
-                              defaultValue={session.user.email}
-                              InputProps={{ readOnly: true }}
-                              required
-                           />
-                        }
-                        <TextField
-                           label="Shop Url Name"
-                           size="small"
-                           type='text'
-                           value={shopUrlNameInput}
-                           onInput={(e: any) => {
-                              setShopUrlNameInput(e.target.value.split(" ").join("").toLowerCase());
-                           }}
-                           helperText={(shopUrlNameInput === '') ? "* Enter your Shop Url Name" : (isUrlConfirmed ? '' : "* You entered Url Name doesn't exist")}
-                           color={(shopUrlNameInput === '') ? "primary" : (isUrlConfirmed ? "success" : "error")}
-                           error={(shopUrlNameInput !== '') && !isUrlConfirmed}
-                           required
-                        />
-                        <TextField
-                           label="Password"
-                           size="small"
-                           fullWidth
-                           type={showPassword ? 'text' : 'password'}
-                           value={password}
-                           onInput={(e: any) => setPassword(e.target.value)}
-                           InputProps={{
-                              endAdornment: <InputAdornment position="end">
-                                 <IconButton
-                                    aria-label="toggle password visibility"
-                                    onClick={() => setShowPassword(prev => !prev)}
-                                    edge="end"
-                                 >
-                                    {showPassword ? <Visibility /> : <VisibilityOff />}
-                                 </IconButton>
-                              </InputAdornment>
-                           }}
-                           helperText={((password === '') || inputChange) ? '' : (!isPasswordConfirmed && '* Wrong password')}
-                           color={((password === '') || inputChange) ? "primary" : (isPasswordConfirmed ? 'success' : 'error')}
-                           disabled={!isUrlConfirmed}
-                           error={((password === '') || inputChange) ? false : !isPasswordConfirmed}
-                           required
-                        />
+         {(status == 'authenticated') && (
+            <>
+               <Box
+                  height={'100vh'}
+                  display="flex" justifyContent="center" alignItems="center"
+               >
+                  <Box
+                     px={3} py={8}
+                     borderRadius={1.5}
+                     sx={{ backgroundColor: 'whitesmoke' }}
+                  >
+                     <Stack spacing={3} alignItems="center">
+                        <Typography variant="h4" component="h1">My Master Project Name</Typography>
+                        <Typography variant="h5" component="div">Login</Typography>
+                        <form onSubmit={handleSubmit}>
+                           <Stack spacing={2}>
+                              {session &&
+                                 <TextField
+                                    label="Shop Email"
+                                    size="small"
+                                    color="warning"
+                                    type='email'
+                                    defaultValue={session.user.email}
+                                    InputProps={{ readOnly: true }}
+                                    required
+                                 />
+                              }
+                              <TextField
+                                 label="Shop Url Name"
+                                 size="small"
+                                 type='text'
+                                 value={shopUrlNameInput}
+                                 onInput={(e: any) => {
+                                    setShopUrlNameInput(e.target.value.split(" ").join("").toLowerCase());
+                                 }}
+                                 helperText={(shopUrlNameInput === '') ? "* Enter your Shop Url Name" : (isUrlConfirmed ? '' : "* You entered Url Name doesn't exist")}
+                                 color={(shopUrlNameInput === '') ? "primary" : (isUrlConfirmed ? "success" : "error")}
+                                 error={(shopUrlNameInput !== '') && !isUrlConfirmed}
+                                 required
+                              />
+                              <TextField
+                                 label="Password"
+                                 size="small"
+                                 fullWidth
+                                 type={showPassword ? 'text' : 'password'}
+                                 value={password}
+                                 onInput={(e: any) => setPassword(e.target.value)}
+                                 InputProps={{
+                                    endAdornment: <InputAdornment position="end">
+                                       <IconButton
+                                          aria-label="toggle password visibility"
+                                          onClick={() => setShowPassword(prev => !prev)}
+                                          edge="end"
+                                       >
+                                          {showPassword ? <Visibility /> : <VisibilityOff />}
+                                       </IconButton>
+                                    </InputAdornment>
+                                 }}
+                                 helperText={((password === '') || inputChange) ? '' : (!isPasswordConfirmed && '* Wrong password')}
+                                 color={((password === '') || inputChange) ? "primary" : (isPasswordConfirmed ? 'success' : 'error')}
+                                 disabled={!isUrlConfirmed}
+                                 error={((password === '') || inputChange) ? false : !isPasswordConfirmed}
+                                 required
+                              />
+                           </Stack>
+                           <Stack direction="row" spacing={2} justifyContent="center" pt={2}>
+                              <Button variant="contained" size='small' color="error" onClick={() => {
+                                 signOutFromProvider({ callbackUrl: "/" });
+                              }}>cancel</Button>
+                              <Button
+                                 variant="contained"
+                                 size="small"
+                                 type="submit"
+                                 endIcon={((password === '') || inputChange) ? '' : (isPasswordConfirmed ? <CheckCircleIcon /> : <CancelIcon />)}
+                                 color={((password === '') || inputChange) ? 'primary' : (isPasswordConfirmed ? 'success' : 'error')}
+                                 disabled={password === ''}
+                              >
+                                 login
+                              </Button>
+                           </Stack>
+                        </form>
                      </Stack>
-                     <Stack direction="row" spacing={2} justifyContent="center" pt={2}>
-                        <Button variant="contained" size='small' color="error" onClick={() => {
-                           signOutFromProvider({ callbackUrl: "/" });
-                        }}>cancel</Button>
-                        <Button
-                           variant="contained"
-                           size="small"
-                           type="submit"
-                           endIcon={((password === '') || inputChange) ? '' : (isPasswordConfirmed ? <CheckCircleIcon /> : <CancelIcon />)}
-                           color={((password === '') || inputChange) ? 'primary' : (isPasswordConfirmed ? 'success' : 'error')}
-                           disabled={password === ''}
-                        >
-                           login
-                        </Button>
-                     </Stack>
-                  </form>
-               </Stack>
-            </Box>
-         </Box>
+                  </Box>
+               </Box>
+            </>
+         )}
       </>
    );
 };
