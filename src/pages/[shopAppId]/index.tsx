@@ -10,6 +10,7 @@ import { database } from '../../config/firebase.config';
 import PublicSection_layout from '../../layouts/PublicSection.layout';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { selectShopDetails, setAppShopDetailsAsync } from '../../redux/slices/shopDetails.slice';
+import { setAppPageId } from '../../redux/slices/pageId.slice';
 
 
 const Shop: NextPage = () => {
@@ -17,7 +18,6 @@ const Shop: NextPage = () => {
    const { shopAppId } = router.query;
 
    // console.log(auth.currentUser);
-
 
    const dispatch = useAppDispatch();
    const shopDetails = useAppSelector(selectShopDetails);
@@ -27,7 +27,7 @@ const Shop: NextPage = () => {
 
 
    useEffect(() => {
-      shopAppId && getDoc(doc(database, 'shops', shopAppId)).then((snap) => {
+      shopAppId && getDoc(doc(database, 'shops', shopAppId.toString())).then((snap) => {
          // console.log(snap.data());
          if (snap.data()) {
             setIsShopExist(true);
@@ -41,11 +41,15 @@ const Shop: NextPage = () => {
       dispatch(setAppShopDetailsAsync(shopAppId));
    }, [shopAppId]);
 
+   useEffect(() => {
+      dispatch(setAppPageId('shopHome_page'));
+   }, []);
+
 
    return (
       <>
          <Head>
-            <title>{shopDetails?.name ? shopDetails?.name : '·'}</title>
+            <title>{shopDetails?.name ? shopDetails?.name : 'shop-name'}</title>
             <meta name="description" content="" />
          </Head>
 

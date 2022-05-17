@@ -3,15 +3,21 @@ import { useRouter } from "next/router";
 import { auth } from "../config/firebase.config";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectShopDetails, setAppShopDetailsAsync } from "../redux/slices/shopDetails.slice";
+import { User } from "firebase/auth";
 
 const useSecurePage = (shopAppId: string | string[] | undefined) => {
    const router = useRouter();
-   const user = auth.currentUser;
+   // const user = auth.currentUser;
    const dispatch = useAppDispatch();
    const shopDetails = useAppSelector(selectShopDetails);
 
    const [isAdmin, setIsAdmin] = useState(false);
+   const [user, setUser] = useState<User | null>();
 
+
+   useEffect(() => auth.onAuthStateChanged(user => {
+      setUser(user);
+   }));
 
    useEffect(() => {
       dispatch(setAppShopDetailsAsync(shopAppId));

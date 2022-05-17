@@ -1,19 +1,19 @@
-import type { ShopAdminSectionLayoutTypes } from './layout.types';
+import type { InfoPageLayoutTypes } from './layout.types';
 
 import { Box, Toolbar } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Footer from '../components/footer';
-import { NavBar } from '../components/navBar';
-import { SideBar } from '../components/sideBar';
+import { InfoPage_sideBar } from '../components/sideBar';
+import { InfoPage_navBar } from '../components/navBar';
 
 
-const ShopAdminSection_layout = ({ children, shopDetails }: ShopAdminSectionLayoutTypes) => {
+const InfoPage_layout = ({ children }: InfoPageLayoutTypes) => {
    return (
       <Box>
          <CssBaseline />
          <Box sx={{ display: 'flex' }}>
-            <Box component='header' ><NavBar /></Box>
-            <Box component='aside' ><SideBar /></Box>
+            <Box component='header' ><InfoPage_navBar /></Box>
+            <Box component='aside' ><InfoPage_sideBar /></Box>
             <Box component="main" sx={{ flexGrow: 1 }}>
                <Toolbar />
                <Box minHeight={'80.5vh'} p={3}>
@@ -26,4 +26,4 @@ const ShopAdminSection_layout = ({ children, shopDetails }: ShopAdminSectionLayo
    );
 };
 
-export default ShopAdminSection_layout;
+export default InfoPage_layout;

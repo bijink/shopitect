@@ -25,3 +25,4 @@ type LayoutTypes = {
 
 export type PublicSectionLayoutTypes = LayoutTypes & DocumentData;
 export type ShopAdminSectionLayoutTypes = LayoutTypes & DocumentData;
+export type InfoPageLayoutTypes = LayoutTypes;

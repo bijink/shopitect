@@ -35,7 +35,7 @@ const Product: NextPage = () => {
 
    useEffect(() => {
       if (productId && shopDetails.urlName) {
-         getDoc(doc(database, 'shops', shopDetails.urlName, 'products', productId)).then((snap) => {
+         getDoc(doc(database, 'shops', shopDetails.urlName, 'products', productId.toString())).then((snap) => {
             // console.log(snap.data());
             setProdDetails(snap.data());
          });

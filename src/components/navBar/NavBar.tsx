@@ -1,14 +1,17 @@
 import * as React from 'react';
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import InputBase from '@mui/material/InputBase';
-import Badge from '@mui/material/Badge';
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
+import {
+   Box,
+   Button,
+   IconButton,
+   Toolbar,
+   Typography,
+   InputBase,
+   Badge,
+   MenuItem,
+   Menu,
+} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
@@ -22,9 +25,9 @@ import { collection, DocumentData, onSnapshot, query, where } from 'firebase/fir
 import { useAppSelector } from '../../redux/hooks';
 import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
 import { getSession, signIn as signInProvider, signOut as signOutProvider, useSession } from 'next-auth/react';
-import { Button } from '@mui/material';
 import { signOut as signOutAccount } from 'firebase/auth';
 import useSecurePage from '../../hooks/useSecurePage';
+import InfoIcon from '@mui/icons-material/Info';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -249,7 +252,7 @@ const NavBar = () => {
                </Search>
                <Box sx={{ flexGrow: 1 }} />
                <Box display="flex" justifyContent="center" alignItems="center">
-                  {isAdmin && (
+                  {isAdmin ? (
                      <>
                         <Button variant='contained' color='secondary' onClick={() => {
                            router.push(`/${shopDetails?.urlName}/dashboard`);
@@ -306,6 +309,17 @@ const NavBar = () => {
                            </IconButton>
                         </Box>
                      </>
+                  ) : (
+                     <IconButton
+                        size="small"
+                        aria-label="information about the shop"
+                        color="inherit"
+                        onClick={() => {
+                           router.push(`/${shopDetails.urlName}/info/about`);
+                        }}
+                     >
+                        <InfoIcon />
+                     </IconButton>
                   )}
                </Box>
             </Toolbar>
