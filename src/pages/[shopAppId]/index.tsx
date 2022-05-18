@@ -7,10 +7,13 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import ProductCard from '../../components/productCard';
 import { database } from '../../config/firebase.config';
-import PublicSection_layout from '../../layouts/PublicSection.layout';
+import PublicSection_layout from '../../layouts/Public.layout';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { selectShopDetails, setAppShopDetailsAsync } from '../../redux/slices/shopDetails.slice';
 import { setAppPageId } from '../../redux/slices/pageId.slice';
+import Public_layout from '../../layouts/Public.layout';
+import useIsAdmin from '../../hooks/useIsAdmin';
+import ShopAdmin_layout from '../../layouts/ShopAdmin.layout';
 
 
 const Shop: NextPage = () => {
@@ -22,6 +25,7 @@ const Shop: NextPage = () => {
    const dispatch = useAppDispatch();
    const shopDetails = useAppSelector(selectShopDetails);
    // console.log(shopDetails);
+   const isAdmin = useIsAdmin(shopAppId);
 
    const [isShopExist, setIsShopExist] = useState(false);
 
@@ -54,9 +58,17 @@ const Shop: NextPage = () => {
          </Head>
 
          {isShopExist && (
-            <PublicSection_layout >
-               <ProductCard />
-            </PublicSection_layout>
+            <>
+               {isAdmin ? (
+                  <ShopAdmin_layout>
+                     <ProductCard />
+                  </ShopAdmin_layout>
+               ) : (
+                  <Public_layout>
+                     <ProductCard />
+                  </Public_layout>
+               )}
+            </>
          )}
       </>
    );

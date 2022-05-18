@@ -23,6 +23,8 @@ type LayoutTypes = {
 //    };
 // };
 
-export type PublicSectionLayoutTypes = LayoutTypes & DocumentData;
-export type ShopAdminSectionLayoutTypes = LayoutTypes & DocumentData;
+// export type PublicLayoutTypes = LayoutTypes & DocumentData;
+export type PublicLayoutTypes = LayoutTypes;
+export type ShopAdminLayoutTypes = LayoutTypes;
 export type InfoPageLayoutTypes = LayoutTypes;
+export type AccountPageLayoutTypes = LayoutTypes;

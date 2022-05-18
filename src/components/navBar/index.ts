@@ -1,4 +1,5 @@
-import NavBar from "./NavBar";
-import { InfoPage_navBar } from "./InfoPage.navBar";
+import ShopAdmin_navBar from "./ShopAdmin.navBar";
+import Public_navBar from "./Public.navBar";
+import AccountPage_navBar from "./AccountPage.navBar";
 
-export { NavBar, InfoPage_navBar };
+export { ShopAdmin_navBar, Public_navBar, AccountPage_navBar };

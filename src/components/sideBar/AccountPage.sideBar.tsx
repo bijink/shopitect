@@ -12,11 +12,13 @@ import MailIcon from '@mui/icons-material/Mail';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import InfoIcon from '@mui/icons-material/Info';
 import { useRouter } from 'next/router';
+import SettingsIcon from '@mui/icons-material/Settings';
+import { Typography } from '@mui/material';
 
 
 const drawerWidth = 240;
 
-export default function InfoPage_sideBar() {
+export default function AccountPage_sideBar() {
    const router = useRouter();
    const { shopAppId } = router.query;
 
@@ -34,19 +36,27 @@ export default function InfoPage_sideBar() {
             <Box sx={{ overflow: 'auto' }}>
                <List>
                   <ListItem button onClick={() => {
-                     router.push(`/${shopAppId}/info/about`);
+                     router.push(`/${shopAppId}/settings/profile`);
                   }} >
-                     <ListItemIcon><InfoIcon /></ListItemIcon>
-                     <ListItemText primary='About Us' />
+                     <ListItemIcon><AdminPanelSettingsIcon /></ListItemIcon>
+                     <ListItemText primary='Profile' />
                   </ListItem>
                </List>
                <Divider />
-               <List>
+               {/* <List>
                   <ListItem button onClick={() => {
                      router.push(`/${shopAppId}/info/admin`);
                   }} >
                      <ListItemIcon><AdminPanelSettingsIcon /></ListItemIcon>
                      <ListItemText primary='Admin' sx={{ color: 'GrayText' }} />
+                  </ListItem>
+               </List> */}
+               <List>
+                  <ListItem button onClick={() => {
+                     router.push(`/${shopAppId}/settings/account`);
+                  }} >
+                     <ListItemIcon><SettingsIcon /></ListItemIcon>
+                     <ListItemText primary='Account' />
                   </ListItem>
                </List>
             </Box>

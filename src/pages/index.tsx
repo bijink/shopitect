@@ -9,10 +9,14 @@ import { auth } from '../config/firebase.config';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { signOut as signOutAccount } from 'firebase/auth';
+import { setAppPageId } from '../redux/slices/pageId.slice';
+import { useAppDispatch } from '../redux/hooks';
 
 
 const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
    const router = useRouter();
+
+   const dispatch = useAppDispatch();
 
    const [isUser, setIsUser] = useState(false);
 
@@ -23,6 +27,10 @@ const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
          user ? setIsUser(true) : setIsUser(false);
       });
    });
+
+   useEffect(() => {
+      dispatch(setAppPageId('home_page'));
+   }, []);
 
 
    return (

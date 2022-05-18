@@ -2,12 +2,15 @@
 import { Stack, Typography } from "@mui/material";
 import Head from "next/head";
 import ProductInputForm from "../../../components/productInputForm";
-import ShopAdminSection_layout from "../../../layouts/ShopAdminSection.layout";
+import ShopAdminSection_layout from "../../../layouts/ShopAdmin.layout";
 import { useEffect } from 'react';
 import { useRouter } from "next/router";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { selectShopDetails, setAppShopDetailsAsync } from "../../../redux/slices/shopDetails.slice";
 import useSecurePage from "../../../hooks/useSecurePage";
+import useIsAdmin from "../../../hooks/useIsAdmin";
+import { setAppPageId } from "../../../redux/slices/pageId.slice";
+import ShopAdmin_layout from "../../../layouts/ShopAdmin.layout";
 
 
 const Product_add = () => {
@@ -17,12 +20,17 @@ const Product_add = () => {
    const dispatch = useAppDispatch();
    const shopDetails = useAppSelector(selectShopDetails);
 
-   const isAdmin = useSecurePage(shopAppId);
+   // const isAdmin = useIsAdmin(shopAppId);
+   const secure = useSecurePage(shopAppId);
 
 
    useEffect(() => {
       dispatch(setAppShopDetailsAsync(shopAppId));
    }, [shopAppId]);
+
+   useEffect(() => {
+      dispatch(setAppPageId('productAdd_page'));
+   }, []);
 
 
    return (
@@ -31,15 +39,16 @@ const Product_add = () => {
             <title>{`Product (add) · ${shopDetails?.name ? shopDetails?.name : '·'}`}</title>
          </Head>
 
-         {isAdmin && (
-            <ShopAdminSection_layout>
+         {/* {isAdmin && ( */}
+         {(secure === "safe") && (
+            <ShopAdmin_layout>
                <>
                   <Stack direction='row' spacing="auto" pb={2} sx={{ alignItems: 'center' }}>
                      <Typography variant="h4" component='div' >Add Product Details</Typography>
                   </Stack>
                   <ProductInputForm />
                </>
-            </ShopAdminSection_layout>
+            </ShopAdmin_layout>
          )}
       </>
    );

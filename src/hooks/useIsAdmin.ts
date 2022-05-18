@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { auth } from "../config/firebase.config";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectShopDetails, setAppShopDetailsAsync } from "../redux/slices/shopDetails.slice";
 import { User } from "firebase/auth";
-import { signIn as signInProvider } from "next-auth/react";
 
-const useSecurePage = (shopAppId: string | string[] | undefined) => {
+const useIsAdmin = (shopAppId: string | string[] | undefined) => {
+   const router = useRouter();
+   // const user = auth.currentUser;
    const dispatch = useAppDispatch();
    const shopDetails = useAppSelector(selectShopDetails);
 
-   const [secure, setSecure] = useState<'safe' | 'not-safe' | 'loading'>('loading');
+   const [isAdmin, setIsAdmin] = useState(false);
    const [user, setUser] = useState<User | null>();
 
 
@@ -22,24 +24,20 @@ const useSecurePage = (shopAppId: string | string[] | undefined) => {
    }, [shopAppId]);
 
    useEffect(() => {
-      if (shopAppId && (shopDetails.accountID !== '') && user) {
-         // if (shopDetails.accountID && user.uid) {
+      if (shopAppId && shopDetails && user) {
          if (user.uid === shopDetails.accountID) {
-            setSecure('safe');
+            setIsAdmin(true);
          } else {
-            // setSecure('not-safe');
-            signInProvider('google', { redirect: false, callbackUrl: `/auth/login` });
+            setIsAdmin(false);
+            // router.push(`/${shopAppId}`);
          }
-         // }
+      } else if (shopAppId && !user) {
+         setIsAdmin(false);
+         // router.push(`/${shopAppId}`);
       }
-      // else if (shopAppId && !user) {
-      //    // setIsAdmin(false);
-      //    setSecure('not-safe');
-      //    // signInProvider('google', { redirect: false, callbackUrl: `/auth/login` });
-      // }
    }, [shopDetails, user]);
 
-   return secure;
+   return isAdmin;
 };
 
-export default useSecurePage;
+export default useIsAdmin;

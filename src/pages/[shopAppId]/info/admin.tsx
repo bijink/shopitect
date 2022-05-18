@@ -31,7 +31,7 @@ const Admin = () => {
    }));
 
    useEffect(() => {
-      dispatch(setAppPageId('settings_page'));
+      dispatch(setAppPageId('admin_page'));
    }, []);
 
 

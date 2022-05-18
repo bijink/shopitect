@@ -12,7 +12,7 @@ import MailIcon from '@mui/icons-material/Mail';
 
 const drawerWidth = 240;
 
-export default function SideBar() {
+export default function ShopAdmin_sideBar() {
    return (
       <>
          <Drawer
@@ -26,7 +26,7 @@ export default function SideBar() {
             <Toolbar />
             <Box sx={{ overflow: 'auto' }}>
                <List>
-                  {['Products', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+                  {['Category', 'Products', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
                      <ListItem button key={text}>
                         <ListItemIcon>
                            {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}

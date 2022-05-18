@@ -9,7 +9,7 @@ const About = () => {
 
 
    useEffect(() => {
-      dispatch(setAppPageId('settings_page'));
+      dispatch(setAppPageId('about_page'));
    }, []);
 
 

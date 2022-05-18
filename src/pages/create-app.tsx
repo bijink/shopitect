@@ -9,10 +9,14 @@ import { signOut as signOutProvider, signIn as signInProvider, useSession } from
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import Head from "next/head";
+import { setAppPageId } from "../redux/slices/pageId.slice";
+import { useAppDispatch } from "../redux/hooks";
 
 
 const Create_app = () => {
    const router = useRouter();
+
+   const dispatch = useAppDispatch();
 
    // console.log(auth.currentUser);
 
@@ -125,6 +129,10 @@ const Create_app = () => {
       // console.log(!(shopDocIds.some(arr => arr == shopUrlName)));
       setIsShopUrlNameUnique(!(shopDocIds.some(arr => arr == shopUrlName)));
    }, [shopUrlName]);
+
+   useEffect(() => {
+      dispatch(setAppPageId('createApp_page'));
+   }, []);
 
 
    if (!isAccountNotExist) return (

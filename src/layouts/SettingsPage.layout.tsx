@@ -1,19 +1,19 @@
-import type { InfoPageLayoutTypes } from './layout.types';
+import type { AccountPageLayoutTypes } from './layout.types';
 
-import { Box, Toolbar } from '@mui/material';
+import { Box, Stack, Toolbar } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Footer from '../components/footer';
-import { Public_sideBar } from '../components/sideBar';
-import { Public_navBar } from '../components/navBar';
+import { AccountPage_sideBar } from '../components/sideBar';
+import { AccountPage_navBar } from '../components/navBar';
 
 
-const InfoPage_layout = ({ children }: InfoPageLayoutTypes) => {
+const SettingsPage_layout = ({ children }: AccountPageLayoutTypes) => {
    return (
       <Box>
          <CssBaseline />
          <Box sx={{ display: 'flex' }}>
-            <Box component='header' ><Public_navBar /></Box>
-            <Box component='aside' ><Public_sideBar /></Box>
+            <Box component='header' ><AccountPage_navBar /></Box>
+            <Box component='aside' ><AccountPage_sideBar /></Box>
             <Box component="main" sx={{ flexGrow: 1 }}>
                <Toolbar />
                <Box minHeight={'80.5vh'} p={3}>
@@ -26,4 +26,4 @@ const InfoPage_layout = ({ children }: InfoPageLayoutTypes) => {
    );
 };
 
-export default InfoPage_layout;
+export default SettingsPage_layout;

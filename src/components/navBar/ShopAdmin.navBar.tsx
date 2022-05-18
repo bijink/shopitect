@@ -11,6 +11,7 @@ import {
    Badge,
    MenuItem,
    Menu,
+   Tooltip,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
@@ -28,6 +29,10 @@ import { getSession, signIn as signInProvider, signOut as signOutProvider, useSe
 import { signOut as signOutAccount } from 'firebase/auth';
 import useSecurePage from '../../hooks/useSecurePage';
 import InfoIcon from '@mui/icons-material/Info';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
+import { selectPageId } from '../../redux/slices/pageId.slice';
+import useIsAdmin from '../../hooks/useIsAdmin';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -71,7 +76,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
    },
 }));
 
-const NavBar = () => {
+export default function ShopAdmin_navBar() {
    const { data: session } = useSession();
 
    const router = useRouter();
@@ -86,8 +91,9 @@ const NavBar = () => {
    const shopDetails = useAppSelector(selectShopDetails);
    // console.log(shopDetails);
    // console.log(shopDetails.createdAt.toDate());
+   const pageId = useAppSelector(selectPageId);
 
-   const isAdmin = useSecurePage(shopAppId);
+   const isAdmin = useIsAdmin(shopAppId);
 
    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -131,25 +137,20 @@ const NavBar = () => {
          open={isMenuOpen}
          onClose={handleMenuClose}
       >
-         <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-         <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-         {session ?
-            <MenuItem onClick={(e: any) => {
-               e.preventDefault();
-               signOutAccount(auth).then(() => {
-                  signOutProvider({ redirect: false, callbackUrl: `/${shopDetails.urlName}` });
-               });
-               handleMenuClose();
-            }}>Sign Out</MenuItem>
-            :
-            <MenuItem onClick={(e: any) => {
-               e.preventDefault();
-               // signIn('google', undefined, { login_hint: "kbijin528@gmail.com" });
-               signInProvider('google');
-
-               handleMenuClose();
-            }}>Sign In</MenuItem>
+         {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem> */}
+         <MenuItem onClick={(e) => {
+            handleMenuClose();
+            router.push(`/${shopAppId}/settings/profile`);
          }
+         }>Settings</MenuItem>
+
+         <MenuItem onClick={(e: any) => {
+            e.preventDefault();
+            signOutAccount(auth).then(() => {
+               signOutProvider({ redirect: false, callbackUrl: `/${shopDetails.urlName}` });
+            });
+            handleMenuClose();
+         }}>Sign Out</MenuItem>
       </Menu>
    );
 
@@ -170,14 +171,14 @@ const NavBar = () => {
          open={isMobileMenuOpen}
          onClose={handleMobileMenuClose}
       >
-         <MenuItem>
+         {/* <MenuItem>
             <IconButton size="large" aria-label="show 4 new mails" color="inherit">
                <Badge badgeContent={4} color="error">
                   <MailIcon />
                </Badge>
             </IconButton>
             <p>Messages</p>
-         </MenuItem>
+         </MenuItem> */}
          <MenuItem>
             <IconButton
                size="large"
@@ -200,26 +201,14 @@ const NavBar = () => {
             >
                <AccountCircle />
             </IconButton>
-            <p>Profile</p>
+            <p>Account</p>
          </MenuItem>
       </Menu>
    );
 
 
-   // React.useEffect(() => {
-   //    auth.onAuthStateChanged(shop => {
-   //       shop &&
-   //          onSnapshot(query(collection(database, 'shops'), where('accountID', '==', shop?.uid)), (snapshot) => {
-   //             snapshot.forEach(obj => {
-   //                setShopDetails(obj.data());
-   //             });
-   //          });
-   //    });
-   // }, []);
-
-
    return (
-      <Box sx={{ flexGrow: 1 }}>
+      <Box sx={{ flexGrow: 1 }} >
          <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }} >
             <Toolbar >
                <IconButton
@@ -241,28 +230,38 @@ const NavBar = () => {
                   {shopDetails?.name}
                </Typography>
                <Box sx={{ flexGrow: 1 }} />
-               <Search sx={{ flexGrow: 2 }}>
-                  <SearchIconWrapper>
-                     <SearchIcon />
-                  </SearchIconWrapper>
-                  <StyledInputBase
-                     placeholder="Search…"
-                     inputProps={{ 'aria-label': 'search' }}
-                  />
-               </Search>
+               {((pageId === 'shopHome_page') || (pageId === 'dashboard_page')) && (
+                  <Search sx={{ flexGrow: 2 }}>
+                     <SearchIconWrapper>
+                        <SearchIcon />
+                     </SearchIconWrapper>
+                     <StyledInputBase
+                        placeholder="Search…"
+                        inputProps={{ 'aria-label': 'search' }}
+                     />
+                  </Search>
+               )}
                <Box sx={{ flexGrow: 1 }} />
-               <Box display="flex" justifyContent="center" alignItems="center">
+               <Box>
                   {isAdmin ? (
                      <>
-                        <Button variant='contained' color='secondary' onClick={() => {
-                           router.push(`/${shopDetails?.urlName}/dashboard`);
-                        }}>Dash</Button>
-                        <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                           <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+                        <Box sx={{ display: { xs: 'none', md: 'flex' } }} justifyContent="center" alignItems="center" >
+                           {!(pageId === 'dashboard_page') && (
+                              <Tooltip title="Dashboard" arrow >
+                                 <IconButton size="large" aria-label="show 4 new mails" color="inherit"
+                                    onClick={() => {
+                                       router.push(`/${shopDetails?.urlName}/dashboard`);
+                                    }}
+                                 >
+                                    <DashboardRoundedIcon />
+                                 </IconButton>
+                              </Tooltip>
+                           )}
+                           {/* <IconButton size="large" aria-label="show 4 new mails" color="inherit">
                               <Badge badgeContent={4} color="error">
                                  <MailIcon />
                               </Badge>
-                           </IconButton>
+                           </IconButton> */}
                            <IconButton
                               size="large"
                               aria-label="show 17 new notifications"
@@ -289,8 +288,12 @@ const NavBar = () => {
                                  aria-label="account of current user"
                                  aria-controls={menuId}
                                  aria-haspopup="true"
-                                 onClick={handleProfileMenuOpen}
+                                 onClick={(e) => {
+                                    handleProfileMenuOpen(e);
+                                    // router.push(`/${shopAppId}/account/profile`);
+                                 }}
                                  color="inherit"
+                                 sx={{ borderRadius: '50%' }}
                               >
                                  <img style={{ width: '40px', borderRadius: '50%' }} src={user.photoURL!} alt="" />
                               </Button>
@@ -329,5 +332,3 @@ const NavBar = () => {
       </Box >
    );
 };
-
-export default NavBar;
