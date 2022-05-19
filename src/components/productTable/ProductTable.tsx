@@ -1,3 +1,5 @@
+import type { ProdDetailsProps, ProdDetailsTypes } from './product.types';
+
 import {
    Table,
    TableContainer,
@@ -16,17 +18,16 @@ import {
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { collection, DocumentData, onSnapshot, orderBy, query } from 'firebase/firestore';
+import { collection, deleteDoc, doc, DocumentData, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { database } from '../../config/firebase.config';
 import { useEffect, useState } from 'react';
-import { ProdDetailsProps, ProdDetailsTypes } from './product.types';
 import { useAppSelector } from '../../redux/hooks';
 import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
-import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditModal_productTable from './EditModal.productTable';
 
 
-const Row = ({ rowBgColor, prodCodeName, prodName, prodCategory, prodBrand, prodImg, quantity, getPrice, sellPrice, profitAmount, profitPercentage }: ProdDetailsProps) => {
+const Row = ({ rowBgColor, shopUrlName, prodId, prodCodeName, prodName, prodCategory, prodBrand, prodImg, quantity, getPrice, sellPrice, profitAmount, profitPercentage }: ProdDetailsProps) => {
    const [open, setOpen] = useState(false);
 
 
@@ -40,7 +41,7 @@ const Row = ({ rowBgColor, prodCodeName, prodName, prodCategory, prodBrand, prod
          value: prodBrand,
       },
       {
-         title: 'GetPrice (Rs)',
+         title: 'Get Price (Rs)',
          value: getPrice,
       },
       {
@@ -54,11 +55,16 @@ const Row = ({ rowBgColor, prodCodeName, prodName, prodCategory, prodBrand, prod
    ];
 
 
+   const handleProdRemove = async () => {
+      await deleteDoc(doc(database, "shops", shopUrlName, "products", prodId));
+   };
+
+
    return (
       <>
          <TableRow sx={{ '& > *': { backgroundColor: rowBgColor, borderBottom: 'unset', borderTop: '1.05px solid gray' } }} >
             <TableCell component="th" scope="row" align="left" sx={{ fontWeight: 'bold' }} >{prodCodeName}</TableCell>
-            <TableCell component="th" scope="row" align="left" colSpan={3} sx={{ fontWeight: 'bold' }} >{prodName}</TableCell>
+            <TableCell component="th" scope="row" align="left" sx={{ fontWeight: '500' }} >{prodName}</TableCell>
             <TableCell>
                <Avatar alt="product" src={prodImg} variant="rounded" />
             </TableCell>
@@ -76,9 +82,9 @@ const Row = ({ rowBgColor, prodCodeName, prodName, prodCategory, prodBrand, prod
          </TableRow>
 
          <TableRow>
-            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7} >
+            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={4} >
                <Collapse in={open} timeout="auto" unmountOnExit>
-                  <Box sx={{ margin: 1 }}>
+                  <Box my={1} >
                      <Typography variant="h6" gutterBottom component="div">
                         More Details
                      </Typography>
@@ -96,26 +102,41 @@ const Row = ({ rowBgColor, prodCodeName, prodName, prodCategory, prodBrand, prod
                </Collapse>
             </TableCell>
 
-            <TableCell sx={{ padding: '0' }} style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={1} >
+            <TableCell style={{ padding: 0 }} colSpan={1} >
+               <Collapse in={open} timeout="auto" unmountOnExit />
+            </TableCell>
+
+            <TableCell style={{ padding: 0 }} colSpan={1} >
                <Collapse in={open} timeout="auto" unmountOnExit>
-                  <Box sx={{ margin: 1 }} >
+                  <Box>
                      <Table size="small" aria-label="purchases"
                         sx={{ [`& .${tableCellClasses.root}`]: { borderBottom: "none" } }}
                      >
                         <TableBody  >
                            <TableRow  >
                               <TableCell component="th" scope="row" align="center"  >
-                                 <Tooltip title="Edit" placement="left" arrow >
-                                    <IconButton size='small' sx={{ backgroundColor: 'orange' }} >
-                                       <EditIcon />
-                                    </IconButton>
-                                 </Tooltip>
+                                 <EditModal_productTable
+                                    shopUrlName={shopUrlName}
+                                    prodId={prodId}
+                                    prodCodeName={prodCodeName}
+                                    prodName={prodName}
+                                    // prodImg={'https://images.unsplash.com/photo-1648993219624-2d3535fc6443?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTA2ODE2Nw&ixlib=rb-1.2.1&q=80&w=1080'}
+                                    prodBrand={prodBrand}
+                                    prodCategory={prodCategory}
+                                    quantity={quantity}
+                                    getPrice={getPrice}
+                                    sellPrice={sellPrice}
+                                    profitAmount={profitAmount}
+                                    profitPercentage={profitPercentage}
+                                 />
                               </TableCell>
                            </TableRow>
                            <TableRow >
                               <TableCell component="th" scope="row" align="center"  >
-                                 <Tooltip title="Delete" placement="left" arrow >
-                                    <IconButton size='small' sx={{ backgroundColor: 'red' }} >
+                                 <Tooltip title="Remove" placement="left" arrow >
+                                    <IconButton size='small' sx={{ backgroundColor: 'red' }}
+                                       onClick={handleProdRemove}
+                                    >
                                        <DeleteIcon />
                                     </IconButton>
                                  </Tooltip>
@@ -136,7 +157,6 @@ const ProductTable = () => {
    const shopDetails = useAppSelector(selectShopDetails);
 
    const [prodDetails, setProdDetails] = useState<DocumentData>([]);
-   // console.log(prodDetails);
 
 
    useEffect(() => {
@@ -154,7 +174,7 @@ const ProductTable = () => {
             <TableHead >
                <TableRow sx={{ backgroundColor: '#616161' }}>
                   <TableCell align="left" sx={{ color: '#ffffff' }} >Code</TableCell>
-                  <TableCell align="left" sx={{ color: '#ffffff', paddingTop: '18px', paddingBottom: '18px' }} colSpan={3} >Name</TableCell>
+                  <TableCell align="left" sx={{ color: '#ffffff', paddingTop: '18px', paddingBottom: '18px' }} >Name</TableCell>
                   <TableCell align="left" sx={{ color: '#ffffff' }}>Image</TableCell>
                   <TableCell align="left" sx={{ color: '#ffffff' }}>Catagory</TableCell>
                   <TableCell align="right" sx={{ color: '#ffffff' }}>Sell Price&nbsp;(Rs)</TableCell>
@@ -167,6 +187,8 @@ const ProductTable = () => {
                      key={index}
                      rowBgColor={index % 2 === 0 ? '#f5f5f5' : '#e0e0e0'}
 
+                     shopUrlName={shopDetails.urlName}
+                     prodId={prod.id}
                      prodCodeName={prod.data().codeName}
                      prodName={prod.data().name}
                      prodImg={'https://images.unsplash.com/photo-1648993219624-2d3535fc6443?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTA2ODE2Nw&ixlib=rb-1.2.1&q=80&w=1080'}
@@ -177,7 +199,6 @@ const ProductTable = () => {
                      sellPrice={prod.data().sellPrice}
                      profitAmount={prod.data().profitAmount}
                      profitPercentage={prod.data().profitPercentage}
-                  // createdAt={prod.data().createdAt.toDate().toString().slice(0, 15)}
                   />
                ))}
             </TableBody>

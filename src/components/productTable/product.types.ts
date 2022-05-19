@@ -12,6 +12,8 @@ export interface ProdDetailsProps {
    // createdAt: string;
 
    rowBgColor: string;
+   shopUrlName: string;
+   prodId: string;
 };
 interface ProdDetails {
    name: string;
@@ -28,5 +30,22 @@ interface ProdDetails {
 };
 
 export type ProdDetailsTypes = {
+   id: string;
    data: () => ProdDetails;
+};
+
+export interface ProdDetailsModalTypes {
+   prodName: string;
+   prodCodeName: string;
+   prodBrand: string;
+   prodCategory: string;
+   // prodImg: string;
+   quantity: number;
+   getPrice: number;
+   sellPrice: number;
+   profitAmount: number;
+   profitPercentage: number;
+
+   shopUrlName: string;
+   prodId: string;
 };
