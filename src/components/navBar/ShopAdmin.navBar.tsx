@@ -147,7 +147,10 @@ export default function ShopAdmin_navBar() {
          <MenuItem onClick={(e: any) => {
             e.preventDefault();
             signOutAccount(auth).then(() => {
-               signOutProvider({ redirect: false, callbackUrl: `/${shopDetails.urlName}` });
+               // signOutProvider({ redirect: false, callbackUrl: `/${shopDetails.urlName}` });
+               signOutProvider({ redirect: false }).then(() => {
+                  router.push(`/${shopAppId}`);
+               });
             });
             handleMenuClose();
          }}>Sign Out</MenuItem>

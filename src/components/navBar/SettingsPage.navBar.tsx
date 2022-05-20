@@ -75,7 +75,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
    },
 }));
 
-export default function AccountPage_navBar() {
+export default function SettingsPage_navBar() {
    const { data: session } = useSession();
 
    const router = useRouter();

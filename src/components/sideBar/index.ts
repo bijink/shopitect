@@ -1,5 +1,5 @@
 import ShopAdmin_sideBar from "./ShopAdmin.sideBar";
 import Public_sideBar from "./Public.sideBar";
-import AccountPage_sideBar from "./AccountPage.sideBar";
+import SettingsPage_sideBar from "./SettingsPage.sideBar";
 
-export { ShopAdmin_sideBar, Public_sideBar, AccountPage_sideBar };
+export { ShopAdmin_sideBar, Public_sideBar, SettingsPage_sideBar };

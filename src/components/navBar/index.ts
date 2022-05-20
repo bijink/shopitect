@@ -1,5 +1,5 @@
 import ShopAdmin_navBar from "./ShopAdmin.navBar";
 import Public_navBar from "./Public.navBar";
-import AccountPage_navBar from "./AccountPage.navBar";
+import SettingsPage_navBar from "./SettingsPage.navBar";
 
-export { ShopAdmin_navBar, Public_navBar, AccountPage_navBar };
+export { ShopAdmin_navBar, Public_navBar, SettingsPage_navBar };

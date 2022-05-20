@@ -18,7 +18,7 @@ import { Typography } from '@mui/material';
 
 const drawerWidth = 240;
 
-export default function AccountPage_sideBar() {
+export default function SettingsPage_sideBar() {
    const router = useRouter();
    const { shopAppId } = router.query;
 

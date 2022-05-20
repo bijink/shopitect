@@ -88,11 +88,13 @@ const Create_app = () => {
    };
 
    const handleFormReset = () => {
+      setLoading(false);
       setShopName('');
       setShopCategory('');
       setShopOwnerName('');
       setShopAddress('');
       setShopUrlName('');
+      setPassword('');
    };
 
 

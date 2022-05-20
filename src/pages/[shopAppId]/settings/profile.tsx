@@ -15,14 +15,9 @@ const Profile = () => {
 
 
    return (
-      <SettingsPage_layout>
+      <SettingsPage_layout title={'Profile'} >
          <>
-            <Stack spacing={1} direction='row' alignItems="center" pb={2} >
-               <Typography variant="h5" component='div' >Settings</Typography>
-               <ArrowForwardIosIcon sx={{ fontSize: '12px' }} />
-               <Typography variant="h5" component='div' sx={{ color: '#757575' }} >Profile</Typography>
-            </Stack>
-            {/* <ProductTable /> */}
+
          </>
       </SettingsPage_layout>
    );

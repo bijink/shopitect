@@ -191,6 +191,7 @@ export default function EditModal_productTable({ shopUrlName, prodId, prodName, 
                            <TextField
                               size="small"
                               id="outlined-required"
+                              type="number"
                               fullWidth
                               required
                               value={quantityInput}

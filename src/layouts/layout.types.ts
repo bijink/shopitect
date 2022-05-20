@@ -23,8 +23,12 @@ type LayoutTypes = {
 //    };
 // };
 
+interface SettingsPageLayoutProps {
+   title: string;
+}
+
 // export type PublicLayoutTypes = LayoutTypes & DocumentData;
 export type PublicLayoutTypes = LayoutTypes;
 export type ShopAdminLayoutTypes = LayoutTypes;
 export type InfoPageLayoutTypes = LayoutTypes;
-export type AccountPageLayoutTypes = LayoutTypes;
+export type SettingsPageLayoutTypes = LayoutTypes & SettingsPageLayoutProps;
