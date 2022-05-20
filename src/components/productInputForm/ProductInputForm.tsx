@@ -5,12 +5,13 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import { database } from "../../config/firebase.config";
-import { addDoc, collection, DocumentData, onSnapshot, query, serverTimestamp, where } from "firebase/firestore";
+import { database, storage } from "../../config/firebase.config";
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import LoadingButton from '@mui/lab/LoadingButton';
 import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
 import { useAppSelector } from "../../redux/hooks";
 import { selectShopDetails } from "../../redux/slices/shopDetails.slice";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 
 const ProductInputForm = () => {
@@ -23,18 +24,15 @@ const ProductInputForm = () => {
    const [prodCategory, setProdCategory] = useState('');
    const [prodBrand, setProdBrand] = useState('');
    const [quantity, setQuantity] = useState('');
-
-   // const [date, setDate] = useState<Date>(new Date());
+   const [prodImage, setProdImage] = useState<any>(null);
 
    const [getPriceInput, setGetPriceInput] = useState<string>('');
    const [sellPriceInput, setSellPriceInput] = useState<string>('');
    const [profitAmountInput, setProfitAmountInput] = useState<string>('');
    const [profitPercentageInput, setProfitPercentageInput] = useState<string>('');
 
-   // const [checkCalc, setCheckCalc] = useState(false);
    const [calcMethod, setCalcMethod] = useState('method-1');
    const [loading, setLoading] = useState(false);
-   // const [shopDetails, setShopDetails] = useState<DocumentData>([]);
 
 
    const calculate = () => {
@@ -99,24 +97,34 @@ const ProductInputForm = () => {
          sellPrice: (sellPriceInput === '') ? sellPriceInput : parseFloat(sellPriceInput),
          profitAmount: (profitAmountInput === '') ? profitAmountInput : parseFloat(profitAmountInput),
          profitPercentage: (profitPercentageInput === '') ? profitPercentageInput : parseFloat(profitPercentageInput),
-         // createdAt: serverTimestamp(),
-         // createdAt: new Date().getTime(),
-      }).then(() => {
-         setProdName('');
-         setProdCodeName('');
-         setProdCategory('');
-         setProdBrand('');
-         setQuantity('');
-         setGetPriceInput('');
-         setSellPriceInput('');
-         setProfitAmountInput('');
-         setProfitPercentageInput('');
-      }).then(() => {
-         setLoading(false);
+      }).then((res) => {
+         const imageRef = ref(storage, `/product-images/${shopDetails.urlName}/PRODUCT_IMG:${res.id}`);
+         uploadBytes(imageRef, prodImage!).then(() => {
+            getDownloadURL(imageRef).then(url => {
+               updateDoc(doc(database, 'shops', shopDetails.urlName, 'products', res.id), {
+                  imageUrl: url,
+               }).then(() => {
+                  setProdName('');
+                  setProdCodeName('');
+                  setProdCategory('');
+                  setProdBrand('');
+                  setQuantity('');
+                  setGetPriceInput('');
+                  setSellPriceInput('');
+                  setProfitAmountInput('');
+                  setProfitPercentageInput('');
+                  setProdImage(null);
+               }).then(() => {
+                  setLoading(false);
+               });
+            });
+         });
       });
    };
 
    const handleFormReset = () => {
+      setLoading(false);
+
       setProdName('');
       setProdCodeName('');
       setProdCategory('');
@@ -127,27 +135,13 @@ const ProductInputForm = () => {
       setProfitAmountInput('');
       setProfitPercentageInput('');
       setCalcMethod('method-1');
+      setProdImage(null);
    };
 
 
    useEffect(() => {
       inputFocusRef.current.focus();
    }, []);
-
-   // useEffect(() => {
-   //    auth.onAuthStateChanged(shop => {
-   //       // setUser(user);
-   //       // console.log(user?.displayName);
-   //       // console.log(shop?.uid);
-
-   //       // onSnapshot(query(collection(database, 'shops'), where('accountID', '==', shop?.uid)), (snapshot) => {
-   //       //    snapshot.forEach(obj => {
-   //       //       // console.log(obj.data());
-   //       //       setShopDetails(obj.data());
-   //       //    });
-   //       // });
-   //    });
-   // }, []);
 
 
    return (
@@ -169,6 +163,7 @@ const ProductInputForm = () => {
                      size="small"
                      value={prodCodeName}
                      onInput={(e: any) => setProdCodeName(e.target.value)}
+                     required
                   />
                </Stack>
                <Stack direction="row" spacing={3}>
@@ -195,19 +190,39 @@ const ProductInputForm = () => {
                      size="small"
                      type="number"
                      // sx={{ width: '12.5%', paddingRight: '12px' }}
-                     sx={{ width: '12%' }}
+                     sx={{ width: '15%' }}
                      value={quantity}
                      onInput={(e: any) => setQuantity(e.target.value)}
                      required
                   />
-                  {/* <TextField
-                     size="small"
-                     type="date"
-                     sx={{ width: '34.7%' }}
-                     value={quantity}
-                     onInput={(e: any) => setQuantity(e.target.value)}
-                  // required
-                  /> */}
+               </Stack>
+               <Stack direction="row" spacing={3}>
+                  <Box>
+                     <label htmlFor="upload-image">
+                        {prodImage ? (
+                           <img width={150} height={150} src={prodImage ? URL.createObjectURL(prodImage) : ''} alt="product" />
+                        ) : (
+                           <Typography
+                              px={1} py={0.4}
+                              sx={{
+                                 border: '1px solid #1769aa',
+                                 color: '#1769aa',
+                                 borderRadius: '4px ',
+                                 cursor: 'pointer'
+                              }}
+                           >
+                              Add Product Image
+                           </Typography>
+                        )}
+                     </label>
+                     <TextField
+                        id="upload-image"
+                        type="file"
+                        style={{ display: "none" }}
+                        onInput={(e: any) => setProdImage(e.target.files[0])}
+                     />
+                  </Box>
+                  {prodImage && <Button onClick={() => setProdImage(null)}>clear</Button>}
                </Stack>
                <Box>
                   <Stack direction="row" spacing="auto" pb={1} sx={{ alignItems: 'center' }}>
@@ -247,7 +262,7 @@ const ProductInputForm = () => {
                               />
                            </Stack>
                            <Typography height={60} variant="h6" component="div" className="btn" >»</Typography>
-                           {/* <Typography variant="h6" sx={{ transform: 'rotate(90deg)' }} component="div" className="btn">»</Typography> */}
+                           {/* <Typography variant="h6" sx={{ transform: 'rotate(90deg)' }} component="Box" className="btn">»</Typography> */}
                            <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
                               <TextField label="Profit Percentage" size="small" fullWidth type="number"
                                  helperText="*helper text"

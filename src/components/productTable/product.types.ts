@@ -10,6 +10,7 @@ export interface ProdDetailsProps {
    profitAmount: number;
    profitPercentage: number;
    // createdAt: string;
+   prodImg: string;
 
    rowBgColor: string;
    shopUrlName: string;
@@ -27,6 +28,7 @@ interface ProdDetails {
    profitAmount: number;
    profitPercentage: number;
    // createdAt: string;
+   imageUrl: string;
 };
 
 export type ProdDetailsTypes = {

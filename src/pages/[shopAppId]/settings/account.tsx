@@ -6,10 +6,11 @@ import SettingsPage_layout from "../../../layouts/SettingsPage.layout";
 import { useRouter } from "next/router";
 import { selectShopDetails } from "../../../redux/slices/shopDetails.slice";
 import { collection, deleteDoc, doc, onSnapshot } from "firebase/firestore";
-import { database } from "../../../config/firebase.config";
+import { database, storage } from "../../../config/firebase.config";
 import { signOut as signOutProvider } from "next-auth/react";
 import { auth } from "../../../config/firebase.config";
-import { signOut as signOutAccount, deleteUser } from "firebase/auth";
+import { signOut as signOutAccount, deleteUser, User } from "firebase/auth";
+import { deleteObject, ref } from "firebase/storage";
 
 
 const Account = () => {
@@ -20,20 +21,21 @@ const Account = () => {
    const shopDetails = useAppSelector(selectShopDetails);
    // console.log(shopDetails);
 
-   const user = auth.currentUser;
-   // console.log(user);
-
+   const [user, setUser] = useState<User | null>();
    const [prodIds, setProdIds] = useState([] as string[]);
    // (prodIds.length > 0) && console.log('prod:', prodIds);
 
 
-   function deleteProds() {
+   function deleteProducts() {
       return new Promise(resolve => {
          prodIds.forEach(id => {
             // console.log(id);
-            deleteDoc(doc(database, "shops", shopDetails.urlName, "products", id)).then(() => {
-               // console.log('Deleted');
-               resolve(null);
+            const imageRef = ref(storage, `/product-images/${shopDetails.urlName}/PRODUCT_IMG:${id}`);
+            deleteObject(imageRef).then(() => {
+               deleteDoc(doc(database, "shops", shopDetails.urlName, "products", id)).then(() => {
+                  // console.log('Deleted');
+                  resolve(null);
+               });
             });
          });
       });
@@ -45,16 +47,13 @@ const Account = () => {
       if (confirmShopUrlName === shopAppId) {
          if (prodIds.length > 0) {
             // #if product exist
-            await deleteProds().then(() => {
+            await deleteProducts().then(() => {
                deleteDoc(doc(database, "shops", shopDetails.urlName)).then(() => {
                   // console.log('done with delete');
 
-                  signOutAccount(auth).then(() => {
+                  deleteUser(user!).then(() => {
                      signOutProvider({ redirect: false }).then(() => {
-                        deleteUser(user!).then(() => {
-                           // User deleted.
-                           router.push('/');
-                        });
+                        router.push('/');
                      });
                   });
                });
@@ -64,12 +63,9 @@ const Account = () => {
             await deleteDoc(doc(database, "shops", shopDetails.urlName)).then(() => {
                // console.log('done without delete');
 
-               signOutAccount(auth).then(() => {
+               deleteUser(user!).then(() => {
                   signOutProvider({ redirect: false }).then(() => {
-                     deleteUser(user!).then(() => {
-                        // User deleted.
-                        router.push('/');
-                     });
+                     router.push('/');
                   });
                });
             });
@@ -90,6 +86,10 @@ const Account = () => {
          setProdIds(arr);
       });
    }, [database, shopDetails.urlName]);
+
+   useEffect(() => auth.onAuthStateChanged(user => {
+      setUser(user);
+   }));
 
    useEffect(() => {
       dispatch(setAppPageId('account_page'));

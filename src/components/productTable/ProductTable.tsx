@@ -19,12 +19,13 @@ import {
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { collection, deleteDoc, doc, DocumentData, onSnapshot, orderBy, query } from 'firebase/firestore';
-import { database } from '../../config/firebase.config';
+import { database, storage } from '../../config/firebase.config';
 import { useEffect, useState } from 'react';
 import { useAppSelector } from '../../redux/hooks';
 import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditModal_productTable from './EditModal.productTable';
+import { getStorage, ref, deleteObject } from "firebase/storage";
 
 
 const Row = ({ rowBgColor, shopUrlName, prodId, prodCodeName, prodName, prodCategory, prodBrand, prodImg, quantity, getPrice, sellPrice, profitAmount, profitPercentage }: ProdDetailsProps) => {
@@ -56,7 +57,13 @@ const Row = ({ rowBgColor, shopUrlName, prodId, prodCodeName, prodName, prodCate
 
 
    const handleProdRemove = async () => {
-      await deleteDoc(doc(database, "shops", shopUrlName, "products", prodId));
+      const imageRef = ref(storage, `/product-images/${shopUrlName}/PRODUCT_IMG:${prodId}`);
+      await deleteObject(imageRef).then(() => {
+         deleteDoc(doc(database, "shops", shopUrlName, "products", prodId));
+         // File deleted successfully
+      }).catch((error) => {
+         // Uh-oh, an error occurred!
+      });
    };
 
 
@@ -120,7 +127,6 @@ const Row = ({ rowBgColor, shopUrlName, prodId, prodCodeName, prodName, prodCate
                                     prodId={prodId}
                                     prodCodeName={prodCodeName}
                                     prodName={prodName}
-                                    // prodImg={'https://images.unsplash.com/photo-1648993219624-2d3535fc6443?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTA2ODE2Nw&ixlib=rb-1.2.1&q=80&w=1080'}
                                     prodBrand={prodBrand}
                                     prodCategory={prodCategory}
                                     quantity={quantity}
@@ -191,7 +197,7 @@ const ProductTable = () => {
                      prodId={prod.id}
                      prodCodeName={prod.data().codeName}
                      prodName={prod.data().name}
-                     prodImg={'https://images.unsplash.com/photo-1648993219624-2d3535fc6443?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTA2ODE2Nw&ixlib=rb-1.2.1&q=80&w=1080'}
+                     prodImg={prod.data().imageUrl}
                      prodBrand={prod.data().brand}
                      prodCategory={prod.data().category}
                      quantity={prod.data().quantity}

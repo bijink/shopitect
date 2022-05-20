@@ -19,7 +19,7 @@ interface ProdDetails {
    name: string;
    brand: string;
    category: string;
-   prodImg: string;
+   imageUrl: string;
    quantity: number;
    getPrice: number;
    sellPrice: number;

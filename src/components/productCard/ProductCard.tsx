@@ -21,7 +21,7 @@ const Cards = ({ shopUrlName, prodId, prodName, prodCategory, prodBrand, prodImg
    return (
       <Box p={1.5} onClick={() => {
          router.push({
-            pathname: `/${shopUrlName}/product`,
+            pathname: `/${shopUrlName}/product%view`,
             query: { id: prodId },
          });
       }}>
@@ -92,7 +92,8 @@ const ProductCard = () => {
                // prodDetails={prod.data()}
                prodId={prod.id}
                prodName={prod.data().name}
-               prodImg={'https://images.unsplash.com/photo-1648993219624-2d3535fc6443?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTA2ODE2Nw&ixlib=rb-1.2.1&q=80&w=1080'}
+               prodImg={prod.data().imageUrl}
+               // prodImg={'https://images.unsplash.com/photo-1648993219624-2d3535fc6443?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTA2ODE2Nw&ixlib=rb-1.2.1&q=80&w=1080'}
                prodBrand={prod.data().brand}
                prodCategory={prod.data().category}
                quantity={prod.data().quantity}

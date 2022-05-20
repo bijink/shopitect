@@ -4,7 +4,7 @@ import type { GoogleProviderTypes } from "../types/pages/googleProvider.types";
 
 import Head from 'next/head';
 import { Box, Button, Stack, Typography } from '@mui/material';
-import { getProviders, signIn as signInProvider } from "next-auth/react";
+import { getProviders, signIn as signInProvider, useSession } from "next-auth/react";
 import { auth } from '../config/firebase.config';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -15,6 +15,10 @@ import { useAppDispatch } from '../redux/hooks';
 
 const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
    const router = useRouter();
+
+   // const { data: session } = useSession();
+   // console.log(session);
+   // console.log(auth.currentUser);
 
    const dispatch = useAppDispatch();
 

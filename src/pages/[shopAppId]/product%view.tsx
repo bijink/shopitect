@@ -68,8 +68,8 @@ const Product: NextPage = () => {
                         <CardMedia
                            component="img"
                            height="140"
-                           image='https://images.unsplash.com/photo-1648993219624-2d3535fc6443?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTA2ODE2Nw&ixlib=rb-1.2.1&q=80&w=1080'
-                           // image={prodDetails.prodImg}
+                           // image='https://images.unsplash.com/photo-1648993219624-2d3535fc6443?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTA2ODE2Nw&ixlib=rb-1.2.1&q=80&w=1080'
+                           image={prodDetails.imageUrl}
                            alt={prodDetails.name}
                         />
                         <CardContent>
@@ -95,8 +95,8 @@ const Product: NextPage = () => {
                         <CardMedia
                            component="img"
                            height="140"
-                           image='https://images.unsplash.com/photo-1648993219624-2d3535fc6443?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTA2ODE2Nw&ixlib=rb-1.2.1&q=80&w=1080'
-                           // image={prodDetails.prodImg}
+                           // image='https://images.unsplash.com/photo-1648993219624-2d3535fc6443?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTA2ODE2Nw&ixlib=rb-1.2.1&q=80&w=1080'
+                           image={prodDetails.imageUrl}
                            alt={prodDetails.name}
                         />
                         <CardContent>
