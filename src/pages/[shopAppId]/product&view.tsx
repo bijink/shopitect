@@ -17,7 +17,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { selectShopDetails, setAppShopDetailsAsync } from "../../redux/slices/shopDetails.slice";
 import { setAppPageId } from "../../redux/slices/pageId.slice";
 import Public_layout from "../../layouts/Public.layout";
-import useIsAdmin from "../../hooks/useIsAdmin";
+import useHasAdmin from "../../hooks/useHasAdmin";
 import ShopAdmin_layout from "../../layouts/ShopAdmin.layout";
 
 
@@ -27,7 +27,7 @@ const Product: NextPage = () => {
 
    const dispatch = useAppDispatch();
    const shopDetails = useAppSelector(selectShopDetails);
-   const isAdmin = useIsAdmin(shopAppId);
+   const hasAdmin = useHasAdmin(shopAppId);
 
 
    // const [prodDetails, setProdDetails] = useState<DocumentData>([]);
@@ -40,16 +40,16 @@ const Product: NextPage = () => {
    }, [shopAppId]);
 
    useEffect(() => {
-      if (productId && shopDetails.urlName) {
+      if (productId && shopDetails) {
          getDoc(doc(database, 'shops', shopDetails.urlName, 'products', productId.toString())).then((snap) => {
             // console.log(snap.data());
             setProdDetails(snap.data());
          });
       }
-   }, [productId, shopDetails.urlName]);
+   }, [productId, shopDetails]);
 
    useEffect(() => {
-      dispatch(setAppPageId('product_page'));
+      dispatch(setAppPageId('productView_page'));
    }, []);
 
 
@@ -60,7 +60,7 @@ const Product: NextPage = () => {
             <meta name="description" content="" />
          </Head>
 
-         {isAdmin ? (
+         {hasAdmin ? (
             <ShopAdmin_layout>
                <Box p={1.5} >
                   <Card sx={{ width: '70vw', height: '70vh' }}>

@@ -5,13 +5,13 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectShopDetails, setAppShopDetailsAsync } from "../redux/slices/shopDetails.slice";
 import { User } from "firebase/auth";
 
-const useIsAdmin = (shopAppId: string | string[] | undefined) => {
+const useHasAdmin = (shopAppId: string | string[] | undefined) => {
    const router = useRouter();
    // const user = auth.currentUser;
    const dispatch = useAppDispatch();
    const shopDetails = useAppSelector(selectShopDetails);
 
-   const [isAdmin, setIsAdmin] = useState(false);
+   const [hasAdmin, setHasAdmin] = useState(false);
    const [user, setUser] = useState<User | null>();
 
 
@@ -26,18 +26,18 @@ const useIsAdmin = (shopAppId: string | string[] | undefined) => {
    useEffect(() => {
       if (shopAppId && shopDetails && user) {
          if (user.uid === shopDetails.accountID) {
-            setIsAdmin(true);
+            setHasAdmin(true);
          } else {
-            setIsAdmin(false);
+            setHasAdmin(false);
             // router.push(`/${shopAppId}`);
          }
       } else if (shopAppId && !user) {
-         setIsAdmin(false);
+         setHasAdmin(false);
          // router.push(`/${shopAppId}`);
       }
    }, [shopDetails, user]);
 
-   return isAdmin;
+   return hasAdmin;
 };
 
-export default useIsAdmin;
+export default useHasAdmin;

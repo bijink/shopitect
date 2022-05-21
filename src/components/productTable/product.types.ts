@@ -1,15 +1,17 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface ProdDetailsProps {
    prodName: string;
    prodCodeName: string;
    prodBrand: string;
    prodCategory: string;
-   prodImg: string;
    quantity: number;
    getPrice: number;
    sellPrice: number;
    profitAmount: number;
    profitPercentage: number;
-   // createdAt: string;
+   createdAt: Timestamp;
+   // createdAt: Date;
    prodImg: string;
 
    rowBgColor: string;
@@ -27,7 +29,8 @@ interface ProdDetails {
    sellPrice: number;
    profitAmount: number;
    profitPercentage: number;
-   // createdAt: string;
+   createdAt: Timestamp;
+   // createdAt: Date;
    imageUrl: string;
 };
 
@@ -41,7 +44,6 @@ export interface ProdDetailsModalTypes {
    prodCodeName: string;
    prodBrand: string;
    prodCategory: string;
-   // prodImg: string;
    quantity: number;
    getPrice: number;
    sellPrice: number;

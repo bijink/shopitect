@@ -47,7 +47,7 @@ const SignupConfirm = () => {
             });
          } else {
             // #if there is no existing account 
-            router.push('/create-app');
+            router.push('/create&app');
          }
       });
    }, [session]);

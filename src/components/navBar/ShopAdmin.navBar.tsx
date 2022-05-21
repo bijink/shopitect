@@ -32,7 +32,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import { selectPageId } from '../../redux/slices/pageId.slice';
-import useIsAdmin from '../../hooks/useIsAdmin';
+import useHasAdmin from '../../hooks/useHasAdmin';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -93,7 +93,7 @@ export default function ShopAdmin_navBar() {
    // console.log(shopDetails.createdAt.toDate());
    const pageId = useAppSelector(selectPageId);
 
-   const isAdmin = useIsAdmin(shopAppId);
+   const hasAdmin = useHasAdmin(shopAppId);
 
    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -246,7 +246,7 @@ export default function ShopAdmin_navBar() {
                )}
                <Box sx={{ flexGrow: 1 }} />
                <Box>
-                  {isAdmin ? (
+                  {hasAdmin ? (
                      <>
                         <Box sx={{ display: { xs: 'none', md: 'flex' } }} justifyContent="center" alignItems="center" >
                            {!(pageId === 'dashboard_page') && (
@@ -321,7 +321,7 @@ export default function ShopAdmin_navBar() {
                         aria-label="information about the shop"
                         color="inherit"
                         onClick={() => {
-                           router.push(`/${shopDetails.urlName}/info/about`);
+                           router.push(`/${shopDetails?.urlName}/info/about`);
                         }}
                      >
                         <InfoIcon />

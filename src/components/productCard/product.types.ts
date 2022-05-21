@@ -1,7 +1,7 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface ProdDetailsProps {
    shopUrlName: string,
-   // id: "CgSFEnzLpFNsGtQBHMom";
-   // product: {
    prodName: string;
    prodBrand: string;
    prodCategory: string;
@@ -10,12 +10,10 @@ export interface ProdDetailsProps {
    getPrice: number;
    sellPrice: number;
    prodId: string;
-   // };
+   createdAt: Timestamp;
 };
 interface ProdDetails {
    shopUrlName: string,
-   // id: "CgSFEnzLpFNsGtQBHMom";
-   // product: {
    name: string;
    brand: string;
    category: string;
@@ -24,7 +22,7 @@ interface ProdDetails {
    getPrice: number;
    sellPrice: number;
    prodId: string;
-   // };
+   createdAt: Timestamp;
 };
 
 export type ProdDetailsTypes = {

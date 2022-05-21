@@ -30,9 +30,9 @@ const Account = () => {
       return new Promise(resolve => {
          prodIds.forEach(id => {
             // console.log(id);
-            const imageRef = ref(storage, `/product-images/${shopDetails.urlName}/PRODUCT_IMG:${id}`);
+            const imageRef = ref(storage, `/product-images/${shopDetails?.urlName}/PRODUCT_IMG:${id}`);
             deleteObject(imageRef).then(() => {
-               deleteDoc(doc(database, "shops", shopDetails.urlName, "products", id)).then(() => {
+               deleteDoc(doc(database, "shops", shopDetails?.urlName, "products", id)).then(() => {
                   // console.log('Deleted');
                   resolve(null);
                });
@@ -48,7 +48,7 @@ const Account = () => {
          if (prodIds.length > 0) {
             // #if product exist
             await deleteProducts().then(() => {
-               deleteDoc(doc(database, "shops", shopDetails.urlName)).then(() => {
+               deleteDoc(doc(database, "shops", shopDetails?.urlName)).then(() => {
                   // console.log('done with delete');
 
                   deleteUser(user!).then(() => {
@@ -60,7 +60,7 @@ const Account = () => {
             });
          } else {
             // #if there is no product exist
-            await deleteDoc(doc(database, "shops", shopDetails.urlName)).then(() => {
+            await deleteDoc(doc(database, "shops", shopDetails?.urlName)).then(() => {
                // console.log('done without delete');
 
                deleteUser(user!).then(() => {
@@ -77,7 +77,7 @@ const Account = () => {
 
 
    useEffect(() => {
-      (shopDetails.urlName) && onSnapshot(collection(database, 'shops', shopDetails.urlName, 'products'), (snapshot) => {
+      shopDetails && onSnapshot(collection(database, 'shops', shopDetails?.urlName, 'products'), (snapshot) => {
          const arr: Array<string> = [];
          snapshot.forEach(obj => {
             arr.push(obj.id);
@@ -85,7 +85,7 @@ const Account = () => {
          // console.log(arr);
          setProdIds(arr);
       });
-   }, [database, shopDetails.urlName]);
+   }, [database, shopDetails]);
 
    useEffect(() => auth.onAuthStateChanged(user => {
       setUser(user);

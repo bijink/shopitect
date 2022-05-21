@@ -1,45 +1,41 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import { fetchShopDetails } from '../../pages/api/shopDetailsAPI';
+import { collection, DocumentData, onSnapshot, query, where } from "firebase/firestore";
+import { database } from "../../config/firebase.config";
 
 
-export interface shopDeatilsState {
-   // value: {
-   //    address: string,
-   //    providerID: string,
-   //    accountID: string,
-   //    category: string,
-   //    email: string,
-   //    name: string,
-   //    ownerName: string,
-   //    urlName: string,
-   //    createdAt: {
-   //       nanoseconds: number,
-   //       seconds: number,
-   //    };
-   // };
-   value: any;
+interface shopDeatilsState {
+   value: {
+      address: string,
+      providerID: string,
+      accountID: string,
+      category: string,
+      email: string,
+      name: string,
+      ownerName: string,
+      urlName: string,
+      createdAt: {
+         nanoseconds: number,
+         seconds: number,
+      };
+   } | DocumentData | null;
    status: 'idle' | 'loading' | 'failed';
 }
 
 
+function fetchShopDetails(shopAppId: string | string[] | undefined) {
+   return new Promise<DocumentData>((resolve) => {
+      onSnapshot(query(collection(database, 'shops'), where('urlName', '==', shopAppId)), (snapshot) => {
+         snapshot.forEach(obj => {
+            resolve(obj.data());
+         });
+      });
+   });
+}
+
 
 const initialState: shopDeatilsState = {
-   value: {
-      address: '',
-      providerID: '',
-      accountID: '',
-      category: '',
-      email: '',
-      name: '',
-      ownerName: '',
-      urlName: '',
-      createdAt: {
-         nanoseconds: 0,
-         seconds: 0,
-      },
-   },
-   // value:{},
+   value: null,
    status: 'idle',
 };
 

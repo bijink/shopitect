@@ -22,7 +22,8 @@ const useSecurePage = (shopAppId: string | string[] | undefined) => {
    }, [shopAppId]);
 
    useEffect(() => {
-      if (shopAppId && (shopDetails.accountID !== '') && user) {
+      // if (shopAppId && (shopDetails.accountID !== '') && user) {
+      if (shopAppId && shopDetails && user) {
          // if (shopDetails.accountID && user.uid) {
          if (user.uid === shopDetails.accountID) {
             setSecure('safe');

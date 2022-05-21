@@ -15,6 +15,7 @@ import {
    TableCell,
    tableCellClasses,
    Tooltip,
+   capitalize,
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -25,34 +26,20 @@ import { useAppSelector } from '../../redux/hooks';
 import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditModal_productTable from './EditModal.productTable';
-import { getStorage, ref, deleteObject } from "firebase/storage";
+import { ref, deleteObject } from "firebase/storage";
 
 
-const Row = ({ rowBgColor, shopUrlName, prodId, prodCodeName, prodName, prodCategory, prodBrand, prodImg, quantity, getPrice, sellPrice, profitAmount, profitPercentage }: ProdDetailsProps) => {
+const Row = ({ rowBgColor, shopUrlName, prodId, prodCodeName, prodName, prodCategory, prodBrand, prodImg, quantity, getPrice, sellPrice, profitAmount, profitPercentage, createdAt }: ProdDetailsProps) => {
    const [open, setOpen] = useState(false);
 
 
    const moreDetails = [
-      {
-         title: 'Quantity',
-         value: quantity,
-      },
-      {
-         title: 'Brand',
-         value: prodBrand,
-      },
-      {
-         title: 'Get Price (Rs)',
-         value: getPrice,
-      },
-      {
-         title: 'Profit Percentage (%)',
-         value: profitPercentage + ' %',
-      },
-      {
-         title: 'Profit Amount (Rs)',
-         value: profitAmount,
-      },
+      { title: 'Get Price (Rs)', value: getPrice },
+      { title: 'Profit Percentage (%)', value: profitPercentage + ' %' },
+      { title: 'Profit Amount (Rs)', value: profitAmount },
+      { title: 'Quantity', value: quantity },
+      { title: 'Brand', value: capitalize(prodBrand) },
+      { title: 'Created At', value: createdAt.toDate().toUTCString().slice(0, 22) },
    ];
 
 
@@ -70,12 +57,12 @@ const Row = ({ rowBgColor, shopUrlName, prodId, prodCodeName, prodName, prodCate
    return (
       <>
          <TableRow sx={{ '& > *': { backgroundColor: rowBgColor, borderBottom: 'unset', borderTop: '1.05px solid gray' } }} >
-            <TableCell component="th" scope="row" align="left" sx={{ fontWeight: 'bold' }} >{prodCodeName}</TableCell>
-            <TableCell component="th" scope="row" align="left" sx={{ fontWeight: '500' }} >{prodName}</TableCell>
+            <TableCell component="th" scope="row" align="left" sx={{ fontWeight: 'bold' }} >{capitalize(prodCodeName)}</TableCell>
+            <TableCell component="th" scope="row" align="left" sx={{ fontWeight: '500' }} >{capitalize(prodName)}</TableCell>
             <TableCell>
-               <Avatar alt="product" src={prodImg} variant="rounded" />
+               <Avatar src={prodImg} alt={capitalize(prodName)} variant="rounded" />
             </TableCell>
-            <TableCell align="left" >{prodCategory}</TableCell>
+            <TableCell align="left" >{capitalize(prodCategory)}</TableCell>
             <TableCell align="right" sx={{ fontWeight: 'bold' }} >{sellPrice}</TableCell>
             <TableCell align="center">
                <IconButton
@@ -161,17 +148,16 @@ const Row = ({ rowBgColor, shopUrlName, prodId, prodCodeName, prodName, prodCate
 
 const ProductTable = () => {
    const shopDetails = useAppSelector(selectShopDetails);
+   // console.log(shopDetails);
 
    const [prodDetails, setProdDetails] = useState<DocumentData>([]);
 
 
    useEffect(() => {
-      (shopDetails.urlName) && (
-         onSnapshot(query(collection(database, 'shops', shopDetails.urlName, 'products'), orderBy('codeName')), (snapshot) => {
-            setProdDetails(snapshot.docs);
-         })
-      );
-   }, [database, shopDetails.urlName]);
+      onSnapshot(query(collection(database, 'shops', shopDetails?.urlName, 'products'), orderBy('codeName')), (snapshot) => {
+         setProdDetails(snapshot.docs);
+      });
+   }, [database, shopDetails]);
 
 
    return (
@@ -193,7 +179,8 @@ const ProductTable = () => {
                      key={index}
                      rowBgColor={index % 2 === 0 ? '#f5f5f5' : '#e0e0e0'}
 
-                     shopUrlName={shopDetails.urlName}
+                     shopUrlName={shopDetails?.urlName}
+
                      prodId={prod.id}
                      prodCodeName={prod.data().codeName}
                      prodName={prod.data().name}
@@ -205,6 +192,7 @@ const ProductTable = () => {
                      sellPrice={prod.data().sellPrice}
                      profitAmount={prod.data().profitAmount}
                      profitPercentage={prod.data().profitPercentage}
+                     createdAt={prod.data().createdAt}
                   />
                ))}
             </TableBody>

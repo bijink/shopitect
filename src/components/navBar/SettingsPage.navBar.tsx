@@ -22,12 +22,10 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import { useRouter } from 'next/router';
 import { auth, database } from '../../config/firebase.config';
 import { collection, DocumentData, onSnapshot, query, where } from 'firebase/firestore';
-// import { signOut } from 'firebase/auth';
 import { useAppSelector } from '../../redux/hooks';
 import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
 import { getSession, signIn as signInProvider, signOut as signOutProvider, useSession } from 'next-auth/react';
 import { signOut as signOutAccount } from 'firebase/auth';
-import useSecurePage from '../../hooks/useSecurePage';
 import InfoIcon from '@mui/icons-material/Info';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
@@ -92,8 +90,6 @@ export default function SettingsPage_navBar() {
    // console.log(shopDetails.createdAt.toDate());
    const pageId = useAppSelector(selectPageId);
 
-   const isAdmin = useSecurePage(shopAppId);
-
    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
    // const [shopDetails, setShopDetails] = React.useState<DocumentData>([]);
@@ -142,7 +138,7 @@ export default function SettingsPage_navBar() {
             <MenuItem onClick={(e: any) => {
                e.preventDefault();
                signOutAccount(auth).then(() => {
-                  signOutProvider({ redirect: false, callbackUrl: `/${shopDetails.urlName}` });
+                  signOutProvider({ redirect: false, callbackUrl: `/${shopDetails?.urlName}` });
                });
                handleMenuClose();
             }}>Sign Out</MenuItem>

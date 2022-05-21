@@ -121,7 +121,7 @@ export default function Public_navBar() {
                   aria-label="information about the shop"
                   color="inherit"
                   onClick={() => {
-                     router.push(`/${shopDetails.urlName}/info/about`);
+                     router.push(`/${shopDetails?.urlName}/info/about`);
                   }}
                >
                   <InfoIcon />

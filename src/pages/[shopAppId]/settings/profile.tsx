@@ -28,7 +28,7 @@ const Profile = () => {
       e.preventDefault();
       setLoading(true);
 
-      await updateDoc(doc(database, "shops", shopDetails.urlName), {
+      await updateDoc(doc(database, "shops", shopDetails?.urlName), {
          name: shopName,
          // urlName: shopUrlName,
          category: shopCategory,

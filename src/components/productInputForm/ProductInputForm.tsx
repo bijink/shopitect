@@ -6,18 +6,19 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import { database, storage } from "../../config/firebase.config";
-import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, serverTimestamp, updateDoc } from "firebase/firestore";
 import LoadingButton from '@mui/lab/LoadingButton';
 import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
 import { useAppSelector } from "../../redux/hooks";
 import { selectShopDetails } from "../../redux/slices/shopDetails.slice";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import amountCalculate from "../../utility/amountCalculate";
 
 
 const ProductInputForm = () => {
-   const shopDetails = useAppSelector(selectShopDetails);
-
    const inputFocusRef = useRef<any>(null);
+
+   const shopDetails = useAppSelector(selectShopDetails);
 
    const [prodName, setProdName] = useState('');
    const [prodCodeName, setProdCodeName] = useState('');
@@ -33,93 +34,80 @@ const ProductInputForm = () => {
 
    const [calcMethod, setCalcMethod] = useState('method-1');
    const [loading, setLoading] = useState(false);
+   const [calcuInputDisabled, setCalcuInputDisabled] = useState(false);
 
 
    const calculate = () => {
-      // * (getPrice, sellPrice) => (profitAmount, profitPercentage)
       if (calcMethod === 'method-1') {
-         if (((getPriceInput && sellPriceInput) !== '') && ((getPriceInput) !== '0')) {
-            let getPrice = parseFloat(getPriceInput);
-            let sellPrice = parseFloat(sellPriceInput);
-
-            // * (getPrice, sellPrice) => profitAmount
-            let profitAmountCalc = sellPrice - getPrice;
-            setProfitAmountInput(profitAmountCalc.toFixed(2));
-
-            // * (getPrice, sellPrice) => profitPercentage
-            let profitPercentageCalc = profitAmountCalc / (getPrice / 100);
-            setProfitPercentageInput(profitPercentageCalc.toFixed(2));
-         }
+         // #(getPrice, sellPrice) =>> (profitAmount, profitPercentage)
+         const [profitAmount, profitPercentage] = amountCalculate(calcMethod, getPriceInput, sellPriceInput);
+         setProfitAmountInput(profitAmount);
+         setProfitPercentageInput(profitPercentage);
+      } else if (calcMethod === 'method-2') {
+         // #(getPrice, profitPercentage)  =>> (profitAmount, sellPrice)
+         const [profitAmount, sellPrice] = amountCalculate(calcMethod, getPriceInput, profitPercentageInput);
+         setProfitAmountInput(profitAmount);
+         setSellPriceInput(sellPrice);
+      } else if (calcMethod === 'method-3') {
+         // #(getPrice, profitAmount) =>> (sellPrice, profitPercentage)
+         const [sellPrice, profitPercentage] = amountCalculate(calcMethod, getPriceInput, profitAmountInput);
+         setSellPriceInput(sellPrice);
+         setProfitPercentageInput(profitPercentage);
       }
-      // * (getPrice, profitPercentage) => (profitAmount, sellPrice)
-      if (calcMethod === 'method-2') {
-         if (((getPriceInput && profitPercentageInput) !== '') && ((getPriceInput) !== '0')) {
-            let getPrice = parseFloat(getPriceInput);
-            let profitPercentage = parseFloat(profitPercentageInput);
+   };
 
-            // * (getPrice, profitPercentage) => profitAmount
-            let profitAmountCalc = (getPrice / 100) * profitPercentage;
-            setProfitAmountInput(profitAmountCalc.toFixed(2));
+   const calculateReset = () => {
+      setCalcuInputDisabled(false);
 
-            // * (getPrice, profitPercentage) => sellPrice
-            let sellPriceCalc = profitAmountCalc + getPrice;
-            setSellPriceInput(sellPriceCalc.toFixed(2));
-         }
-      }
-      // * (getPrice, profitAmount) => (sellPrice, profitPercentage)
-      if (calcMethod === 'method-3') {
-         if (((getPriceInput && profitAmountInput) !== '') && ((getPriceInput) !== '0')) {
-            let getPrice = parseFloat(getPriceInput);
-            let profitAmount = parseFloat(profitAmountInput);
-
-            // * (getPrice, profitAmount) => sellPrice
-            let sellPriceCalc = getPrice + profitAmount;
-            setSellPriceInput(sellPriceCalc.toFixed(2));
-
-            // * (getPrice, profitAmount) => profitPercentage
-            let profitPercentageCalc = ((sellPriceCalc - getPrice) / (getPrice / 100));
-            setProfitPercentageInput(profitPercentageCalc.toFixed(2));
-         }
-      }
+      setGetPriceInput('');
+      setSellPriceInput('');
+      setProfitAmountInput('');
+      setProfitPercentageInput('');
    };
 
    const handleFormSubmit = (e: any) => {
       e.preventDefault();
       setLoading(true);
 
-      addDoc(collection(database, 'shops', shopDetails.urlName, 'products'), {
-         name: prodName,
-         codeName: prodCodeName,
-         category: prodCategory,
-         brand: prodBrand,
-         quantity: parseFloat(quantity),
-         getPrice: (getPriceInput === '') ? getPriceInput : parseFloat(getPriceInput),
-         sellPrice: (sellPriceInput === '') ? sellPriceInput : parseFloat(sellPriceInput),
-         profitAmount: (profitAmountInput === '') ? profitAmountInput : parseFloat(profitAmountInput),
-         profitPercentage: (profitPercentageInput === '') ? profitPercentageInput : parseFloat(profitPercentageInput),
-      }).then((res) => {
-         const imageRef = ref(storage, `/product-images/${shopDetails.urlName}/PRODUCT_IMG:${res.id}`);
-         uploadBytes(imageRef, prodImage!).then(() => {
-            getDownloadURL(imageRef).then(url => {
-               updateDoc(doc(database, 'shops', shopDetails.urlName, 'products', res.id), {
-                  imageUrl: url,
-               }).then(() => {
-                  setProdName('');
-                  setProdCodeName('');
-                  setProdCategory('');
-                  setProdBrand('');
-                  setQuantity('');
-                  setGetPriceInput('');
-                  setSellPriceInput('');
-                  setProfitAmountInput('');
-                  setProfitPercentageInput('');
-                  setProdImage(null);
-               }).then(() => {
-                  setLoading(false);
+      if (prodImage) {
+         addDoc(collection(database, 'shops', shopDetails?.urlName, 'products'), {
+            name: prodName,
+            codeName: prodCodeName,
+            category: prodCategory,
+            brand: prodBrand,
+            quantity: parseFloat(quantity),
+            getPrice: parseFloat(getPriceInput),
+            sellPrice: parseFloat(sellPriceInput),
+            profitAmount: parseFloat(profitAmountInput),
+            profitPercentage: parseFloat(profitPercentageInput),
+            createdAt: serverTimestamp(),
+         }).then((res) => {
+            const imageRef = ref(storage, `/product-images/${shopDetails?.urlName}/PRODUCT_IMG:${res.id}`);
+            uploadBytes(imageRef, prodImage!).then(() => {
+               getDownloadURL(imageRef).then(url => {
+                  updateDoc(doc(database, 'shops', shopDetails?.urlName, 'products', res.id), {
+                     imageUrl: url,
+                  }).then(() => {
+                     setProdName('');
+                     setProdCodeName('');
+                     setProdCategory('');
+                     setProdBrand('');
+                     setQuantity('');
+                     setGetPriceInput('');
+                     setSellPriceInput('');
+                     setProfitAmountInput('');
+                     setProfitPercentageInput('');
+                     setProdImage(null);
+                  }).then(() => {
+                     setLoading(false);
+                  });
                });
             });
          });
-      });
+      } else {
+         setLoading(false);
+         alert('Image is not added. Please add Image.');
+      }
    };
 
    const handleFormReset = () => {
@@ -138,6 +126,12 @@ const ProductInputForm = () => {
       setProdImage(null);
    };
 
+
+   useEffect(() => {
+      if ((getPriceInput !== '') && (sellPriceInput !== '') && (profitAmountInput !== '') && (profitPercentageInput !== '')) {
+         setCalcuInputDisabled(true);
+      }
+   }, [getPriceInput, sellPriceInput, profitAmountInput, profitPercentageInput]);
 
    useEffect(() => {
       inputFocusRef.current.focus();
@@ -240,7 +234,10 @@ const ProductInputForm = () => {
                            <FormControlLabel value="method-3" control={<Radio />} label="Method 3" />
                         </RadioGroup>
                      </FormControl>
-                     <Button variant="contained" size="small" onClick={calculate}>Calculate</Button>
+                     <Stack direction="row" spacing={2} >
+                        <Button variant="contained" size="small" color="error" onClick={calculateReset}>Reset</Button>
+                        <Button variant="contained" size="small" onClick={calculate}>Calculate</Button>
+                     </Stack>
                   </Stack>
                   <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ alignItems: 'center' }} spacing={1} >
                      {(calcMethod == 'method-1') &&
@@ -251,6 +248,7 @@ const ProductInputForm = () => {
                                  InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment> }}
                                  value={getPriceInput}
                                  onInput={(e: ChangeEvent<HTMLInputElement>) => setGetPriceInput(e.target.value)}
+                                 disabled={calcuInputDisabled}
                                  required
                               />
                               <TextField label="Sell Price" size="small" fullWidth type="number"
@@ -258,6 +256,7 @@ const ProductInputForm = () => {
                                  InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment> }}
                                  value={sellPriceInput}
                                  onInput={(e: ChangeEvent<HTMLInputElement>) => setSellPriceInput(e.target.value)}
+                                 disabled={calcuInputDisabled}
                                  required
                               />
                            </Stack>
@@ -266,19 +265,22 @@ const ProductInputForm = () => {
                            <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
                               <TextField label="Profit Percentage" size="small" fullWidth type="number"
                                  helperText="*helper text"
-                                 InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment>, readOnly: true }}
+                                 InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
                                  value={profitPercentageInput}
-                                 disabled
+                                 color="warning"
+                                 disabled={calcuInputDisabled}
+                                 required
                               />
                               <TextField label="Profit Amount" size="small" fullWidth type="number"
                                  helperText="*helper text"
                                  InputProps={{
                                     startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
                                     endAdornment: <InputAdornment position="end">+</InputAdornment>,
-                                    readOnly: true,
                                  }}
                                  value={profitAmountInput}
-                                 disabled
+                                 color="warning"
+                                 disabled={calcuInputDisabled}
+                                 required
                               />
                            </Stack>
                         </>}
@@ -290,6 +292,7 @@ const ProductInputForm = () => {
                                  InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment> }}
                                  value={getPriceInput}
                                  onInput={(e: ChangeEvent<HTMLInputElement>) => setGetPriceInput(e.target.value)}
+                                 disabled={calcuInputDisabled}
                                  required
                               />
                               <TextField label="Profit Percentage" size="small" fullWidth type="number"
@@ -297,6 +300,7 @@ const ProductInputForm = () => {
                                  InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
                                  value={profitPercentageInput}
                                  onInput={(e: ChangeEvent<HTMLInputElement>) => setProfitPercentageInput(e.target.value)}
+                                 disabled={calcuInputDisabled}
                                  required
                               />
                            </Stack>
@@ -304,19 +308,22 @@ const ProductInputForm = () => {
                            <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
                               <TextField label="Sell Price" size="small" fullWidth type="number"
                                  helperText="*helper text"
-                                 InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment>, readOnly: true }}
+                                 InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment> }}
                                  value={sellPriceInput}
-                                 disabled
+                                 color="warning"
+                                 disabled={calcuInputDisabled}
+                                 required
                               />
                               <TextField label="Profit Amount" size="small" fullWidth type="number"
                                  helperText="*helper text"
                                  InputProps={{
                                     startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
                                     endAdornment: <InputAdornment position="end">+</InputAdornment>,
-                                    readOnly: true
                                  }}
                                  value={profitAmountInput}
-                                 disabled
+                                 color="warning"
+                                 disabled={calcuInputDisabled}
+                                 required
                               />
                            </Stack>
                         </>}
@@ -328,6 +335,7 @@ const ProductInputForm = () => {
                                  InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment> }}
                                  value={getPriceInput}
                                  onInput={(e: ChangeEvent<HTMLInputElement>) => setGetPriceInput(e.target.value)}
+                                 disabled={calcuInputDisabled}
                                  required
                               />
                               <TextField label="Profit Amount" size="small" fullWidth type="number"
@@ -338,6 +346,7 @@ const ProductInputForm = () => {
                                  }}
                                  value={profitAmountInput}
                                  onInput={(e: ChangeEvent<HTMLInputElement>) => setProfitAmountInput(e.target.value)}
+                                 disabled={calcuInputDisabled}
                                  required
                               />
                            </Stack>
@@ -345,22 +354,23 @@ const ProductInputForm = () => {
                            <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
                               <TextField label="Sell Price" size="small" fullWidth type="number"
                                  helperText="*helper text"
-                                 InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment>, readOnly: true }}
+                                 InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment> }}
                                  value={sellPriceInput}
-                                 disabled
+                                 color="warning"
+                                 disabled={calcuInputDisabled}
+                                 required
                               />
                               <TextField label="Profit Percentage" size="small" fullWidth type="number"
                                  helperText="*helper text"
-                                 InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment>, readOnly: true }}
+                                 InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
                                  value={profitPercentageInput}
-                                 disabled
+                                 color="warning"
+                                 disabled={calcuInputDisabled}
+                                 required
                               />
                            </Stack>
                         </>}
                   </Stack>
-                  {/* {(getPriceInput !== '') &&
-               <Typography variant="subtitle2" color={checkCalc ? 'green' : 'error'}>Calculation {checkCalc ? 'Correct' : 'wrong'}</Typography>
-            } */}
                </Box>
             </Stack>
             <Stack direction={{ sm: 'column', md: 'row' }} spacing={{ sm: 1, md: 3 }} pt={4}>

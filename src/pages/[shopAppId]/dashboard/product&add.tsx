@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { selectShopDetails, setAppShopDetailsAsync } from "../../../redux/slices/shopDetails.slice";
 import useSecurePage from "../../../hooks/useSecurePage";
-import useIsAdmin from "../../../hooks/useIsAdmin";
+import useHasAdmin from "../../../hooks/useHasAdmin";
 import { setAppPageId } from "../../../redux/slices/pageId.slice";
 import ShopAdmin_layout from "../../../layouts/ShopAdmin.layout";
 
@@ -20,7 +20,7 @@ const Product_add = () => {
    const dispatch = useAppDispatch();
    const shopDetails = useAppSelector(selectShopDetails);
 
-   // const isAdmin = useIsAdmin(shopAppId);
+   // const hasAdmin = useHasAdmin(shopAppId);
    const secure = useSecurePage(shopAppId);
 
 
@@ -39,7 +39,7 @@ const Product_add = () => {
             <title>{`Product (add) · ${shopDetails?.name ? shopDetails?.name : '·'}`}</title>
          </Head>
 
-         {/* {isAdmin && ( */}
+         {/* {hasAdmin && ( */}
          {(secure === "safe") && (
             <ShopAdmin_layout>
                <>

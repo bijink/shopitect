@@ -12,7 +12,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { selectShopDetails, setAppShopDetailsAsync } from '../../redux/slices/shopDetails.slice';
 import { setAppPageId } from '../../redux/slices/pageId.slice';
 import Public_layout from '../../layouts/Public.layout';
-import useIsAdmin from '../../hooks/useIsAdmin';
+import useHasAdmin from '../../hooks/useHasAdmin';
 import ShopAdmin_layout from '../../layouts/ShopAdmin.layout';
 
 
@@ -25,7 +25,7 @@ const Shop: NextPage = () => {
    const dispatch = useAppDispatch();
    const shopDetails = useAppSelector(selectShopDetails);
    // console.log(shopDetails);
-   const isAdmin = useIsAdmin(shopAppId);
+   const hasAdmin = useHasAdmin(shopAppId);
 
    const [isShopExist, setIsShopExist] = useState(false);
 
@@ -59,7 +59,7 @@ const Shop: NextPage = () => {
 
          {isShopExist && (
             <>
-               {isAdmin ? (
+               {hasAdmin ? (
                   <ShopAdmin_layout>
                      <ProductCard />
                   </ShopAdmin_layout>
