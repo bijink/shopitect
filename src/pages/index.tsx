@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import { signOut as signOutAccount } from 'firebase/auth';
 import { setAppPageId } from '../redux/slices/pageId.slice';
 import { useAppDispatch } from '../redux/hooks';
+import useUser from '../hooks/useUser';
 
 
 const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
@@ -18,19 +19,12 @@ const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
 
    // const { data: session } = useSession();
    // console.log(session);
-   // console.log(auth.currentUser);
 
    const dispatch = useAppDispatch();
 
-   const [isUser, setIsUser] = useState(false);
+   const { status: userStatus } = useUser();
+   console.log(userStatus);
 
-
-   useEffect(() => {
-      auth.onAuthStateChanged(user => {
-         // console.log(user);
-         user ? setIsUser(true) : setIsUser(false);
-      });
-   });
 
    useEffect(() => {
       dispatch(setAppPageId('home_page'));
@@ -67,6 +61,7 @@ const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
                                  signInProvider(provider.id, { redirect: false, callbackUrl: `/auth/signup` });
                               });
                            }}
+                           disabled={(userStatus === 'loading')}
                         >
                            signup
                         </Button>
@@ -74,10 +69,11 @@ const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
                            variant='contained'
                            color="info"
                            onClick={() => {
-                              !isUser
-                                 ? signInProvider(provider.id, { redirect: false, callbackUrl: `/auth/login` })
-                                 : router.push(`/auth/login`);
+                              (userStatus === 'user')
+                                 ? router.push(`/auth/login`)
+                                 : signInProvider(provider.id, { redirect: false, callbackUrl: `/auth/login` });
                            }}
+                           disabled={(userStatus === 'loading')}
                         >
                            login
                         </Button>

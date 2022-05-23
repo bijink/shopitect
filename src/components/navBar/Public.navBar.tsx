@@ -101,7 +101,7 @@ export default function Public_navBar() {
                   sx={{ display: { xs: 'none', sm: 'block' }, cursor: 'pointer' }}
                   onClick={() => router.push(`/${shopAppId}`)}
                >
-                  {shopDetails?.name}
+                  {shopDetails?.data?.name}
                </Typography>
                <Box sx={{ flexGrow: 1 }} />
                {(pageId === 'shopHome_page') && (
@@ -121,7 +121,7 @@ export default function Public_navBar() {
                   aria-label="information about the shop"
                   color="inherit"
                   onClick={() => {
-                     router.push(`/${shopDetails?.urlName}/info/about`);
+                     router.push(`/${shopDetails?.data?.urlName}/info/about`);
                   }}
                >
                   <InfoIcon />

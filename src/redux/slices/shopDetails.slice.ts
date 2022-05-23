@@ -6,36 +6,59 @@ import { database } from "../../config/firebase.config";
 
 interface shopDeatilsState {
    value: {
-      address: string,
-      providerID: string,
-      accountID: string,
-      category: string,
-      email: string,
-      name: string,
-      ownerName: string,
-      urlName: string,
-      createdAt: {
-         nanoseconds: number,
-         seconds: number,
-      };
-   } | DocumentData | null;
+      data: {
+         address: string,
+         providerID: string,
+         accountID: string,
+         category: string,
+         email: string,
+         name: string,
+         ownerName: string,
+         urlName: string,
+         createdAt: {
+            nanoseconds: number,
+            seconds: number,
+         };
+      } | DocumentData | null;
+      length: number | null;
+   };
    status: 'idle' | 'loading' | 'failed';
 }
 
 
 function fetchShopDetails(shopAppId: string | string[] | undefined) {
-   return new Promise<DocumentData>((resolve) => {
+   return new Promise<{ data: DocumentData | null, length: number | null; }>((resolve) => {
       onSnapshot(query(collection(database, 'shops'), where('urlName', '==', shopAppId)), (snapshot) => {
+         let docsLength = null;
+         let doc = null;
+
+         if (snapshot.docs.length === 0) {
+            docsLength = 0;
+         } else if (snapshot.docs.length === 1) {
+            docsLength = 1;
+         }
+
          snapshot.forEach(obj => {
-            resolve(obj.data());
+            doc = obj.data();
          });
+
+         const shopDetails = {
+            data: doc,
+            length: docsLength,
+         };
+
+         resolve(shopDetails);
       });
    });
 }
 
 
 const initialState: shopDeatilsState = {
-   value: null,
+   // value: null,
+   value: {
+      data: null,
+      length: null
+   },
    status: 'idle',
 };
 

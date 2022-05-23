@@ -8,9 +8,10 @@ import { useRouter } from "next/router";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { selectShopDetails, setAppShopDetailsAsync } from "../../../redux/slices/shopDetails.slice";
 import useSecurePage from "../../../hooks/useSecurePage";
-import useHasAdmin from "../../../hooks/useHasAdmin";
+// import useHasAdmin from "../../../hooks/useHasAdmin";
 import { setAppPageId } from "../../../redux/slices/pageId.slice";
 import ShopAdmin_layout from "../../../layouts/ShopAdmin.layout";
+import PageLoading_layout from "../../../layouts/PageLoading.layout";
 
 
 const Product_add = () => {
@@ -24,9 +25,9 @@ const Product_add = () => {
    const secure = useSecurePage(shopAppId);
 
 
-   useEffect(() => {
-      dispatch(setAppShopDetailsAsync(shopAppId));
-   }, [shopAppId]);
+   // useEffect(() => {
+   //    dispatch(setAppShopDetailsAsync(shopAppId));
+   // }, [shopAppId]);
 
    useEffect(() => {
       dispatch(setAppPageId('productAdd_page'));
@@ -36,11 +37,10 @@ const Product_add = () => {
    return (
       <>
          <Head>
-            <title>{`Product (add) · ${shopDetails?.name ? shopDetails?.name : '·'}`}</title>
+            {/* <title>{`Product (add) · ${shopDetails?.name ? shopDetails?.name : '·'}`}</title> */}
          </Head>
 
-         {/* {hasAdmin && ( */}
-         {(secure === "safe") && (
+         {((secure === "200") && (
             <ShopAdmin_layout>
                <>
                   <Stack direction='row' spacing="auto" pb={2} sx={{ alignItems: 'center' }}>
@@ -49,7 +49,9 @@ const Product_add = () => {
                   <ProductInputForm />
                </>
             </ShopAdmin_layout>
-         )}
+         )) || ((secure === "loading") && (
+            <PageLoading_layout />
+         ))}
       </>
    );
 };

@@ -154,7 +154,7 @@ const ProductTable = () => {
 
 
    useEffect(() => {
-      onSnapshot(query(collection(database, 'shops', shopDetails?.urlName, 'products'), orderBy('codeName')), (snapshot) => {
+      onSnapshot(query(collection(database, 'shops', shopDetails?.data?.urlName, 'products'), orderBy('codeName')), (snapshot) => {
          setProdDetails(snapshot.docs);
       });
    }, [database, shopDetails]);
@@ -179,7 +179,7 @@ const ProductTable = () => {
                      key={index}
                      rowBgColor={index % 2 === 0 ? '#f5f5f5' : '#e0e0e0'}
 
-                     shopUrlName={shopDetails?.urlName}
+                     shopUrlName={shopDetails?.data?.urlName}
 
                      prodId={prod.id}
                      prodCodeName={prod.data().codeName}

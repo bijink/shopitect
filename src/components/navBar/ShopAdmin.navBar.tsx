@@ -32,7 +32,8 @@ import InfoIcon from '@mui/icons-material/Info';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import { selectPageId } from '../../redux/slices/pageId.slice';
-import useHasAdmin from '../../hooks/useHasAdmin';
+import useUser from '../../hooks/useUser';
+// import useHasAdmin from '../../hooks/useHasAdmin';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -78,22 +79,16 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function ShopAdmin_navBar() {
    const { data: session } = useSession();
+   // console.log(session?.user);
 
    const router = useRouter();
    const { shopAppId } = router.query;
-   // console.log(session?.user);
 
-   const user = auth.currentUser;
-   // console.log(user);
-   // console.log(user?.photoURL);
+   const secure = useSecurePage(shopAppId);
+   const { user, status } = useUser();
 
-
-   const shopDetails = useAppSelector(selectShopDetails);
-   // console.log(shopDetails);
-   // console.log(shopDetails.createdAt.toDate());
+   const shop = useAppSelector(selectShopDetails);
    const pageId = useAppSelector(selectPageId);
-
-   const hasAdmin = useHasAdmin(shopAppId);
 
    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -228,9 +223,9 @@ export default function ShopAdmin_navBar() {
                   noWrap
                   component="div"
                   sx={{ display: { xs: 'none', sm: 'block' }, cursor: 'pointer' }}
-                  onClick={() => router.push(`/${shopDetails?.urlName}`)}
+                  onClick={() => router.push(`/${shop?.data?.urlName}`)}
                >
-                  {shopDetails?.name}
+                  {shop?.data?.name}
                </Typography>
                <Box sx={{ flexGrow: 1 }} />
                {((pageId === 'shopHome_page') || (pageId === 'dashboard_page')) && (
@@ -246,14 +241,14 @@ export default function ShopAdmin_navBar() {
                )}
                <Box sx={{ flexGrow: 1 }} />
                <Box>
-                  {hasAdmin ? (
+                  {(secure === '200') && (
                      <>
                         <Box sx={{ display: { xs: 'none', md: 'flex' } }} justifyContent="center" alignItems="center" >
                            {!(pageId === 'dashboard_page') && (
                               <Tooltip title="Dashboard" arrow >
                                  <IconButton size="large" aria-label="show 4 new mails" color="inherit"
                                     onClick={() => {
-                                       router.push(`/${shopDetails?.urlName}/dashboard`);
+                                       router.push(`/${shop?.data?.urlName}/dashboard`);
                                     }}
                                  >
                                     <DashboardRoundedIcon />
@@ -315,18 +310,19 @@ export default function ShopAdmin_navBar() {
                            </IconButton>
                         </Box>
                      </>
-                  ) : (
-                     <IconButton
-                        size="small"
-                        aria-label="information about the shop"
-                        color="inherit"
-                        onClick={() => {
-                           router.push(`/${shopDetails?.urlName}/info/about`);
-                        }}
-                     >
-                        <InfoIcon />
-                     </IconButton>
-                  )}
+                  ) ||
+                     (secure === '401') && (
+                        <IconButton
+                           size="small"
+                           aria-label="information about the shop"
+                           color="inherit"
+                           onClick={() => {
+                              router.push(`/${shop?.data?.urlName}/info/about`);
+                           }}
+                        >
+                           <InfoIcon />
+                        </IconButton>
+                     )}
                </Box>
             </Toolbar>
          </AppBar>

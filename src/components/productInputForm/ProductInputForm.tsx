@@ -70,7 +70,7 @@ const ProductInputForm = () => {
       setLoading(true);
 
       if (prodImage) {
-         addDoc(collection(database, 'shops', shopDetails?.urlName, 'products'), {
+         addDoc(collection(database, 'shops', shopDetails?.data?.urlName, 'products'), {
             name: prodName,
             codeName: prodCodeName,
             category: prodCategory,
@@ -82,10 +82,10 @@ const ProductInputForm = () => {
             profitPercentage: parseFloat(profitPercentageInput),
             createdAt: serverTimestamp(),
          }).then((res) => {
-            const imageRef = ref(storage, `/product-images/${shopDetails?.urlName}/PRODUCT_IMG:${res.id}`);
+            const imageRef = ref(storage, `/product-images/${shopDetails?.data?.urlName}/PRODUCT_IMG:${res.id}`);
             uploadBytes(imageRef, prodImage!).then(() => {
                getDownloadURL(imageRef).then(url => {
-                  updateDoc(doc(database, 'shops', shopDetails?.urlName, 'products', res.id), {
+                  updateDoc(doc(database, 'shops', shopDetails?.data?.urlName, 'products', res.id), {
                      imageUrl: url,
                   }).then(() => {
                      setProdName('');

@@ -17,8 +17,10 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { selectShopDetails, setAppShopDetailsAsync } from "../../redux/slices/shopDetails.slice";
 import { setAppPageId } from "../../redux/slices/pageId.slice";
 import Public_layout from "../../layouts/Public.layout";
-import useHasAdmin from "../../hooks/useHasAdmin";
 import ShopAdmin_layout from "../../layouts/ShopAdmin.layout";
+import useSecurePage from "../../hooks/useSecurePage";
+import PageNotFound from "../../components/pageNotFound";
+import PageLoading_layout from "../../layouts/PageLoading.layout";
 
 
 const Product: NextPage = () => {
@@ -27,21 +29,20 @@ const Product: NextPage = () => {
 
    const dispatch = useAppDispatch();
    const shopDetails = useAppSelector(selectShopDetails);
-   const hasAdmin = useHasAdmin(shopAppId);
 
 
    // const [prodDetails, setProdDetails] = useState<DocumentData>([]);
    // const [prodDetails, setProdDetails] = useState({} as  DocumentSnapshot<DocumentData>);
    const [prodDetails, setProdDetails] = useState<any>({});
 
+   const secure = useSecurePage(shopAppId);
+   // console.log(secure);
+
+
 
    useEffect(() => {
-      shopAppId && dispatch(setAppShopDetailsAsync(shopAppId));
-   }, [shopAppId]);
-
-   useEffect(() => {
-      if (productId && shopDetails) {
-         getDoc(doc(database, 'shops', shopDetails.urlName, 'products', productId.toString())).then((snap) => {
+      if (productId && shopDetails.data) {
+         getDoc(doc(database, 'shops', shopDetails.data.urlName, 'products', productId.toString())).then((snap) => {
             // console.log(snap.data());
             setProdDetails(snap.data());
          });
@@ -56,11 +57,14 @@ const Product: NextPage = () => {
    return (
       <>
          <Head>
-            <title>{shopDetails?.name ? shopDetails?.name : '·'}</title>
+            {/* <title>{shopDetails?.name ? shopDetails?.name : '·'}</title> */}
             <meta name="description" content="" />
          </Head>
 
-         {hasAdmin ? (
+
+         {((secure === 'loading') && (
+            <PageLoading_layout />
+         )) || ((secure === '200') && (
             <ShopAdmin_layout>
                <Box p={1.5} >
                   <Card sx={{ width: '70vw', height: '70vh' }}>
@@ -87,7 +91,7 @@ const Product: NextPage = () => {
                   </Card>
                </Box >
             </ShopAdmin_layout >
-         ) : (
+         )) || (((secure === '401') || (secure === '403')) && (
             <Public_layout>
                <Box p={1.5} >
                   <Card sx={{ width: '70vw', height: '70vh' }}>
@@ -114,7 +118,9 @@ const Product: NextPage = () => {
                   </Card>
                </Box >
             </Public_layout >
-         )}
+         )) || ((secure === '404') && (
+            <PageNotFound />
+         ))}
       </>
    );
 };

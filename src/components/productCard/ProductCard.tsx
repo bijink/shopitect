@@ -56,13 +56,16 @@ const Cards = ({ createdAt, shopUrlName, prodId, prodName, prodCategory, prodBra
 
 const ProductCard = () => {
    const shopDetails = useAppSelector(selectShopDetails);
+   // console.log(shopDetails);
+
 
    const [prodDetails, setProdDetails] = useState<DocumentData>([]);
    const [fetchDelayOver, setFetchDelayOver] = useState(false);
 
 
    useEffect(() => {
-      onSnapshot(collection(database, 'shops', shopDetails?.urlName, 'products'), (snapshot) => {
+      // onSnapshot(collection(database, 'shops', shopDetails?.urlName, 'products'), (snapshot) => {
+      (shopDetails?.data) && onSnapshot(collection(database, 'shops', shopDetails?.data?.urlName!, 'products'), (snapshot) => {
          setProdDetails(snapshot.docs);
          setFetchDelayOver(true);
       });
@@ -83,7 +86,8 @@ const ProductCard = () => {
             <Cards
                key={index}
 
-               shopUrlName={shopDetails?.urlName}
+               // shopUrlName={shopDetails?.urlName}
+               shopUrlName={shopDetails?.data?.urlName}
 
                prodId={prod.id}
                prodName={prod.data().name}

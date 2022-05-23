@@ -28,7 +28,7 @@ export default function Public_sideBar() {
 
    return (
       <>
-         {((pageId === 'shopHome_page') || (pageId === 'product_page')) ? (
+         {((pageId === 'shopHome_page') || (pageId === 'productView_page')) ? (
             <Drawer
                variant="permanent"
                sx={{

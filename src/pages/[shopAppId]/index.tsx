@@ -2,48 +2,57 @@
 import type { NextPage } from 'next';
 
 import Head from 'next/head';
-import { doc, getDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, onSnapshot, query, where } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import ProductCard from '../../components/productCard';
-import { database } from '../../config/firebase.config';
-import PublicSection_layout from '../../layouts/Public.layout';
+import { auth, database } from '../../config/firebase.config';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { selectShopDetails, setAppShopDetailsAsync } from '../../redux/slices/shopDetails.slice';
 import { setAppPageId } from '../../redux/slices/pageId.slice';
 import Public_layout from '../../layouts/Public.layout';
-import useHasAdmin from '../../hooks/useHasAdmin';
 import ShopAdmin_layout from '../../layouts/ShopAdmin.layout';
+import useSecurePage from '../../hooks/useSecurePage';
+import { Typography } from '@mui/material';
+import PageNotFound from '../../components/pageNotFound';
+import PageLoading_layout from '../../layouts/PageLoading.layout';
+import useUser from '../../hooks/useUser';
 
 
 const Shop: NextPage = () => {
    const router = useRouter();
    const { shopAppId } = router.query;
 
-   // console.log(auth.currentUser);
-
    const dispatch = useAppDispatch();
-   const shopDetails = useAppSelector(selectShopDetails);
-   // console.log(shopDetails);
-   const hasAdmin = useHasAdmin(shopAppId);
+   const shop = useAppSelector(selectShopDetails);
+   // console.log(shop);
 
-   const [isShopExist, setIsShopExist] = useState(false);
+   const secure = useSecurePage(shopAppId);
+   // console.log(secure);
+
+   // const [isShopExist, setIsShopExist] = useState(false);
 
 
-   useEffect(() => {
-      shopAppId && getDoc(doc(database, 'shops', shopAppId.toString())).then((snap) => {
-         // console.log(snap.data());
-         if (snap.data()) {
-            setIsShopExist(true);
-         } else {
-            setIsShopExist(false);
-         }
-      });
-   }, [shopAppId]);
+   // useEffect(() => {
+   //    shopAppId && getDoc(doc(database, 'shops', shopAppId.toString())).then((snap) => {
+   //       // console.log(snap.data());
+   //       if (snap.data()) {
+   //          setIsShopExist(true);
+   //       } else {
+   //          setIsShopExist(false);
+   //       }
+   //    });
+   // }, [shopAppId]);
 
    useEffect(() => {
       dispatch(setAppShopDetailsAsync(shopAppId));
    }, [shopAppId]);
+
+
+   const { user, status } = useUser();
+   // console.log(status);
+   // console.log(user);
+
 
    useEffect(() => {
       dispatch(setAppPageId('shopHome_page'));
@@ -53,23 +62,26 @@ const Shop: NextPage = () => {
    return (
       <>
          <Head>
-            <title>{shopDetails?.name ? shopDetails?.name : 'shop-name'}</title>
+            {/* <title>{shopDetails?.name ? shopDetails?.name : 'shop-name'}</title> */}
             <meta name="description" content="" />
          </Head>
 
-         {isShopExist && (
-            <>
-               {hasAdmin ? (
-                  <ShopAdmin_layout>
-                     <ProductCard />
-                  </ShopAdmin_layout>
-               ) : (
-                  <Public_layout>
-                     <ProductCard />
-                  </Public_layout>
-               )}
-            </>
-         )}
+         <>
+            {((secure === 'loading') && (
+               <PageLoading_layout />
+            )) || ((secure === '200') && (
+               <ShopAdmin_layout>
+                  <ProductCard />
+               </ShopAdmin_layout>
+            )) || (((secure === '401') || (secure === '403')) && (
+               <Public_layout>
+                  <ProductCard />
+               </Public_layout>
+            )) || ((secure === '404') && (
+               <PageNotFound />
+            ))}
+            {/* <PageLoading_layout /> */}
+         </>
       </>
    );
 };

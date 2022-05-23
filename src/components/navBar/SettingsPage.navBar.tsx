@@ -138,7 +138,7 @@ export default function SettingsPage_navBar() {
             <MenuItem onClick={(e: any) => {
                e.preventDefault();
                signOutAccount(auth).then(() => {
-                  signOutProvider({ redirect: false, callbackUrl: `/${shopDetails?.urlName}` });
+                  signOutProvider({ redirect: false, callbackUrl: `/${shopDetails?.data?.urlName}` });
                });
                handleMenuClose();
             }}>Sign Out</MenuItem>
@@ -225,9 +225,9 @@ export default function SettingsPage_navBar() {
                   noWrap
                   component="div"
                   sx={{ display: { xs: 'none', sm: 'block' }, cursor: 'pointer' }}
-                  onClick={() => router.push(`/${shopDetails?.urlName}`)}
+                  onClick={() => router.push(`/${shopDetails?.data?.urlName}`)}
                >
-                  {shopDetails?.name}
+                  {shopDetails?.data?.name}
                </Typography>
                <Box sx={{ flexGrow: 1 }} />
                <Search sx={{ flexGrow: 2 }}>
@@ -246,7 +246,7 @@ export default function SettingsPage_navBar() {
                         <Tooltip title="Dashboard" arrow >
                            <IconButton size="large" aria-label="show 4 new mails" color="inherit"
                               onClick={() => {
-                                 router.push(`/${shopDetails?.urlName}/dashboard`);
+                                 router.push(`/${shopDetails?.data?.urlName}/dashboard`);
                               }}
                            >
                               <DashboardRoundedIcon />

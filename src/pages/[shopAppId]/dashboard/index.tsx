@@ -11,6 +11,8 @@ import { selectShopDetails, setAppShopDetailsAsync } from '../../../redux/slices
 import useSecurePage from '../../../hooks/useSecurePage';
 import { setAppPageId } from '../../../redux/slices/pageId.slice';
 import ShopAdmin_layout from '../../../layouts/ShopAdmin.layout';
+import PageLoading_layout from '../../../layouts/PageLoading.layout';
+import { signIn as signInProvider } from "next-auth/react";
 
 
 const Dashboard: NextPage = () => {
@@ -39,10 +41,12 @@ const Dashboard: NextPage = () => {
    return (
       <>
          <Head>
-            <title>{`Dashboard · ${shopDetails?.name ? shopDetails?.name : '·'}`}</title>
+            {/* <title>{`Dashboard · ${shopDetails?.name ? shopDetails?.name : '·'}`}</title> */}
          </Head>
 
-         {(secure === 'safe') && (
+         {((secure === 'loading') && (
+            <PageLoading_layout />
+         )) || ((secure === '200') && (
             <ShopAdmin_layout>
                <>
                   <Stack direction='row' spacing="auto" pb={2} sx={{ alignItems: 'center' }}>
@@ -57,7 +61,11 @@ const Dashboard: NextPage = () => {
                   <ProductTable />
                </>
             </ShopAdmin_layout>
-         )}
+         )) || ((secure === '401') && (
+            signInProvider('google', { redirect: false, callbackUrl: `/auth/signup` })
+         )) || ((secure === '403') && (
+            <Typography>You have no access</Typography>
+         ))}
       </>
    );
 };
