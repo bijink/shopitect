@@ -7,7 +7,7 @@ import { Box, Button, Stack, Typography } from '@mui/material';
 import { getProviders, signIn as signInProvider, useSession } from "next-auth/react";
 import { auth } from '../config/firebase.config';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { signOut as signOutAccount } from 'firebase/auth';
 import { setAppPageId } from '../redux/slices/pageId.slice';
 import { useAppDispatch } from '../redux/hooks';
@@ -23,11 +23,11 @@ const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
    const dispatch = useAppDispatch();
 
    const { status: userStatus } = useUser();
-   console.log(userStatus);
+   // console.log(userStatus);
 
 
    useEffect(() => {
-      dispatch(setAppPageId('home_page'));
+      dispatch(setAppPageId('appHome_page'));
    }, []);
 
 

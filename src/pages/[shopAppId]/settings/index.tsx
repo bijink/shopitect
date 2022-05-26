@@ -1,6 +1,8 @@
+import type { NextPage } from "next";
+
 import Profile from "./profile";
 
-const Settings = () => {
+const Settings: NextPage = () => {
    return (
       <Profile />
    );

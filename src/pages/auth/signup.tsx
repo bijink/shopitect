@@ -2,7 +2,7 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Stack, Typography } from "@mui/material";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { auth, database } from "../../config/firebase.config";
 import { signOut as signOutFromProvider, signIn as signInToProvider, useSession } from "next-auth/react";
@@ -62,7 +62,7 @@ const SignupConfirm = () => {
             <title>Signup - master-project</title>
          </Head>
 
-         {(isAccountExist && !user) && (
+         {(isAccountExist && !user) ? (
             <>
                <Box
                   height={'100vh'}
@@ -116,6 +116,10 @@ const SignupConfirm = () => {
                   </Box>
                </Box>
             </>
+         ) : (
+            <Stack justifyContent="center" alignItems="center" >
+               <CircularProgress />
+            </Stack>
          )}
       </>
    );

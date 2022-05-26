@@ -1,28 +1,30 @@
-import { Timestamp } from "firebase/firestore";
+import type { DocumentData, Timestamp } from "firebase/firestore";
 
-export interface ProdDetailsProps {
+export interface ProductTableProps {
+   shopData: {
+      address: string;
+      providerID: string;
+      accountID: string;
+      category: string;
+      email: string;
+      name: string;
+      ownerName: string;
+      urlName: string;
+      createdAt: Timestamp;
+   } | DocumentData | null;
+   products: DocumentData;
+}
+
+export interface ProductTableRowProps {
+   rowBgColor: string;
+
+   shopUrlName: string;
+
+   prodId: string;
    prodName: string;
    prodCodeName: string;
    prodBrand: string;
    prodCategory: string;
-   quantity: number;
-   getPrice: number;
-   sellPrice: number;
-   profitAmount: number;
-   profitPercentage: number;
-   createdAt: Timestamp;
-   // createdAt: Date;
-   prodImg: string;
-
-   rowBgColor: string;
-   shopUrlName: string;
-   prodId: string;
-};
-interface ProdDetails {
-   name: string;
-   codeName: string;
-   brand: string;
-   category: string;
    prodImg: string;
    quantity: number;
    getPrice: number;
@@ -30,16 +32,30 @@ interface ProdDetails {
    profitAmount: number;
    profitPercentage: number;
    createdAt: Timestamp;
-   // createdAt: Date;
-   imageUrl: string;
 };
 
 export type ProdDetailsTypes = {
    id: string;
-   data: () => ProdDetails;
+   data: () => {
+      name: string;
+      codeName: string;
+      brand: string;
+      category: string;
+      prodImg: string;
+      quantity: number;
+      getPrice: number;
+      sellPrice: number;
+      profitAmount: number;
+      profitPercentage: number;
+      createdAt: Timestamp;
+      imageUrl: string;
+   };
 };
 
-export interface ProdDetailsModalTypes {
+export interface EditProductModalProps {
+   shopUrlName: string;
+
+   prodId: string;
    prodName: string;
    prodCodeName: string;
    prodBrand: string;
@@ -49,7 +65,4 @@ export interface ProdDetailsModalTypes {
    sellPrice: number;
    profitAmount: number;
    profitPercentage: number;
-
-   shopUrlName: string;
-   prodId: string;
 };

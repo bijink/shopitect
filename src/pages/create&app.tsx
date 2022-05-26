@@ -1,5 +1,7 @@
+import type { NextPage } from "next";
+
 import { LoadingButton } from "@mui/lab";
-import { Box, Button, Container, IconButton, InputAdornment, Stack, TextareaAutosize, TextField, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Container, IconButton, InputAdornment, Stack, TextareaAutosize, TextField, Typography } from "@mui/material";
 import { collection, doc, onSnapshot, query, setDoc, where } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 import { database, auth } from "../config/firebase.config";
@@ -13,7 +15,7 @@ import { setAppPageId } from "../redux/slices/pageId.slice";
 import { useAppDispatch } from "../redux/hooks";
 
 
-const Create_app = () => {
+const Create_app: NextPage = () => {
    const router = useRouter();
 
    const dispatch = useAppDispatch();
@@ -101,7 +103,7 @@ const Create_app = () => {
    useEffect(() => {
       if (status == 'unauthenticated') signInProvider('google', { callbackUrl: "/auth/signup" });
 
-      session && onSnapshot(query(collection(database, 'shops'), where('providerID', '==', session?.user.uid)), (snapshot) => {
+      session && onSnapshot(query(collection(database, 'shops'), where('providerID', '==', session.user.uid)), (snapshot) => {
          if (snapshot.docs.length === 1) {
             // #if there is an existing account
             snapshot.forEach(obj => {
@@ -137,144 +139,146 @@ const Create_app = () => {
    }, []);
 
 
-   if (!isAccountNotExist) return (
-      <Head>
-         <title>create-app</title>
-      </Head>
-   );
-   else if (isAccountNotExist && (status == 'authenticated')) return (
+   return (
       <>
          <Head>
             <title>create-app</title>
          </Head>
 
-         <Box py={3} >
-            <Container >
-               <Typography variant="h4" component={'div'} gutterBottom>Create App</Typography>
-               <form onSubmit={handleFormSubmit}>
-                  <Stack direction="column" spacing={3}>
-                     <TextField
-                        label="Shop Name"
-                        size="small"
-                        fullWidth
-                        value={shopName}
-                        onInput={(e: any) => setShopName(e.target.value)}
-                        inputRef={inputFocusRef}
-                        required
-                     />
-                     <TextField
-                        label="Shop Url Name"
-                        size="small"
-                        fullWidth
-                        helperText={!(shopUrlName !== '') ?
-                           '* This name is used in url for identifing your app. Make sure to enter a unique name'
-                           : (isShopUrlNameUnique ? 'Url is unique' : 'Url is not unique')
-                        }
-                        value={shopUrlName}
-                        onInput={(e: any) => setShopUrlName(e.target.value.split(" ").join("").toLowerCase())}
-                        required
-                        error={!isShopUrlNameUnique}
-                     />
-                     <TextField
-                        label="Shop Category"
-                        size="small"
-                        fullWidth
-                        value={shopCategory}
-                        onInput={(e: any) => setShopCategory(e.target.value)}
-                        required
-                     />
-                     <TextField
-                        label="Shop Ower Name"
-                        size="small"
-                        fullWidth
-                        value={shopOwnerName}
-                        onInput={(e: any) => setShopOwnerName(e.target.value)}
-                        required
-                     />
-                     <TextareaAutosize
-                        aria-label="shop address"
-                        placeholder="Shop Address*"
-                        minRows={5}
-                        maxRows={5}
-                        style={{
-                           // minWidth: '49%',
-                           // maxWidth: '49%',
-                           fontSize: '15px',
-                           padding: '12px',
-                           borderRadius: '4px',
-                           borderColor: 'lightgray',
-                           outlineColor: '#1976d2',
-                        }}
-                        value={shopAddress}
-                        onInput={(e: any) => setShopAddress(e.target.value)}
-                        required
-                     />
-                     {session && (
-                        <>
-                           <TextField
-                              label="Email Address"
-                              size="small"
-                              fullWidth
-                              type="email"
-                              color="warning"
-                              defaultValue={session?.user.email}
-                              InputProps={{ readOnly: true }}
-                           />
-                           <TextField
-                              label="Password"
-                              size="small"
-                              fullWidth
-                              type={showPassword ? 'text' : 'password'}
-                              value={password}
-                              onInput={(e: any) => setPassword(e.target.value)}
-                              InputProps={{
-                                 endAdornment: <InputAdornment position="end">
-                                    <IconButton
-                                       aria-label="toggle password visibility"
-                                       onClick={() => setShowPassword(prev => !prev)}
-                                       edge="end"
-                                    >
-                                       {showPassword ? <Visibility /> : <VisibilityOff />}
-                                    </IconButton>
-                                 </InputAdornment>
-                              }}
-                              required
-                           />
-                        </>
-                     )}
-                  </Stack>
-                  <Stack direction={{ sm: 'column', md: 'row' }} spacing={{ sm: 1, md: 3 }} pt={4}>
-                     <Button
-                        variant="contained"
-                        onClick={() => {
-                           router.push('/');
-                        }}
-                        size='large'
-                        fullWidth
-                        color="error"
-                     >cancel</Button>
-                     <Button
-                        variant="contained"
-                        onClick={handleFormReset}
-                        size='large'
-                        fullWidth
-                        color="warning"
-                     >reset</Button>
-                     <LoadingButton
-                        variant="contained"
-                        type="submit"
-                        size='large'
-                        fullWidth
-                        loading={loading}
-                        loadingPosition="start"
-                        startIcon={<PublishRoundedIcon />}
-                     >submit</LoadingButton>
-                  </Stack>
-               </form>
-            </Container>
-         </Box>
+         {(isAccountNotExist && (status == 'authenticated')) ? (
+            <Box py={3} >
+               <Container >
+                  <Typography variant="h4" component={'div'} gutterBottom>Create App</Typography>
+                  <form onSubmit={handleFormSubmit}>
+                     <Stack direction="column" spacing={3}>
+                        <TextField
+                           label="Shop Name"
+                           size="small"
+                           fullWidth
+                           value={shopName}
+                           onInput={(e: any) => setShopName(e.target.value)}
+                           inputRef={inputFocusRef}
+                           required
+                        />
+                        <TextField
+                           label="Shop Url Name"
+                           size="small"
+                           fullWidth
+                           helperText={!(shopUrlName !== '') ?
+                              '* This name is used in url for identifing your app. Make sure to enter a unique name'
+                              : (isShopUrlNameUnique ? 'Url is unique' : 'Url is not unique')
+                           }
+                           value={shopUrlName}
+                           onInput={(e: any) => setShopUrlName(e.target.value.split(" ").join("").toLowerCase())}
+                           required
+                           error={!isShopUrlNameUnique}
+                        />
+                        <TextField
+                           label="Shop Category"
+                           size="small"
+                           fullWidth
+                           value={shopCategory}
+                           onInput={(e: any) => setShopCategory(e.target.value)}
+                           required
+                        />
+                        <TextField
+                           label="Shop Ower Name"
+                           size="small"
+                           fullWidth
+                           value={shopOwnerName}
+                           onInput={(e: any) => setShopOwnerName(e.target.value)}
+                           required
+                        />
+                        <TextareaAutosize
+                           aria-label="shop address"
+                           placeholder="Shop Address*"
+                           minRows={5}
+                           maxRows={5}
+                           style={{
+                              // minWidth: '49%',
+                              // maxWidth: '49%',
+                              fontSize: '15px',
+                              padding: '12px',
+                              borderRadius: '4px',
+                              borderColor: 'lightgray',
+                              outlineColor: '#1976d2',
+                           }}
+                           value={shopAddress}
+                           onInput={(e: any) => setShopAddress(e.target.value)}
+                           required
+                        />
+                        {session && (
+                           <>
+                              <TextField
+                                 label="Email Address"
+                                 size="small"
+                                 fullWidth
+                                 type="email"
+                                 color="warning"
+                                 defaultValue={session?.user.email}
+                                 InputProps={{ readOnly: true }}
+                              />
+                              <TextField
+                                 label="Password"
+                                 size="small"
+                                 fullWidth
+                                 type={showPassword ? 'text' : 'password'}
+                                 value={password}
+                                 onInput={(e: any) => setPassword(e.target.value)}
+                                 InputProps={{
+                                    endAdornment: <InputAdornment position="end">
+                                       <IconButton
+                                          aria-label="toggle password visibility"
+                                          onClick={() => setShowPassword(prev => !prev)}
+                                          edge="end"
+                                       >
+                                          {showPassword ? <Visibility /> : <VisibilityOff />}
+                                       </IconButton>
+                                    </InputAdornment>
+                                 }}
+                                 required
+                              />
+                           </>
+                        )}
+                     </Stack>
+                     <Stack direction={{ sm: 'column', md: 'row' }} spacing={{ sm: 1, md: 3 }} pt={4}>
+                        <Button
+                           variant="contained"
+                           onClick={() => {
+                              router.push('/');
+                           }}
+                           size='large'
+                           fullWidth
+                           color="error"
+                        >cancel</Button>
+                        <Button
+                           variant="contained"
+                           onClick={handleFormReset}
+                           size='large'
+                           fullWidth
+                           color="warning"
+                        >reset</Button>
+                        <LoadingButton
+                           variant="contained"
+                           type="submit"
+                           size='large'
+                           fullWidth
+                           loading={loading}
+                           loadingPosition="start"
+                           startIcon={<PublishRoundedIcon />}
+                        >submit</LoadingButton>
+                     </Stack>
+                  </form>
+               </Container>
+            </Box>
+         ) : (
+            <Stack justifyContent="center" alignItems="center" >
+               <CircularProgress />
+            </Stack>
+         )}
       </>
    );
 };
 
 export default Create_app;
+

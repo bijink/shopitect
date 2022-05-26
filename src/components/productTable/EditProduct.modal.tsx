@@ -1,4 +1,4 @@
-import type { ProdDetailsModalTypes } from './product.types';
+import type { EditProductModalProps } from './product.types';
 
 import {
    Box,
@@ -39,7 +39,7 @@ const style = {
 };
 
 
-export default function EditModal_productTable({ shopUrlName, prodId, prodName, prodCodeName, prodBrand, prodCategory, quantity, getPrice, sellPrice, profitAmount, profitPercentage }: ProdDetailsModalTypes) {
+export default function EditProduct_modal({ shopUrlName, prodId, prodName, prodCodeName, prodBrand, prodCategory, quantity, getPrice, sellPrice, profitAmount, profitPercentage }: EditProductModalProps) {
    const [open, setOpen] = useState(false);
    const [loading, setLoading] = useState(false);
 

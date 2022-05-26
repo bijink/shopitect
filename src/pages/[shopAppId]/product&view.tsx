@@ -1,26 +1,29 @@
 // *Product View Page
-import { Box } from "@mui/material";
-import { NextPage } from "next";
+import type { NextPage } from "next";
+import type { ProductTypes } from "../../types/pages/productView.types";
+
 import Head from "next/head";
-import PublicSection_layout from "../../layouts/Public.layout";
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Typography from '@mui/material/Typography';
-import { CardActionArea } from '@mui/material';
+import {
+   Box,
+   Card,
+   CardContent,
+   CardMedia,
+   Typography,
+   CardActionArea,
+} from "@mui/material";
 import { useEffect, useState } from "react";
-import { collection, DocumentData, DocumentSnapshot, onSnapshot, query, where } from "firebase/firestore";
+import { DocumentData } from "firebase/firestore";
 import { database } from "../../config/firebase.config";
 import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/router";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { selectShopDetails, setAppShopDetailsAsync } from "../../redux/slices/shopDetails.slice";
+import { selectShopDetails } from "../../redux/slices/shopDetails.slice";
 import { setAppPageId } from "../../redux/slices/pageId.slice";
 import Public_layout from "../../layouts/Public.layout";
 import ShopAdmin_layout from "../../layouts/ShopAdmin.layout";
 import useSecurePage from "../../hooks/useSecurePage";
-import PageNotFound from "../../components/pageNotFound";
 import PageLoading_layout from "../../layouts/PageLoading.layout";
+import NotFound from "../404";
 
 
 const Product: NextPage = () => {
@@ -28,26 +31,23 @@ const Product: NextPage = () => {
    const { id: productId, shopAppId } = router.query;
 
    const dispatch = useAppDispatch();
-   const shopDetails = useAppSelector(selectShopDetails);
-
-
-   // const [prodDetails, setProdDetails] = useState<DocumentData>([]);
-   // const [prodDetails, setProdDetails] = useState({} as  DocumentSnapshot<DocumentData>);
-   const [prodDetails, setProdDetails] = useState<any>({});
+   const shop = useAppSelector(selectShopDetails);
 
    const secure = useSecurePage(shopAppId);
    // console.log(secure);
 
+   const [prodDetails, setProdDetails] = useState({} as ProductTypes | DocumentData);
+   // console.log(prodDetails);
 
 
    useEffect(() => {
-      if (productId && shopDetails.data) {
-         getDoc(doc(database, 'shops', shopDetails.data.urlName, 'products', productId.toString())).then((snap) => {
+      if (productId && shop.data) {
+         getDoc(doc(database, 'shops', shop.data.urlName, 'products', productId.toString())).then((snap) => {
             // console.log(snap.data());
-            setProdDetails(snap.data());
+            setProdDetails(snap.data()!);
          });
       }
-   }, [productId, shopDetails]);
+   }, [productId, shop]);
 
    useEffect(() => {
       dispatch(setAppPageId('productView_page'));
@@ -57,10 +57,9 @@ const Product: NextPage = () => {
    return (
       <>
          <Head>
-            {/* <title>{shopDetails?.name ? shopDetails?.name : '·'}</title> */}
+            <title>{shop?.data ? shop.data.name : 'Loading...'}</title>
             <meta name="description" content="" />
          </Head>
-
 
          {((secure === 'loading') && (
             <PageLoading_layout />
@@ -72,7 +71,6 @@ const Product: NextPage = () => {
                         <CardMedia
                            component="img"
                            height="140"
-                           // image='https://images.unsplash.com/photo-1648993219624-2d3535fc6443?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTA2ODE2Nw&ixlib=rb-1.2.1&q=80&w=1080'
                            image={prodDetails.imageUrl}
                            alt={prodDetails.name}
                         />
@@ -99,7 +97,6 @@ const Product: NextPage = () => {
                         <CardMedia
                            component="img"
                            height="140"
-                           // image='https://images.unsplash.com/photo-1648993219624-2d3535fc6443?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY1MTA2ODE2Nw&ixlib=rb-1.2.1&q=80&w=1080'
                            image={prodDetails.imageUrl}
                            alt={prodDetails.name}
                         />
@@ -119,7 +116,7 @@ const Product: NextPage = () => {
                </Box >
             </Public_layout >
          )) || ((secure === '404') && (
-            <PageNotFound />
+            <NotFound />
          ))}
       </>
    );

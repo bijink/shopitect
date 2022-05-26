@@ -16,7 +16,7 @@ const Public_layout = ({ children }: PublicLayoutTypes) => {
             <Box component='aside' ><Public_sideBar /></Box>
             <Box component="main" sx={{ flexGrow: 1 }}>
                <Toolbar />
-               <Box minHeight='80.5vh' p={3} sx={{ display: 'flex', justifyContent: 'center' }}>
+               <Box minHeight='80.5vh' p={3} >
                   {children}
                </Box>
                <Box component='footer' ><Footer /></Box>

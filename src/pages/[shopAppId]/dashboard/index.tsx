@@ -4,34 +4,38 @@ import type { NextPage } from 'next';
 import { Button, Stack, Typography } from '@mui/material';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
-import ProductTable from '../../../components/productTable/ProductTable';
+import { useEffect, useState } from 'react';
+import ProductTable from '../../../components/productTable';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { selectShopDetails, setAppShopDetailsAsync } from '../../../redux/slices/shopDetails.slice';
 import useSecurePage from '../../../hooks/useSecurePage';
 import { setAppPageId } from '../../../redux/slices/pageId.slice';
 import ShopAdmin_layout from '../../../layouts/ShopAdmin.layout';
 import PageLoading_layout from '../../../layouts/PageLoading.layout';
 import { signIn as signInProvider } from "next-auth/react";
+import { selectShopDetails } from '../../../redux/slices/shopDetails.slice';
+import Forbidden from '../../403';
+import { collection, DocumentData, onSnapshot, orderBy, query } from 'firebase/firestore';
+import { database } from '../../../config/firebase.config';
 
 
 const Dashboard: NextPage = () => {
    const router = useRouter();
    const { shopAppId } = router.query;
-   // console.log(shopAppId);
 
    const dispatch = useAppDispatch();
-   const shopDetails = useAppSelector(selectShopDetails);
-   // console.log(shopDetails);
-
+   const shop = useAppSelector(selectShopDetails);
 
    const secure = useSecurePage(shopAppId);
    // console.log(secure);
 
+   const [prodDetails, setProdDetails] = useState<DocumentData>([]);
 
-   // useEffect(() => {
-   //    dispatch(setAppShopDetailsAsync(shopAppId));
-   // }, [shopAppId]);
+
+   useEffect(() => {
+      (shop?.data) && onSnapshot(query(collection(database, 'shops', shop?.data?.urlName, 'products'), orderBy('codeName')), (snapshot) => {
+         setProdDetails(snapshot.docs);
+      });
+   }, [database, shop]);
 
    useEffect(() => {
       dispatch(setAppPageId('dashboard_page'));
@@ -41,7 +45,7 @@ const Dashboard: NextPage = () => {
    return (
       <>
          <Head>
-            {/* <title>{`Dashboard · ${shopDetails?.name ? shopDetails?.name : '·'}`}</title> */}
+            <title>{shop?.data ? `Dashboard · ${shop.data.name}` : 'Loading...'}</title>
          </Head>
 
          {((secure === 'loading') && (
@@ -58,13 +62,14 @@ const Dashboard: NextPage = () => {
                         Add
                      </Button>
                   </Stack>
-                  <ProductTable />
+                  <ProductTable shopData={shop?.data} products={prodDetails} />
                </>
             </ShopAdmin_layout>
          )) || ((secure === '401') && (
             signInProvider('google', { redirect: false, callbackUrl: `/auth/signup` })
+            // <Forbidden />
          )) || ((secure === '403') && (
-            <Typography>You have no access</Typography>
+            <Forbidden />
          ))}
       </>
    );

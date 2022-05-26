@@ -1,24 +1,29 @@
+import type { ProductInputProps } from "./productInput.types";
+
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { Box, InputAdornment, Stack, TextField, Typography, Button } from "@mui/material";
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
+import {
+   Box,
+   InputAdornment,
+   Stack,
+   TextField,
+   Typography,
+   Button,
+   Radio,
+   RadioGroup,
+   FormControlLabel,
+   FormControl,
+   FormLabel,
+} from "@mui/material";
 import { database, storage } from "../../config/firebase.config";
 import { addDoc, collection, doc, serverTimestamp, updateDoc } from "firebase/firestore";
 import LoadingButton from '@mui/lab/LoadingButton';
 import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
-import { useAppSelector } from "../../redux/hooks";
-import { selectShopDetails } from "../../redux/slices/shopDetails.slice";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import amountCalculate from "../../utility/amountCalculate";
 
 
-const ProductInputForm = () => {
+const ProductInputForm = ({ shopData }: ProductInputProps) => {
    const inputFocusRef = useRef<any>(null);
-
-   const shopDetails = useAppSelector(selectShopDetails);
 
    const [prodName, setProdName] = useState('');
    const [prodCodeName, setProdCodeName] = useState('');
@@ -70,7 +75,7 @@ const ProductInputForm = () => {
       setLoading(true);
 
       if (prodImage) {
-         addDoc(collection(database, 'shops', shopDetails?.data?.urlName, 'products'), {
+         addDoc(collection(database, 'shops', shopData?.urlName, 'products'), {
             name: prodName,
             codeName: prodCodeName,
             category: prodCategory,
@@ -82,10 +87,10 @@ const ProductInputForm = () => {
             profitPercentage: parseFloat(profitPercentageInput),
             createdAt: serverTimestamp(),
          }).then((res) => {
-            const imageRef = ref(storage, `/product-images/${shopDetails?.data?.urlName}/PRODUCT_IMG:${res.id}`);
+            const imageRef = ref(storage, `/product-images/${shopData?.urlName}/PRODUCT_IMG:${res.id}`);
             uploadBytes(imageRef, prodImage!).then(() => {
                getDownloadURL(imageRef).then(url => {
-                  updateDoc(doc(database, 'shops', shopDetails?.data?.urlName, 'products', res.id), {
+                  updateDoc(doc(database, 'shops', shopData?.urlName, 'products', res.id), {
                      imageUrl: url,
                   }).then(() => {
                      setProdName('');
@@ -100,6 +105,7 @@ const ProductInputForm = () => {
                      setProdImage(null);
                   }).then(() => {
                      setLoading(false);
+                     setCalcuInputDisabled(false);
                   });
                });
             });

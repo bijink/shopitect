@@ -1,4 +1,4 @@
-import type { ProdDetailsProps, ProdDetailsTypes } from './product.types';
+import type { ProdDetailsTypes, ProductTableProps, ProductTableRowProps } from './product.types';
 
 import {
    Table,
@@ -19,17 +19,15 @@ import {
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { collection, deleteDoc, doc, DocumentData, onSnapshot, orderBy, query } from 'firebase/firestore';
+import { deleteDoc, doc } from 'firebase/firestore';
 import { database, storage } from '../../config/firebase.config';
-import { useEffect, useState } from 'react';
-import { useAppSelector } from '../../redux/hooks';
-import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
+import { useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditModal_productTable from './EditModal.productTable';
+import EditProduct_modal from './EditProduct.modal';
 import { ref, deleteObject } from "firebase/storage";
 
 
-const Row = ({ rowBgColor, shopUrlName, prodId, prodCodeName, prodName, prodCategory, prodBrand, prodImg, quantity, getPrice, sellPrice, profitAmount, profitPercentage, createdAt }: ProdDetailsProps) => {
+const Row = ({ rowBgColor, shopUrlName, prodId, prodCodeName, prodName, prodCategory, prodBrand, prodImg, quantity, getPrice, sellPrice, profitAmount, profitPercentage, createdAt }: ProductTableRowProps) => {
    const [open, setOpen] = useState(false);
 
 
@@ -109,7 +107,7 @@ const Row = ({ rowBgColor, shopUrlName, prodId, prodCodeName, prodName, prodCate
                         <TableBody  >
                            <TableRow  >
                               <TableCell component="th" scope="row" align="center"  >
-                                 <EditModal_productTable
+                                 <EditProduct_modal
                                     shopUrlName={shopUrlName}
                                     prodId={prodId}
                                     prodCodeName={prodCodeName}
@@ -146,20 +144,7 @@ const Row = ({ rowBgColor, shopUrlName, prodId, prodCodeName, prodName, prodCate
 };
 
 
-const ProductTable = () => {
-   const shopDetails = useAppSelector(selectShopDetails);
-   // console.log(shopDetails);
-
-   const [prodDetails, setProdDetails] = useState<DocumentData>([]);
-
-
-   useEffect(() => {
-      onSnapshot(query(collection(database, 'shops', shopDetails?.data?.urlName, 'products'), orderBy('codeName')), (snapshot) => {
-         setProdDetails(snapshot.docs);
-      });
-   }, [database, shopDetails]);
-
-
+export default function ProductTable({ shopData, products }: ProductTableProps) {
    return (
       <TableContainer component={Paper}>
          <Table aria-label="collapsible table" size="small" >
@@ -174,12 +159,11 @@ const ProductTable = () => {
                </TableRow>
             </TableHead>
             <TableBody>
-               {prodDetails.map((prod: ProdDetailsTypes, index: number) => (
-                  <Row
-                     key={index}
+               {products.map((prod: ProdDetailsTypes, index: number) => (
+                  <Row key={index}
                      rowBgColor={index % 2 === 0 ? '#f5f5f5' : '#e0e0e0'}
 
-                     shopUrlName={shopDetails?.data?.urlName}
+                     shopUrlName={shopData?.urlName}
 
                      prodId={prod.id}
                      prodCodeName={prod.data().codeName}
@@ -200,5 +184,3 @@ const ProductTable = () => {
       </TableContainer >
    );
 };
-
-export default ProductTable;

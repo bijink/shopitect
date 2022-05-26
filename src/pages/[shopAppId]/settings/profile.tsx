@@ -1,3 +1,5 @@
+import type { NextPage } from "next";
+
 import { Box, Stack, TextareaAutosize, TextField, Typography } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
@@ -11,18 +13,23 @@ import { LoadingButton } from "@mui/lab";
 import { useRouter } from "next/router";
 import useSecurePage from "../../../hooks/useSecurePage";
 import PageLoading_layout from "../../../layouts/PageLoading.layout";
+import { signIn as signInProvider } from "next-auth/react";
+import Forbidden from "../../403";
+import NotFound from "../../404";
 
 
-const Profile = () => {
+const Profile: NextPage = () => {
    const router = useRouter();
    const { shopAppId } = router.query;
 
    const dispatch = useAppDispatch();
 
-   const shopDetails = useAppSelector(selectShopDetails);
-   // console.log(shopDetails);
+   const shop = useAppSelector(selectShopDetails);
+   // console.log(shop);
 
    const secure = useSecurePage(shopAppId);
+   // console.log(secure);
+
 
    const [shopName, setShopName] = useState('');
    const [shopCategory, setShopCategory] = useState('');
@@ -36,9 +43,8 @@ const Profile = () => {
       e.preventDefault();
       setLoading(true);
 
-      await updateDoc(doc(database, "shops", shopDetails?.data?.urlName), {
+      await updateDoc(doc(database, "shops", shop?.data?.urlName), {
          name: shopName,
-         // urlName: shopUrlName,
          category: shopCategory,
          ownerName: shopOwnerName,
          address: shopAddress,
@@ -49,11 +55,11 @@ const Profile = () => {
    };
 
    useEffect(() => {
-      setShopName(shopDetails?.data?.name);
-      setShopOwnerName(shopDetails?.data?.ownerName);
-      setShopCategory(shopDetails?.data?.category);
-      setShopAddress(shopDetails?.data?.address);
-   }, [shopDetails]);
+      setShopName(shop?.data?.name);
+      setShopOwnerName(shop?.data?.ownerName);
+      setShopCategory(shop?.data?.category);
+      setShopAddress(shop?.data?.address);
+   }, [shop]);
 
    // useEffect(() => {
    //    dispatch(setAppShopDetailsAsync(shopAppId));
@@ -66,7 +72,9 @@ const Profile = () => {
 
    return (
       <>
-         {((secure === '200') && (
+         {((secure === 'loading') && (
+            <PageLoading_layout />
+         )) || ((secure === '200') && (
             <SettingsPage_layout title={'Profile'} >
                <>
                   <form onSubmit={handleSubmit} >
@@ -154,11 +162,15 @@ const Profile = () => {
                   </form>
                </>
             </SettingsPage_layout>
-         )) || ((secure === 'loading') && (
-            <PageLoading_layout />
+         )) || ((secure === '401') && (
+            // signInProvider('google', { redirect: false, callbackUrl: `/auth/signup` })
+            <Forbidden />
+         )) || ((secure === '403') && (
+            <Forbidden />
+         )) || ((secure === '404') && (
+            <NotFound />
          ))}
       </>
-
    );
 };
 
