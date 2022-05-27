@@ -86,6 +86,8 @@ export default function ShopAdmin_navBar() {
 
    const secure = useSecurePage(shopAppId);
    const { user, status } = useUser();
+   // console.log(user);
+
 
    const shop = useAppSelector(selectShopDetails);
    const pageId = useAppSelector(selectPageId);
@@ -280,7 +282,7 @@ export default function ShopAdmin_navBar() {
                            >
                               <AccountCircle />
                            </IconButton> */}
-                           {(user?.photoURL) ? (
+                           {(user?.photoURL) && (
                               <Button
                                  size="large"
                                  aria-label="account of current user"
@@ -295,18 +297,6 @@ export default function ShopAdmin_navBar() {
                               >
                                  <img style={{ width: '40px', borderRadius: '50%' }} src={user.photoURL!} alt="" />
                               </Button>
-                           ) : (
-                              <IconButton
-                                 size="large"
-                                 edge="end"
-                                 aria-label="account of current user"
-                                 aria-controls={menuId}
-                                 aria-haspopup="true"
-                                 onClick={(e) => handleProfileMenuOpen(e)}
-                                 color="inherit"
-                              >
-                                 <AccountCircle />
-                              </IconButton>
                            )}
                         </Box>
                         <Box sx={{ display: { xs: 'flex', md: 'none' } }}>

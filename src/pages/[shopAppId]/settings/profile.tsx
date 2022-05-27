@@ -61,10 +61,6 @@ const Profile: NextPage = () => {
       setShopAddress(shop?.data?.address);
    }, [shop]);
 
-   // useEffect(() => {
-   //    dispatch(setAppShopDetailsAsync(shopAppId));
-   // }, [shopAppId]);
-
    useEffect(() => {
       dispatch(setAppPageId('profile_page'));
    }, []);

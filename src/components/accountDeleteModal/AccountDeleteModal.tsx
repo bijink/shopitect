@@ -9,20 +9,21 @@ import {
    Button,
    InputAdornment,
 } from '@mui/material';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LoadingButton } from '@mui/lab';
 import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
-import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
-import { useSession, signOut as signOutProvider, signIn as signInProvider } from "next-auth/react";
+import { deleteDoc, doc } from 'firebase/firestore';
+import { useSession, signOut as signOutProvider } from "next-auth/react";
 import { useRouter } from "next/router";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { auth, database, storage } from "../../config/firebase.config";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { deleteUser, signInWithEmailAndPassword } from "firebase/auth";
+import { deleteUser, EmailAuthProvider, reauthenticateWithCredential, signInWithEmailAndPassword } from "firebase/auth";
 import useUser from '../../hooks/useUser';
 import { useAppSelector } from '../../redux/hooks';
 import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
 import { deleteObject, ref } from 'firebase/storage';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 
 const style = {
@@ -57,6 +58,7 @@ export default function AccountDeleteModal() {
    const [isPasswordConfirmed, setIsPasswordConfirmed] = useState(false);
    const [inputChange, setInputChange] = useState(false);
    const [showPassword, setShowPassword] = useState(false);
+   const [loading, setLoading] = useState(false);
 
    const shop = useAppSelector(selectShopDetails);
 
@@ -95,101 +97,19 @@ export default function AccountDeleteModal() {
       });
    }
 
-   // const handleAccountDelete = async () => {
-   //    const confirmShopUrlName = prompt("Please enter your Shop Url Name :");
-
-   //    if (confirmShopUrlName === shopAppId) {
-   //       // await deleteAccount().then(() => {
-   //       //    router.push('/');
-   //       // });
-
-
-   //       if (prodIds.length > 0) {
-   //          // #if product exist
-   //          await deleteProducts().then(() => {
-   //             deleteAccount().then(() => {
-   //                router.push('/');
-   //             });
-   //          });
-   //       } else {
-   //          // #if there is no product exist
-   //          await deleteAccount().then(() => {
-   //             router.push('/');
-   //          });
-   //       }
-
-
-   //       // else {
-   //       //    // #if there is no product exist
-   //       //    await deleteAccount().then(() => {
-   //       //       router.push('/');
-   //       //    });
-   //       //    // await deleteAccount();
-   //       // }
-
-
-   //       //    if (prodIds.length > 0) {
-   //       //       // #if product exist
-   //       //       await deleteProducts().then(() => {
-   //       //          deleteDoc(doc(database, "shops", shop?.data?.urlName)).then(() => {
-   //       //             // console.log('done with delete');
-
-   //       //             // router.push('/');
-   //       //             deleteUser(user!).then(() => {
-   //       //                // signOutProvider({ callbackUrl: '/' });
-
-   //       //                // signOutProvider({ callbackUrl: '/' });
-
-   //       //                // signOutProvider({ redirect: false }).then(() => {
-   //       //                //    router.push('/');
-   //       //                // });
-   //       //                signOutProvider().then(() => {
-   //       //                   router.push('/');
-   //       //                });
-   //       //                // signOutProvider({ redirect: false });
-   //       //                // signOutProvider();
-   //       //             });
-   //       //          });
-   //       //       });
-   //       //    } else {
-   //       //      // #if there is no product exist
-   //       //       await deleteDoc(doc(database, "shops", shop?.data?.urlName)).then(() => {
-   //       //          // console.log('done without delete');
-
-   //       //          // router.push('/');
-   //       //          deleteUser(user!).then(() => {
-   //       //             signOutProvider({ callbackUrl: '/' });
-   //       //             // signOutProvider({ callbackUrl: '/' });
-   //       //             // signOutProvider({ redirect: false }).then(() => {
-   //       //             signOutProvider().then(() => {
-   //       //                router.push('/');
-   //       //             });
-   //       //             // signOutProvider({ redirect: false });
-   //       //             signOutProvider();
-   //       //          });
-   //       //       });
-   //       //    }
-   //       // } else {
-   //       //    alert('You Entered Shop Url Name is Wrong.');
-   //       // }
-   //    } else {
-   //       alert('You Entered Shop Url Name is Wrong.');
-   //    }
-   // };
-
-
    const handleSubmit = (e: any) => {
       e.preventDefault();
 
       if (isUrlConfirmed && session) {
-         signInWithEmailAndPassword(auth, session?.user.email!, password).then((userCredential) => {
-            setInputChange(false);
-            setIsPasswordConfirmed(true);
+         setLoading(true);
 
-            // console.log('passed');
-            // router.push(`/${shopUrlNameInput}`);
-            handleClose();
-         }).then(() => {
+         const credential = EmailAuthProvider.credential(
+            session.user.email!,
+            password
+         );
+
+         reauthenticateWithCredential(user!, credential).then(() => {
+            // handleClose();
             if (prodIds.length > 0) {
                // #if product exist
                deleteProducts().then(() => {
@@ -203,17 +123,13 @@ export default function AccountDeleteModal() {
                   router.push('/');
                });
             }
-         })
-            .catch((error) => {
-               // const errorCode = error.code;
-               // const errorMessage = error.message;
-               // console.log(errorCode, ' : ', errorMessage);
-               // console.log('catch');
-
-               // handleClose();
-               setInputChange(false);
-               setIsPasswordConfirmed(false);
-            });
+            setLoading(false);
+         }).catch((error) => {
+            setLoading(false);
+            // handleClose();
+            setInputChange(false);
+            setIsPasswordConfirmed(false);
+         });
       }
    };
 
@@ -323,17 +239,17 @@ export default function AccountDeleteModal() {
                            size='large'
                            color="error"
                            fullWidth
-                           onClick={() => setOpen(false)}
+                           onClick={() => { setOpen(false); setLoading(false); }}
                         >Cancel</Button>
                         <LoadingButton
                            variant="contained"
                            type="submit"
                            size='large'
                            fullWidth
-                           // loading={loading}
+                           loading={loading}
                            loadingPosition="start"
-                           startIcon={<PublishRoundedIcon />}
-                        >Submit</LoadingButton>
+                           startIcon={<DeleteForeverIcon />}
+                        >Delete</LoadingButton>
                      </Stack>
                   </form>
                </Box>

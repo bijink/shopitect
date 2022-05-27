@@ -42,13 +42,13 @@ const Create_app: NextPage = () => {
    const [isAccountNotExist, setIsAccountNotExist] = useState(false);
 
 
-   const handleFormSubmit = (e: any) => {
+   const handleFormSubmit = async (e: any) => {
       e.preventDefault();
       setLoading(true);
 
       // #shopUrlName is used as documentID in firebase firestore as a unique id
       if (session && isShopUrlNameUnique && (password.length >= 8)) {
-         createUserWithEmailAndPassword(auth, shopEmail, password).then((userCredential) => {
+         await createUserWithEmailAndPassword(auth, shopEmail, password).then((userCredential) => {
             // Signed in 
             // const user = userCredential.user;
             // ...

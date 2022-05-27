@@ -12,9 +12,7 @@ export default NextAuth({
    ],
    secret: process.env.NEXTAUTH_SECRET,
    pages: {
-      signIn: "/auth/signin",
-      // signIn: "/",
-      // signOut: "/",
+      signIn: "/auth/signup",
    },
    callbacks: {
       async session({ session, token, user }) {
