@@ -29,15 +29,16 @@ import { ref, deleteObject } from "firebase/storage";
 
 const Row = ({ rowBgColor, shopUrlName, prodId, prodCodeName, prodName, prodCategory, prodBrand, prodImg, quantity, getPrice, sellPrice, profitAmount, profitPercentage, createdAt }: ProductTableRowProps) => {
    const [open, setOpen] = useState(false);
-
+   let date = createdAt.toDate().toUTCString().slice(0, 16);
+   let time = `${createdAt.toDate().getHours()}:${createdAt.toDate().getMinutes()}`;
 
    const moreDetails = [
       { title: 'Get Price (Rs)', value: getPrice },
-      { title: 'Profit Percentage (%)', value: profitPercentage + ' %' },
+      { title: 'Profit Percentage (%)', value: `${profitPercentage} %` },
       { title: 'Profit Amount (Rs)', value: profitAmount },
       { title: 'Quantity', value: quantity },
       { title: 'Brand', value: capitalize(prodBrand) },
-      { title: 'Created At', value: createdAt.toDate().toUTCString().slice(0, 22) },
+      { title: 'Created At', value: `${date} ${time}` },
    ];
 
 

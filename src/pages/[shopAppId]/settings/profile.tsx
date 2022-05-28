@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { setAppPageId } from "../../../redux/slices/pageId.slice";
 import SettingsPage_layout from "../../../layouts/SettingsPage.layout";
 import { selectShopDetails, setAppShopDetailsAsync } from "../../../redux/slices/shopDetails.slice";
-import { doc, updateDoc } from "firebase/firestore";
+import { collection, doc, onSnapshot, query, updateDoc, where } from "firebase/firestore";
 import { database } from "../../../config/firebase.config";
 import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
 import { LoadingButton } from "@mui/lab";
@@ -30,7 +30,6 @@ const Profile: NextPage = () => {
    const secure = useSecurePage(shopAppId);
    // console.log(secure);
 
-
    const [shopName, setShopName] = useState('');
    const [shopCategory, setShopCategory] = useState('');
    const [shopOwnerName, setShopOwnerName] = useState('');
@@ -50,16 +49,38 @@ const Profile: NextPage = () => {
          address: shopAddress,
       }).then(() => {
          setLoading(false);
-         router.reload();
+         // router.reload();
       });
    };
 
+
    useEffect(() => {
-      setShopName(shop?.data?.name);
-      setShopOwnerName(shop?.data?.ownerName);
-      setShopCategory(shop?.data?.category);
-      setShopAddress(shop?.data?.address);
-   }, [shop]);
+      shopAppId && onSnapshot(query(collection(database, 'shops'), where('urlName', '==', shopAppId)), (snapshot) => {
+         let docsLength = null;
+         let doc = null;
+
+         if (snapshot.docs.length === 0) docsLength = 0;
+         else if (snapshot.docs.length === 1) docsLength = 1;
+
+         snapshot.forEach(obj => {
+            setShopName(obj.data().name);
+            setShopOwnerName(obj.data().ownerName);
+            setShopCategory(obj.data().category);
+            setShopAddress(obj.data().address);
+
+            doc = obj.data();
+         });
+
+         const shopDetails = {
+            data: doc,
+            length: docsLength,
+         };
+
+         sessionStorage.setItem('shop-details', JSON.stringify(shopDetails));
+
+         dispatch(setAppShopDetailsAsync(shopAppId));
+      });
+   }, [shopAppId, database]);
 
    useEffect(() => {
       dispatch(setAppPageId('profile_page'));

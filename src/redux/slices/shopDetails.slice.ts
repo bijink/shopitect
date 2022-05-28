@@ -32,15 +32,10 @@ function fetchShopDetails(shopAppId: string | string[] | undefined) {
          let docsLength = null;
          let doc = null;
 
-         if (snapshot.docs.length === 0) {
-            docsLength = 0;
-         } else if (snapshot.docs.length === 1) {
-            docsLength = 1;
-         }
+         if (snapshot.docs.length === 0) docsLength = 0;
+         else if (snapshot.docs.length === 1) docsLength = 1;
 
-         snapshot.forEach(obj => {
-            doc = obj.data();
-         });
+         snapshot.forEach(obj => (doc = obj.data()));
 
          const shopDetails = {
             data: doc,
@@ -54,7 +49,6 @@ function fetchShopDetails(shopAppId: string | string[] | undefined) {
 
 
 const initialState: shopDeatilsState = {
-   // value: null,
    value: {
       data: null,
       length: null
@@ -65,7 +59,27 @@ const initialState: shopDeatilsState = {
 export const setAppShopDetailsAsync = createAsyncThunk(
    'shop-details/fetchshopDetails',
    async (shopAppId: string | string[] | undefined) => {
-      const response = await fetchShopDetails(shopAppId);
+      // const response = await fetchShopDetails(shopAppId);
+
+      let response;
+      let details = sessionStorage.getItem('shop-details');
+      let parseDetails = JSON.parse(details!);
+
+      if (!details || !(parseDetails.data)) {
+         const details = await fetchShopDetails(shopAppId);
+         response = details;
+
+         sessionStorage.setItem('shop-details', JSON.stringify(details));
+      } else {
+         if (parseDetails.data.urlName === shopAppId) {
+            response = parseDetails;
+         } else {
+            const details = await fetchShopDetails(shopAppId);
+            response = details;
+
+            sessionStorage.setItem('shop-details', JSON.stringify(details));
+         }
+      }
 
       return response;
    }

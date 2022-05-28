@@ -1,4 +1,4 @@
-// *securePage
+// *securePage hook
 import { useEffect, useState } from "react";
 import { auth } from "../config/firebase.config";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
@@ -10,8 +10,12 @@ const useSecurePage = (shopAppId: string | string[] | undefined) => {
    const dispatch = useAppDispatch();
 
    const shopDetails = useAppSelector(selectShopDetails);
-   const [userData, setUserData] = useState<User | null>(null);
-   const [delayOver, setDelayOver] = useState(false);
+   // console.log(shopDetails.length);
+
+   const [userData, setUserData] = useState<User | null | undefined>(undefined);
+   // console.log(userData);
+
+   // const [delayOver, setDelayOver] = useState(false);
 
    const [secure, setSecure] = useState<'200' | '401' | '403' | '404' | 'loading'>('loading');
    /**
@@ -33,23 +37,28 @@ const useSecurePage = (shopAppId: string | string[] | undefined) => {
 
    useEffect(() => {
       if (shopAppId && shopDetails) {
-         !userData && setDelayOver(true);
+         // !userData && setDelayOver(true);
          if (userData && (shopDetails.length === 1)) {
-            setDelayOver(false);
+            // setDelayOver(false);
             if (userData.uid === shopDetails.data?.accountID) {
                setSecure('200');
             } else {
                setSecure('403');
             }
-         } else if (!userData && (shopDetails.length === 1)) {
-            delayOver && setSecure('401');
+            // } else if (!userData && (shopDetails.length === 1)) {
+            // } else if (!userData) {
+         } else if (userData === null) {
+            // delayOver && setSecure('401');
+            setSecure('401');
          } else if ((shopDetails.length === 0)) {
             setSecure('404');
-         } else if ((shopDetails.length === null)) {
+            // } else if ((shopDetails.length === null)) {
+         } else if ((shopDetails.length === null) || (userData === undefined)) {
             setSecure('loading');
          }
       }
-   }, [shopDetails, userData, delayOver]);
+      // }, [shopDetails, userData, delayOver]);
+   }, [shopDetails, userData]);
 
    return secure;
 };
