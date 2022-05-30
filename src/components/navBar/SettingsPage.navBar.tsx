@@ -30,6 +30,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import { selectPageId } from '../../redux/slices/pageId.slice';
+import { useUser } from '../../hooks';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -80,7 +81,7 @@ export default function SettingsPage_navBar() {
    const { shopAppId } = router.query;
    // console.log(session?.user);
 
-   const user = auth.currentUser;
+   const { user } = useUser();
    // console.log(user);
    // console.log(user?.photoURL);
 
@@ -133,24 +134,16 @@ export default function SettingsPage_navBar() {
          onClose={handleMenuClose}
       >
          {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem> */}
-         <MenuItem onClick={handleMenuClose}>Account</MenuItem>
-         {session ?
-            <MenuItem onClick={(e: any) => {
-               e.preventDefault();
-               signOutAccount(auth).then(() => {
-                  signOutProvider({ redirect: false, callbackUrl: `/${shopDetails?.data?.urlName}` });
+         {/* <MenuItem onClick={handleMenuClose}>Account</MenuItem> */}
+         <MenuItem onClick={(e: any) => {
+            e.preventDefault();
+            router.push(`/${shopAppId}`).then(() => {
+               signOutProvider({ redirect: false }).then(() => {
+                  signOutAccount(auth);
                });
-               handleMenuClose();
-            }}>Sign Out</MenuItem>
-            :
-            <MenuItem onClick={(e: any) => {
-               e.preventDefault();
-               // signIn('google', undefined, { login_hint: "kbijin528@gmail.com" });
-               signInProvider('google');
-
-               handleMenuClose();
-            }}>Sign In</MenuItem>
-         }
+            });
+            handleMenuClose();
+         }}>Sign Out</MenuItem>
       </Menu>
    );
 
@@ -268,25 +261,25 @@ export default function SettingsPage_navBar() {
                         </Badge>
                      </IconButton>
                      {/* <IconButton
-                              size="large"
-                              edge="end"
-                              aria-label="account of current user"
-                              aria-controls={menuId}
-                              aria-haspopup="true"
-                              onClick={handleProfileMenuOpen}
-                              color="inherit"
-                           >
-                              <AccountCircle />
-                           </IconButton> */}
+                           size="large"
+                           edge="end"
+                           aria-label="account of current user"
+                           aria-controls={menuId}
+                           aria-haspopup="true"
+                           onClick={handleProfileMenuOpen}
+                           color="inherit"
+                        >
+                           <AccountCircle />
+                        </IconButton> */}
                      {(user?.photoURL) && (
                         <Button
                            size="large"
                            aria-label="account of current user"
                            aria-controls={menuId}
                            aria-haspopup="true"
-                           onClick={() => {
-                              // handleProfileMenuOpen();
-                              router.push(`/${shopAppId}/account/profile`);
+                           onClick={(event) => {
+                              handleProfileMenuOpen(event);
+                              // router.push(`/${shopAppId}/settings/profile`);
                            }}
                            color="inherit"
                            sx={{ borderRadius: '50%' }}
@@ -311,7 +304,7 @@ export default function SettingsPage_navBar() {
             </Toolbar>
          </AppBar>
          {renderMobileMenu}
-         {/* {renderMenu} */}
+         {renderMenu}
       </Box >
    );
 };

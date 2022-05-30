@@ -22,18 +22,15 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import { useRouter } from 'next/router';
 import { auth, database } from '../../config/firebase.config';
 import { collection, DocumentData, onSnapshot, query, where } from 'firebase/firestore';
-// import { signOut } from 'firebase/auth';
 import { useAppSelector } from '../../redux/hooks';
 import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
 import { getSession, signIn as signInProvider, signOut as signOutProvider, useSession } from 'next-auth/react';
 import { signOut as signOutAccount } from 'firebase/auth';
-import useSecurePage from '../../hooks/useSecurePage';
+import { useSecurePage, useUser } from '../../hooks';
 import InfoIcon from '@mui/icons-material/Info';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import { selectPageId } from '../../redux/slices/pageId.slice';
-import useUser from '../../hooks/useUser';
-// import useHasAdmin from '../../hooks/useHasAdmin';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -88,7 +85,6 @@ export default function ShopAdmin_navBar() {
    const { user, status } = useUser();
    // console.log(user);
 
-
    const shop = useAppSelector(selectShopDetails);
    const pageId = useAppSelector(selectPageId);
 
@@ -134,19 +130,15 @@ export default function ShopAdmin_navBar() {
          open={isMenuOpen}
          onClose={handleMenuClose}
       >
-         {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem> */}
-         <MenuItem onClick={(e) => {
+         <MenuItem onClick={() => {
             handleMenuClose();
             router.push(`/${shopAppId}/settings/profile`);
-         }
-         }>Settings</MenuItem>
+         }}>Settings</MenuItem>
 
-         <MenuItem onClick={(e: any) => {
-            e.preventDefault();
-            signOutAccount(auth).then(() => {
-               // signOutProvider({ redirect: false, callbackUrl: `/${shopDetails.urlName}` });
+         <MenuItem onClick={() => {
+            router.push(`/${shopAppId}`).then(() => {
                signOutProvider({ redirect: false }).then(() => {
-                  router.push(`/${shopAppId}`);
+                  signOutAccount(auth);
                });
             });
             handleMenuClose();
@@ -243,7 +235,7 @@ export default function ShopAdmin_navBar() {
                )}
                <Box sx={{ flexGrow: 1 }} />
                <Box>
-                  {(secure === '200') && (
+                  {((secure === '200') && (
                      <>
                         <Box sx={{ display: { xs: 'none', md: 'flex' } }} justifyContent="center" alignItems="center" >
                            {!(pageId === 'dashboard_page') && (
@@ -312,24 +304,23 @@ export default function ShopAdmin_navBar() {
                            </IconButton>
                         </Box>
                      </>
-                  ) ||
-                     (secure === '401') && (
-                        <IconButton
-                           size="small"
-                           aria-label="information about the shop"
-                           color="inherit"
-                           onClick={() => {
-                              router.push(`/${shop?.data?.urlName}/info/about`);
-                           }}
-                        >
-                           <InfoIcon />
-                        </IconButton>
-                     )}
+                  )) || ((secure === '401') && (
+                     <IconButton
+                        size="small"
+                        aria-label="information about the shop"
+                        color="inherit"
+                        onClick={() => {
+                           router.push(`/${shop?.data?.urlName}/info/about`);
+                        }}
+                     >
+                        <InfoIcon />
+                     </IconButton>
+                  ))}
                </Box>
             </Toolbar>
          </AppBar>
          {renderMobileMenu}
          {renderMenu}
-      </Box >
+      </Box>
    );
 };

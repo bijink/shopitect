@@ -9,15 +9,16 @@ import { signOut as signOutFromProvider, signIn as signInToProvider, useSession 
 import { LoadingButton } from "@mui/lab";
 import LoginIcon from '@mui/icons-material/Login';
 import UnAuthProvider from "../../components/unAuthProvider";
+import { useUser } from "../../hooks";
 
 
 const SignupConfirm = () => {
    const router = useRouter();
 
-   const { data: session, status } = useSession();
+   const { data: session, status: sessionStatus } = useSession();
    // console.log(session?.user);
 
-   const user = auth.currentUser;
+   const { user, status: userStatus } = useUser();
 
    const [shopUrlName, setShopUrlName] = useState('');
 
@@ -29,12 +30,12 @@ const SignupConfirm = () => {
       user && onSnapshot(query(collection(database, 'shops'), where("accountID", "==", user.uid)), (snapshot) => {
          snapshot.forEach(obj => {
             // console.log(obj.data());
-            if (status == 'authenticated') {
+            if (sessionStatus === 'authenticated') {
                router.push(`/${obj.data().urlName}`);
             }
          });
       });
-   }, [user, status]);
+   }, [user, sessionStatus]);
 
    useEffect(() => {
       session && onSnapshot(query(collection(database, 'shops'), where('providerID', '==', session.user.uid)), (snapshot) => {
@@ -53,16 +54,15 @@ const SignupConfirm = () => {
    }, [session]);
 
 
-   if (status == 'unauthenticated') return (
-      <UnAuthProvider title="Signup" />
-   );
-   else return (
+   return (
       <>
          <Head>
-            <title>Signup - master-project</title>
+            <title>Signup · Shopitect</title>
          </Head>
 
-         {(isAccountExist && !user) ? (
+         {((sessionStatus === 'unauthenticated') && (
+            <UnAuthProvider title="Signup" />
+         )) || ((isAccountExist && (userStatus === 'unauthenticated')) && (
             <>
                <Box
                   height={'100vh'}
@@ -100,8 +100,7 @@ const SignupConfirm = () => {
                                     variant="contained"
                                     size='small'
                                     loading={loading}
-                                    loadingPosition="end"
-                                    endIcon={<LoginIcon />}
+                                    loadingPosition="center"
                                     onClick={() => {
                                        setLoading(true);
                                        router.push('/auth/login').then(() => {
@@ -116,11 +115,11 @@ const SignupConfirm = () => {
                   </Box>
                </Box>
             </>
-         ) : (
-            <Stack justifyContent="center" alignItems="center" >
+         )) || (((sessionStatus === 'loading') || (userStatus === 'loading') || !isAccountExist) && (
+            <Stack justifyContent="center" alignItems="center" pt={5} >
                <CircularProgress />
             </Stack>
-         )}
+         ))}
       </>
    );
 };

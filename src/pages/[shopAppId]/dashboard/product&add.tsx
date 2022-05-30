@@ -8,12 +8,13 @@ import { useEffect } from 'react';
 import { useRouter } from "next/router";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { selectShopDetails } from "../../../redux/slices/shopDetails.slice";
-import useSecurePage from "../../../hooks/useSecurePage";
+import { useSecurePage } from "../../../hooks";
 import { setAppPageId } from "../../../redux/slices/pageId.slice";
-import ShopAdmin_layout from "../../../layouts/ShopAdmin.layout";
-import PageLoading_layout from "../../../layouts/PageLoading.layout";
+import { PageLoading_layout, ShopAdmin_layout } from "../../../layouts";
 import { signIn as signInProvider } from "next-auth/react";
 import Forbidden from "../../403";
+import NotFound from "../../404";
+import ShopPagesHead from "../../../components/shopPagesHead";
 
 
 const Product_add: NextPage = () => {
@@ -28,15 +29,17 @@ const Product_add: NextPage = () => {
 
 
    useEffect(() => {
+      (secure === '401') && signInProvider('google', { redirect: false, callbackUrl: `/auth/signup` });
+   }, [secure]);
+
+   useEffect(() => {
       dispatch(setAppPageId('productAdd_page'));
    }, []);
 
 
    return (
       <>
-         <Head>
-            <title>{shop?.data ? `Product (add) · ${shop.data.name}` : 'Loading...'}</title>
-         </Head>
+         <ShopPagesHead title="Product (add)" />
 
          {((secure === "loading") && (
             <PageLoading_layout />
@@ -49,11 +52,10 @@ const Product_add: NextPage = () => {
                   <ProductInputForm shopData={shop?.data && shop.data} />
                </>
             </ShopAdmin_layout>
-         )) || ((secure === '401') && (
-            // signInProvider('google', { redirect: false, callbackUrl: `/auth/signup` })
-            <Forbidden />
          )) || ((secure === '403') && (
             <Forbidden />
+         )) || ((secure === '404') && (
+            <NotFound />
          ))}
       </>
    );

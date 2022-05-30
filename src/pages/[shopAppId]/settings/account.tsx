@@ -1,19 +1,19 @@
 import type { NextPage } from "next";
 
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { setAppPageId } from "../../../redux/slices/pageId.slice";
-import SettingsPage_layout from "../../../layouts/SettingsPage.layout";
+import { PageLoading_layout, SettingsPage_layout } from "../../../layouts";
 import { useRouter } from "next/router";
 import { selectShopDetails } from "../../../redux/slices/shopDetails.slice";
 import Forbidden from "../../403";
-import useSecurePage from "../../../hooks/useSecurePage";
-import PageLoading_layout from "../../../layouts/PageLoading.layout";
-import useUser from "../../../hooks/useUser";
+import { useSecurePage, useUser } from "../../../hooks";
 import NotFound from "../../404";
 import AccountDeleteModal from "../../../components/accountDeleteModal";
-import { EmailAuthProvider, getAuth, reauthenticateWithCredential } from "firebase/auth";
+import Head from "next/head";
+import { signIn as signInProvider } from "next-auth/react";
+import ShopPagesHead from "../../../components/shopPagesHead";
 
 
 const Account: NextPage = () => {
@@ -27,32 +27,15 @@ const Account: NextPage = () => {
    const secure = useSecurePage(shopAppId);
    // console.log(secure);
 
-   const { user } = useUser();
+   // const { user } = useUser();
+
+   const [hasAccountDeleteCall, setHasAccountDeleteCall] = useState(false);
 
 
-   // const handleDelete = () => {
-   //    const userProvidedPassword = prompt('Enter your password');
-   //    // console.log(userProvidedPassword);
-
-
-   //    // TODO(you): prompt the user to re-provide their sign-in credentials
-   //    const credential = EmailAuthProvider.credential(
-   //       // auth.currentUser.email,
-   //       user?.email!,
-   //       userProvidedPassword!
-   //    );
-
-   //    reauthenticateWithCredential(user!, credential).then(() => {
-   //       // User re-authenticated.
-   //       console.log('re');
-
-   //    }).catch((error) => {
-   //       // An error ocurred
-   //       // ...
-   //       console.log('no-re');
-   //    });
-   // };
-
+   useEffect(() => {
+      // (secure === '401') && signInProvider('google', { redirect: false, callbackUrl: `/auth/signup` });
+      (secure === '401') && router.push('/');
+   }, [secure]);
 
    useEffect(() => {
       dispatch(setAppPageId('account_page'));
@@ -61,21 +44,19 @@ const Account: NextPage = () => {
 
    return (
       <>
-         {((secure === 'loading') && (
+         <ShopPagesHead title="Account" />
+
+         {((secure === 'loading' || hasAccountDeleteCall) && (
             <PageLoading_layout />
          )) || ((secure === '200') && (
             <SettingsPage_layout title={'Account'} >
                <>
                   <Box>
                      <Typography variant="h5" component="p" gutterBottom color={'error'} >Delete account</Typography>
-                     <AccountDeleteModal />
-                     {/* <Button onClick={handleDelete} >Delete</Button> */}
+                     <AccountDeleteModal setHasAccountDeleteCall={setHasAccountDeleteCall} />
                   </Box>
                </>
             </SettingsPage_layout>
-         )) || ((secure === '401') && (
-            // signInProvider('google', { redirect: false, callbackUrl: `/auth/signup` })
-            <Forbidden />
          )) || ((secure === '403') && (
             <Forbidden />
          )) || ((secure === '404') && (

@@ -17,8 +17,6 @@ const SettingsPage_layout = ({ children, title }: SettingsPageLayoutTypes) => {
             <Box component='aside' ><SettingsPage_sideBar /></Box>
             <Box component="main" sx={{ flexGrow: 1 }}>
                <Toolbar />
-               {/* <Box minHeight={'80.5vh'} p={3}> */}
-               {/* <Box minHeight={'80.5vh'} > */}
                <Box minHeight={'80.4vh'} >
                   <Stack spacing={1} direction='row' alignItems="center" px={3} py={1.5} bgcolor="cyan" >
                      <Typography variant="h5" component='div' >Settings</Typography>

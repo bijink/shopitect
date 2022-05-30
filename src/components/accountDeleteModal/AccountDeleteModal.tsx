@@ -11,15 +11,14 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { LoadingButton } from '@mui/lab';
-import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { useSession, signOut as signOutProvider } from "next-auth/react";
 import { useRouter } from "next/router";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { auth, database, storage } from "../../config/firebase.config";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { deleteUser, EmailAuthProvider, reauthenticateWithCredential, signInWithEmailAndPassword } from "firebase/auth";
-import useUser from '../../hooks/useUser';
+import { FormatColorResetOutlined, Visibility, VisibilityOff } from "@mui/icons-material";
+import { deleteUser, EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
+import { useUser } from '../../hooks';
 import { useAppSelector } from '../../redux/hooks';
 import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
 import { deleteObject, ref } from 'firebase/storage';
@@ -40,12 +39,12 @@ const style = {
 };
 
 
-export default function AccountDeleteModal() {
+export default function AccountDeleteModal({ setHasAccountDeleteCall }: any) {
    const router = useRouter();
-   const { shopAppId } = router.query;
 
-   const { data: session, status } = useSession();
+   const { data: session, status: sessionStatus } = useSession();
 
+   const shop = useAppSelector(selectShopDetails);
 
    const { user } = useUser();
 
@@ -53,6 +52,7 @@ export default function AccountDeleteModal() {
 
    const [shopUrlNameInput, setShopUrlNameInput] = useState('');
    const [password, setPassword] = useState('');
+   const [prodIds, setProdIds] = useState([] as string[]);
 
    const [isUrlConfirmed, setIsUrlConfirmed] = useState(false);
    const [isPasswordConfirmed, setIsPasswordConfirmed] = useState(false);
@@ -60,14 +60,9 @@ export default function AccountDeleteModal() {
    const [showPassword, setShowPassword] = useState(false);
    const [loading, setLoading] = useState(false);
 
-   const shop = useAppSelector(selectShopDetails);
-
 
    const handleOpen = () => setOpen(true);
    const handleClose = () => setOpen(false);
-
-   const [prodIds, setProdIds] = useState([] as string[]);
-   // (prodIds.length > 0) && console.log('prod:', prodIds);
 
 
    function deleteProducts() {
@@ -87,9 +82,8 @@ export default function AccountDeleteModal() {
    function deleteAccount() {
       return new Promise(resolve => {
          (shop?.data) && deleteDoc(doc(database, "shops", shop.data.urlName)).then(() => {
-            signOutProvider({ redirect: false }).then(() => {
+            signOutProvider({ callbackUrl: '/' }).then(() => {
                user && deleteUser(user).then(() => {
-                  // router.reload();
                   resolve(null);
                });
             });
@@ -97,36 +91,36 @@ export default function AccountDeleteModal() {
       });
    }
 
-   const handleSubmit = (e: any) => {
+   const handleSubmit = async (e: any) => {
       e.preventDefault();
 
       if (isUrlConfirmed && session) {
          setLoading(true);
+         setHasAccountDeleteCall(true);
 
          const credential = EmailAuthProvider.credential(
             session.user.email!,
             password
          );
 
-         reauthenticateWithCredential(user!, credential).then(() => {
-            // handleClose();
+         await reauthenticateWithCredential(user!, credential).then(() => {
             if (prodIds.length > 0) {
                // #if product exist
                deleteProducts().then(() => {
                   deleteAccount().then(() => {
-                     router.push('/');
+                     handleClose();
                   });
                });
             } else {
                // #if there is no product exist
                deleteAccount().then(() => {
-                  router.push('/');
+                  handleClose();
                });
             }
             setLoading(false);
          }).catch((error) => {
             setLoading(false);
-            // handleClose();
+            setHasAccountDeleteCall(false);
             setInputChange(false);
             setIsPasswordConfirmed(false);
          });
@@ -166,9 +160,6 @@ export default function AccountDeleteModal() {
    return (
       <>
          <Tooltip title="Edit" placement="left" arrow >
-            {/* <Button disabled={!user || !(shop?.data)} variant="outlined" size="small" color={'error'} sx={{ textTransform: 'none' }}
-               onClick={handleAccountDelete}
-            >Delete your account</Button> */}
             <Button variant="outlined" size="small" color={'error'} sx={{ textTransform: 'none' }} onClick={handleOpen} >Delete your account</Button>
          </Tooltip>
 

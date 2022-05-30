@@ -1,4 +1,5 @@
-import { User } from "firebase/auth";
+// *user, userStatus hook
+import type { User } from "firebase/auth";
 
 import { useEffect, useState } from "react";
 import { auth } from "../config/firebase.config";
@@ -6,8 +7,10 @@ import { auth } from "../config/firebase.config";
 
 const useUser = () => {
    const [isUser, setIsUser] = useState<boolean | null>(null);
-   const [status, setStatus] = useState<'user' | 'no-user' | 'loading'>('loading');
+
    const [user, setUser] = useState<User | null>(null);
+   const [status, setStatus] = useState<'loading' | 'authenticated' | 'unauthenticated'>('loading');
+
 
    useEffect(() => auth.onAuthStateChanged(user => {
       user ? setIsUser(true) : setIsUser(false);
@@ -18,9 +21,9 @@ const useUser = () => {
       if (isUser === null) {
          setStatus('loading');
       } else if (isUser === false) {
-         setStatus('no-user');
+         setStatus('unauthenticated');
       } else if (isUser === true) {
-         setStatus('user');
+         setStatus('authenticated');
       }
    }, [isUser]);
 

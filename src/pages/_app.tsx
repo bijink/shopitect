@@ -15,6 +15,7 @@ import { Provider } from 'react-redux';
 import { store } from '../redux/store';
 
 import { SessionProvider } from "next-auth/react";
+import Head from 'next/head';
 
 
 interface MyAppProps extends AppProps {
@@ -30,16 +31,22 @@ const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
    const { Component, emotionCache = clientSideEmotionCache, pageProps: { session, ...pageProps } } = props;
 
    return (
-      <SessionProvider session={session}>
-         <Provider store={store}>
-            <CacheProvider value={emotionCache}>
-               <ThemeProvider theme={theme}>
-                  <CssBaseline />
-                  <Component {...pageProps} />
-               </ThemeProvider>
-            </CacheProvider>
-         </Provider>
-      </SessionProvider>
+      <>
+         <Head>
+            <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+         </Head>
+
+         <SessionProvider session={session}>
+            <Provider store={store}>
+               <CacheProvider value={emotionCache}>
+                  <ThemeProvider theme={theme}>
+                     <CssBaseline />
+                     <Component {...pageProps} />
+                  </ThemeProvider>
+               </CacheProvider>
+            </Provider>
+         </SessionProvider>
+      </>
    );
 };
 

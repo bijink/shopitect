@@ -160,7 +160,7 @@ export default function ProductTable({ shopData, products }: ProductTableProps) 
                </TableRow>
             </TableHead>
             <TableBody>
-               {products.map((prod: ProdDetailsTypes, index: number) => (
+               {(products && shopData) && (products.map((prod: ProdDetailsTypes, index: number) => (
                   <Row key={index}
                      rowBgColor={index % 2 === 0 ? '#f5f5f5' : '#e0e0e0'}
 
@@ -179,7 +179,7 @@ export default function ProductTable({ shopData, products }: ProductTableProps) 
                      profitPercentage={prod.data().profitPercentage}
                      createdAt={prod.data().createdAt}
                   />
-               ))}
+               )))}
             </TableBody>
          </Table>
       </TableContainer >

@@ -2,12 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 
 
-export interface pageIdState {
-   value: string;
-}
-
-
-const initialState: pageIdState = {
+const initialState: { value: string; } = {
    value: '',
 };
 

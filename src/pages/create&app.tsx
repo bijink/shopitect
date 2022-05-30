@@ -20,9 +20,7 @@ const Create_app: NextPage = () => {
 
    const dispatch = useAppDispatch();
 
-   // console.log(auth.currentUser);
-
-   const { data: session, status } = useSession();
+   const { data: session, status: sessionStatus } = useSession();
    // console.log(session?.user);
 
    const inputFocusRef = useRef<any>(null);
@@ -101,7 +99,7 @@ const Create_app: NextPage = () => {
 
 
    useEffect(() => {
-      if (status == 'unauthenticated') signInProvider('google', { callbackUrl: "/auth/signup" });
+      if (sessionStatus == 'unauthenticated') signInProvider('google', { callbackUrl: "/auth/signup" });
 
       session && onSnapshot(query(collection(database, 'shops'), where('providerID', '==', session.user.uid)), (snapshot) => {
          if (snapshot.docs.length === 1) {
@@ -116,10 +114,10 @@ const Create_app: NextPage = () => {
          }
       });
 
-      if (isAccountNotExist && (status == 'authenticated')) {
+      if (isAccountNotExist && (sessionStatus == 'authenticated')) {
          inputFocusRef.current.focus();
       }
-   }, [session]);
+   }, [session, sessionStatus]);
 
    useEffect(() => {
       onSnapshot(query(collection(database, 'shops')), (snapshot) => {
@@ -142,10 +140,12 @@ const Create_app: NextPage = () => {
    return (
       <>
          <Head>
-            <title>create-app</title>
+            <title>Create (app) · Shopitect</title>
+            <meta name="description" content="An architect of shop management application" />
+            <meta property="og:title" content="Shopitect" key="title" />
          </Head>
 
-         {(isAccountNotExist && (status == 'authenticated')) ? (
+         {(isAccountNotExist && (sessionStatus == 'authenticated')) ? (
             <Box py={3} >
                <Container >
                   <Typography variant="h4" component={'div'} gutterBottom>Create App</Typography>
@@ -272,7 +272,7 @@ const Create_app: NextPage = () => {
                </Container>
             </Box>
          ) : (
-            <Stack justifyContent="center" alignItems="center" >
+            <Stack justifyContent="center" alignItems="center" pt={5} >
                <CircularProgress />
             </Stack>
          )}

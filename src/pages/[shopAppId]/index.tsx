@@ -11,11 +11,9 @@ import { database } from '../../config/firebase.config';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { selectShopDetails, setAppShopDetailsAsync } from '../../redux/slices/shopDetails.slice';
 import { setAppPageId } from '../../redux/slices/pageId.slice';
-import Public_layout from '../../layouts/Public.layout';
-import ShopAdmin_layout from '../../layouts/ShopAdmin.layout';
-import useSecurePage from '../../hooks/useSecurePage';
+import { PageLoading_layout, Public_layout, ShopAdmin_layout } from '../../layouts';
+import { useSecurePage } from '../../hooks';
 import { Stack, Typography } from '@mui/material';
-import PageLoading_layout from '../../layouts/PageLoading.layout';
 import NotFound from '../404';
 
 
@@ -52,8 +50,9 @@ const Shop: NextPage = () => {
    return (
       <>
          <Head>
-            <title>{shop?.data ? shop.data.name : 'Loading...'}</title>
+            <title>{shop?.data ? shop.data.name : ((secure !== '404') ? 'Loading...' : '404')}</title>
             <meta name="description" content="" />
+            <meta property="og:title" content={shop?.data?.name} key="title" />
          </Head>
 
          <>

@@ -2,8 +2,8 @@
 import { useSession, signOut as signOutFromProvider, signIn as signInToProvider } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { Box, Button, IconButton, InputAdornment, Stack, TextField, Typography } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
+import { Box, Button, CircularProgress, IconButton, InputAdornment, Stack, TextField, Typography } from "@mui/material";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { auth, database } from "../../config/firebase.config";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -11,17 +11,22 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import UnAuthProvider from "../../components/unAuthProvider";
+import { useUser } from "../../hooks";
+import LoginIcon from '@mui/icons-material/Login';
+import { LoadingButton } from "@mui/lab";
+import CircleIcon from '@mui/icons-material/Circle';
 
 
 const LoginConfirm = () => {
    const router = useRouter();
 
-   const { data: session, status } = useSession();
-   // console.log('session:', session, '; ', 'status:', status);
+   const { data: session, status: sessionStatus } = useSession();
+   // console.log(sessionStatus);
 
-   const user = auth.currentUser;
-   // console.log('user:', user?.uid);
+   const { user, status: userStatus } = useUser();
+   // console.log(userStatus);
 
+   const inputFocusRef = useRef<any>(null);
 
    const [shopUrlNameInput, setShopUrlNameInput] = useState('');
    const [password, setPassword] = useState('');
@@ -30,26 +35,26 @@ const LoginConfirm = () => {
    const [isPasswordConfirmed, setIsPasswordConfirmed] = useState(false);
    const [inputChange, setInputChange] = useState(false);
    const [showPassword, setShowPassword] = useState(false);
+   const [loading, setLoading] = useState(false);
 
 
    const handleSubmit = (e: any) => {
       e.preventDefault();
+      setLoading(true);
 
       if (isUrlConfirmed && session) {
          signInWithEmailAndPassword(auth, session?.user.email!, password).then((userCredential) => {
             setInputChange(false);
             setIsPasswordConfirmed(true);
-
-            // console.log('passed');
+            setLoading(false);
             router.push(`/${shopUrlNameInput}`);
          }).catch((error) => {
             // const errorCode = error.code;
             // const errorMessage = error.message;
-            // console.log(errorCode, ' : ', errorMessage);
-            // console.log('catch');
 
             setInputChange(false);
             setIsPasswordConfirmed(false);
+            setLoading(false);
          });
       }
    };
@@ -59,12 +64,12 @@ const LoginConfirm = () => {
       user && onSnapshot(query(collection(database, 'shops'), where("accountID", "==", user.uid)), (snapshot) => {
          snapshot.forEach(obj => {
             // console.log(obj.data());
-            if (status == 'authenticated') {
+            if (userStatus === 'authenticated') {
                router.push(`/${obj.data().urlName}`);
             }
          });
       });
-   }, [user, status]);
+   }, [user, userStatus]);
 
    useEffect(() => {
       session && onSnapshot(query(collection(database, 'shops'), where("email", "==", session?.user.email)), (snapshot) => {
@@ -83,17 +88,20 @@ const LoginConfirm = () => {
       setInputChange(true);
    }, [password]);
 
+   useEffect(() => {
+      ((sessionStatus === 'authenticated') && (userStatus === 'unauthenticated')) && inputFocusRef.current.focus();
+   }, [sessionStatus, userStatus]);
 
-   if (status == 'unauthenticated') return (
-      <UnAuthProvider title="Login" />
-   );
-   else return (
+
+   return (
       <>
          <Head>
-            <title>Login - master-project</title>
+            <title>Login · Shopitect</title>
          </Head>
 
-         {((status == 'authenticated') && !user) && (
+         {((sessionStatus === 'unauthenticated') && (
+            <UnAuthProvider title="Login" />
+         )) || (((sessionStatus === 'authenticated') && (userStatus === 'unauthenticated')) && (
             <>
                <Box
                   height={'100vh'}
@@ -131,6 +139,7 @@ const LoginConfirm = () => {
                                  helperText={(shopUrlNameInput === '') ? "* Enter your Shop Url Name" : (isUrlConfirmed ? '' : "* You entered Url Name doesn't exist")}
                                  color={(shopUrlNameInput === '') ? "primary" : (isUrlConfirmed ? "success" : "error")}
                                  error={(shopUrlNameInput !== '') && !isUrlConfirmed}
+                                 inputRef={inputFocusRef}
                                  required
                               />
                               <TextField
@@ -162,23 +171,28 @@ const LoginConfirm = () => {
                               <Button variant="contained" size='small' color="error" onClick={() => {
                                  signOutFromProvider({ callbackUrl: "/" });
                               }}>cancel</Button>
-                              <Button
+
+                              <LoadingButton
                                  variant="contained"
                                  size="small"
                                  type="submit"
-                                 endIcon={((password === '') || inputChange) ? '' : (isPasswordConfirmed ? <CheckCircleIcon /> : <CancelIcon />)}
+                                 endIcon={((password === '') || inputChange) ? <LoginIcon /> : (isPasswordConfirmed ? <CircleIcon sx={{ color: 'transparent' }} /> : <CancelIcon />)}
                                  color={((password === '') || inputChange) ? 'primary' : (isPasswordConfirmed ? 'success' : 'error')}
                                  disabled={password === ''}
-                              >
-                                 login
-                              </Button>
+                                 loading={loading}
+                                 loadingPosition="end"
+                              >login</LoadingButton>
                            </Stack>
                         </form>
                      </Stack>
                   </Box>
                </Box>
             </>
-         )}
+         )) || (((sessionStatus === 'loading') || (userStatus === 'loading') || (userStatus === 'authenticated')) && (
+            <Stack justifyContent="center" alignItems="center" pt={5} >
+               <CircularProgress />
+            </Stack>
+         ))}
       </>
    );
 };

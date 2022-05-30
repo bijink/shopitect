@@ -1,3 +1,5 @@
+// *Amount calculation fn to calculate "sellPrice, profitAmount, profitPercentage"
+
 const amountCalculate = (calcMethod: string, inputValue1: string, inputValue2: string) => {
    let outputValue1: string = '';
    let outputValue2: string = '';

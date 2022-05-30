@@ -2,13 +2,15 @@ import type { NextPage } from "next";
 
 import { Typography } from "@mui/material";
 import { useEffect } from "react";
-import InfoPage_layout from "../../../layouts/InfoPage.layout";
-import { useAppDispatch } from "../../../redux/hooks";
+import { InfoPage_layout, PageLoading_layout } from "../../../layouts";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { setAppPageId } from "../../../redux/slices/pageId.slice";
-import useSecurePage from "../../../hooks/useSecurePage";
-import PageLoading_layout from "../../../layouts/PageLoading.layout";
+import { useSecurePage } from "../../../hooks";
 import { useRouter } from "next/router";
 import NotFound from "../../404";
+import { selectShopDetails } from "../../../redux/slices/shopDetails.slice";
+import Head from "next/head";
+import ShopPagesHead from "../../../components/shopPagesHead";
 
 
 const About: NextPage = () => {
@@ -19,6 +21,8 @@ const About: NextPage = () => {
 
    const secure = useSecurePage(shopAppId);
 
+   const shop = useAppSelector(selectShopDetails);
+
 
    useEffect(() => {
       dispatch(setAppPageId('about_page'));
@@ -27,6 +31,8 @@ const About: NextPage = () => {
 
    return (
       <>
+         <ShopPagesHead title="About" />
+
          {((secure === 'loading') && (
             <PageLoading_layout />
          )) || ((secure === '200') && (

@@ -116,16 +116,18 @@ export default function Public_navBar() {
                   </Search>
                )}
                <Box sx={{ flexGrow: 1 }} />
-               <IconButton
-                  size="small"
-                  aria-label="information about the shop"
-                  color="inherit"
-                  onClick={() => {
-                     router.push(`/${shopDetails?.data?.urlName}/info/about`);
-                  }}
-               >
-                  <InfoIcon />
-               </IconButton>
+               {!((pageId === `about_page`) || (pageId === `admin_page`)) && (
+                  <IconButton
+                     size="small"
+                     aria-label="information about the shop"
+                     color="inherit"
+                     onClick={() => {
+                        router.push(`/${shopDetails?.data?.urlName}/info/about`);
+                     }}
+                  >
+                     <InfoIcon />
+                  </IconButton>
+               )}
             </Toolbar>
          </AppBar>
       </Box>

@@ -4,18 +4,19 @@ import { Box, Stack, TextareaAutosize, TextField, Typography } from "@mui/materi
 import { ChangeEvent, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { setAppPageId } from "../../../redux/slices/pageId.slice";
-import SettingsPage_layout from "../../../layouts/SettingsPage.layout";
+import { PageLoading_layout, SettingsPage_layout } from "../../../layouts";
 import { selectShopDetails, setAppShopDetailsAsync } from "../../../redux/slices/shopDetails.slice";
 import { collection, doc, onSnapshot, query, updateDoc, where } from "firebase/firestore";
 import { database } from "../../../config/firebase.config";
 import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
 import { LoadingButton } from "@mui/lab";
 import { useRouter } from "next/router";
-import useSecurePage from "../../../hooks/useSecurePage";
-import PageLoading_layout from "../../../layouts/PageLoading.layout";
+import { useSecurePage } from "../../../hooks";
 import { signIn as signInProvider } from "next-auth/react";
 import Forbidden from "../../403";
 import NotFound from "../../404";
+import Head from "next/head";
+import ShopPagesHead from "../../../components/shopPagesHead";
 
 
 const Profile: NextPage = () => {
@@ -83,12 +84,18 @@ const Profile: NextPage = () => {
    }, [shopAppId, database]);
 
    useEffect(() => {
+      (secure === '401') && signInProvider('google', { redirect: false, callbackUrl: `/auth/signup` });
+   }, [secure]);
+
+   useEffect(() => {
       dispatch(setAppPageId('profile_page'));
    }, []);
 
 
    return (
       <>
+         <ShopPagesHead title="Profile" />
+
          {((secure === 'loading') && (
             <PageLoading_layout />
          )) || ((secure === '200') && (
@@ -179,9 +186,6 @@ const Profile: NextPage = () => {
                   </form>
                </>
             </SettingsPage_layout>
-         )) || ((secure === '401') && (
-            // signInProvider('google', { redirect: false, callbackUrl: `/auth/signup` })
-            <Forbidden />
          )) || ((secure === '403') && (
             <Forbidden />
          )) || ((secure === '404') && (

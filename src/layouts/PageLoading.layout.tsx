@@ -1,11 +1,8 @@
-import type { PublicLayoutTypes } from './layout.types';
-
-import { Box, CircularProgress, Toolbar, Typography, } from '@mui/material';
+import { Box, CircularProgress, Toolbar } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Footer from '../components/footer';
-import { Loading_navBar, Public_navBar } from '../components/navBar';
-import { Loading_sideBar, Public_sideBar } from '../components/sideBar';
-// import Loading_sideBar from '../components/sideBar/Loading.sideBar';
+import { Loading_navBar } from '../components/navBar';
+import { Loading_sideBar } from '../components/sideBar';
 
 
 const PageLoading_layout = () => {
