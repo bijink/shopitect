@@ -2,7 +2,6 @@
 import type { NextPage } from 'next';
 
 import { Button, Stack, Typography } from '@mui/material';
-import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import ProductTable from '../../../components/productTable';
@@ -12,16 +11,18 @@ import { PageLoading_layout, ShopAdmin_layout } from '../../../layouts';
 import { signIn as signInProvider } from "next-auth/react";
 import { selectShopDetails } from '../../../redux/slices/shopDetails.slice';
 import Forbidden from '../../403';
-import { collection, DocumentData, onSnapshot, orderBy, query } from 'firebase/firestore';
+import { collection, DocumentData, limit, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { database } from '../../../config/firebase.config';
 import NotFound from '../../404';
-import { useSecurePage, useUser } from '../../../hooks';
+import { useSecurePage } from '../../../hooks';
 import ShopPagesHead from '../../../components/shopPagesHead';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 
 const Dashboard: NextPage = () => {
    const router = useRouter();
-   const { shopAppId } = router.query;
+   const { shopAppId, category } = router.query;
+   // console.log(category);
 
    const dispatch = useAppDispatch();
    const shop = useAppSelector(selectShopDetails);
@@ -29,21 +30,40 @@ const Dashboard: NextPage = () => {
    const secure = useSecurePage(shopAppId);
    // console.log(secure);
 
-   // const { status } = useUser();
-   // console.log(status);
-
    const [prodDetails, setProdDetails] = useState<DocumentData>([]);
    const [prodDocLength, setProdDocLength] = useState(0);
 
+   const [limitNo, setLimitNo] = useState(10);
+   // console.log(limitNo);
+
 
    useEffect(() => {
-      (shop?.data) && onSnapshot(query(collection(database, 'shops', shop.data?.urlName, 'products'), orderBy('codeName')), (snapshot) => {
-         setProdDetails(snapshot.docs);
-
-         // console.log(snapshot.docs.length);
+      (shop?.data) && onSnapshot(query(collection(database, 'shops', shop.data?.urlName, 'products')), (snapshot) => {
          setProdDocLength(snapshot.docs.length);
       });
-   }, [database, shop]);
+
+      if (category) {
+         if (category === 'all') {
+            (shop?.data) && onSnapshot(query(collection(database, 'shops', shop.data?.urlName, 'products'), orderBy('codeName')), (snapshot) => {
+               setProdDetails(snapshot.docs);
+            });
+         } else {
+            (shop?.data && category) && onSnapshot(query(collection(database, 'shops', shop.data?.urlName, 'products'), where('category', '==', category), orderBy('codeName')), (snapshot) => {
+               setProdDetails(snapshot.docs);
+            });
+         }
+      } else {
+         // 
+         // (shop?.data) && onSnapshot(query(collection(database, 'shops', shop.data?.urlName, 'products'), orderBy('codeName')), (snapshot) => {
+         //    setProdDetails(snapshot.docs);
+         // });
+         // 
+
+         (shop?.data) && onSnapshot(query(collection(database, 'shops', shop.data?.urlName, 'products'), orderBy('codeName'), limit(limitNo)), (snapshot) => {
+            setProdDetails(snapshot.docs);
+         });
+      }
+   }, [database, shop, category, limitNo]);
 
    useEffect(() => {
       // (secure === '401') && router.push(`/${shopAppId}`);
@@ -74,7 +94,23 @@ const Dashboard: NextPage = () => {
                      </Button>
                   </Stack>
                   {(prodDocLength > 0) ?
-                     <ProductTable shopData={shop.data} products={prodDetails} />
+                     <>
+                        <ProductTable shopData={shop.data} products={prodDetails} />
+                        {(limitNo < prodDocLength) && (
+                           <Stack direction='row' pt={2} justifyContent="center">
+                              <Button
+                                 variant='outlined'
+                                 size='small'
+                                 onClick={() => {
+                                    // (limitNo < prodDocLength) && setLimitNo(prev => prev + 10);
+                                    setLimitNo(prev => prev + 10);
+                                 }}
+                              >
+                                 <ArrowDropDownIcon />
+                              </Button>
+                           </Stack>
+                        )}
+                     </>
                      :
                      <Stack justifyContent="center" alignItems="center" >
                         <Typography variant="h5" component="p" >No Products</Typography>

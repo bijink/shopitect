@@ -3,7 +3,7 @@ import type { NextPage } from 'next';
 import type { ProdDetailsTypes } from '../../types/pages/shopHomePage.types';
 
 import Head from 'next/head';
-import { collection, DocumentData, onSnapshot, query, where } from 'firebase/firestore';
+import { collection, DocumentData, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import ProductCard from '../../components/productCard';
@@ -19,7 +19,7 @@ import NotFound from '../404';
 
 const Shop: NextPage = () => {
    const router = useRouter();
-   const { shopAppId } = router.query;
+   const { shopAppId, category } = router.query;
    // console.log(shopAppId);
 
    const dispatch = useAppDispatch();
@@ -34,11 +34,25 @@ const Shop: NextPage = () => {
 
 
    useEffect(() => {
-      shop?.data && onSnapshot(collection(database, 'shops', shop.data.urlName!, 'products'), (snapshot) => {
-         setProdDetails(snapshot.docs);
-         setFetchDelayOver(true);
-      });
-   }, [database, shop]);
+      if (category) {
+         if (category === 'all') {
+            (shop?.data) && onSnapshot(query(collection(database, 'shops', shop.data?.urlName, 'products'), orderBy('createdAt', 'desc')), (snapshot) => {
+               setProdDetails(snapshot.docs);
+               setFetchDelayOver(true);
+            });
+         } else {
+            (shop?.data && category) && onSnapshot(query(collection(database, 'shops', shop.data?.urlName, 'products'), where('category', '==', category), orderBy('createdAt', 'desc')), (snapshot) => {
+               setProdDetails(snapshot.docs);
+               setFetchDelayOver(true);
+            });
+         }
+      } else {
+         (shop?.data) && onSnapshot(query(collection(database, 'shops', shop.data?.urlName, 'products'), orderBy('createdAt', 'desc')), (snapshot) => {
+            setProdDetails(snapshot.docs);
+            setFetchDelayOver(true);
+         });
+      }
+   }, [database, shop, category]);
 
    useEffect(() => {
       shopAppId && onSnapshot(query(collection(database, 'shops'), where('urlName', '==', shopAppId)), (snapshot) => {
