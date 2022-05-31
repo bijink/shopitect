@@ -39,7 +39,7 @@ const style = {
 };
 
 
-export default function AccountDeleteModal({ setHasAccountDeleteCall }: any) {
+export default function AccountDeleteModal() {
    const router = useRouter();
 
    const { data: session, status: sessionStatus } = useSession();
@@ -82,6 +82,8 @@ export default function AccountDeleteModal({ setHasAccountDeleteCall }: any) {
    function deleteAccount() {
       return new Promise(resolve => {
          (shop?.data) && deleteDoc(doc(database, "shops", shop.data.urlName)).then(() => {
+            sessionStorage.removeItem('shop-details');
+
             signOutProvider({ callbackUrl: '/' }).then(() => {
                user && deleteUser(user).then(() => {
                   resolve(null);
@@ -96,7 +98,6 @@ export default function AccountDeleteModal({ setHasAccountDeleteCall }: any) {
 
       if (isUrlConfirmed && session) {
          setLoading(true);
-         setHasAccountDeleteCall(true);
 
          const credential = EmailAuthProvider.credential(
             session.user.email!,
@@ -120,7 +121,6 @@ export default function AccountDeleteModal({ setHasAccountDeleteCall }: any) {
             setLoading(false);
          }).catch((error) => {
             setLoading(false);
-            setHasAccountDeleteCall(false);
             setInputChange(false);
             setIsPasswordConfirmed(false);
          });
@@ -159,9 +159,7 @@ export default function AccountDeleteModal({ setHasAccountDeleteCall }: any) {
 
    return (
       <>
-         <Tooltip title="Edit" placement="left" arrow >
-            <Button variant="outlined" size="small" color={'error'} sx={{ textTransform: 'none' }} onClick={handleOpen} >Delete your account</Button>
-         </Tooltip>
+         <Button variant="outlined" size="small" color={'error'} sx={{ textTransform: 'none' }} onClick={handleOpen} >Delete your account</Button>
 
          <Modal
             open={open}

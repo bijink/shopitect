@@ -4,7 +4,7 @@ interface LayoutTypes {
    children: ReactNode;
 };
 interface SettingsPageLayoutProps {
-   title: string;
+   title?: string;
 }
 
 export type PublicLayoutTypes = LayoutTypes;

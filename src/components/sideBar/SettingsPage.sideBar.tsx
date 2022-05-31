@@ -36,7 +36,11 @@ export default function SettingsPage_sideBar() {
             <Box sx={{ overflow: 'auto' }}>
                <List>
                   <ListItem button onClick={() => {
-                     router.push(`/${shopAppId}/settings/profile`);
+                     // router.push(`/${shopAppId}/settings/profile`);
+                     router.push({
+                        pathname: `/${shopAppId}/settings`,
+                        query: { tab: 'profile' },
+                     });
                   }} >
                      <ListItemIcon><AdminPanelSettingsIcon /></ListItemIcon>
                      <ListItemText primary='Profile' />
@@ -53,7 +57,11 @@ export default function SettingsPage_sideBar() {
                </List> */}
                <List>
                   <ListItem button onClick={() => {
-                     router.push(`/${shopAppId}/settings/account`);
+                     // router.push(`/${shopAppId}/settings/account`);
+                     router.push({
+                        pathname: `/${shopAppId}/settings`,
+                        query: { tab: 'account' },
+                     });
                   }} >
                      <ListItemIcon><SettingsIcon /></ListItemIcon>
                      <ListItemText primary='Account' />

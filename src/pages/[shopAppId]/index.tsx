@@ -3,7 +3,7 @@ import type { NextPage } from 'next';
 import type { ProdDetailsTypes } from '../../types/pages/shopHomePage.types';
 
 import Head from 'next/head';
-import { collection, DocumentData, onSnapshot } from 'firebase/firestore';
+import { collection, DocumentData, onSnapshot, query, where } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import ProductCard from '../../components/productCard';
@@ -20,6 +20,7 @@ import NotFound from '../404';
 const Shop: NextPage = () => {
    const router = useRouter();
    const { shopAppId } = router.query;
+   // console.log(shopAppId);
 
    const dispatch = useAppDispatch();
    const shop = useAppSelector(selectShopDetails);
@@ -29,6 +30,7 @@ const Shop: NextPage = () => {
 
    const [prodDetails, setProdDetails] = useState<DocumentData>([]);
    const [fetchDelayOver, setFetchDelayOver] = useState(false);
+   const [shopNotExistOnServer, setShopNotExistOnServer] = useState(false);
 
 
    useEffect(() => {
@@ -37,6 +39,16 @@ const Shop: NextPage = () => {
          setFetchDelayOver(true);
       });
    }, [database, shop]);
+
+   useEffect(() => {
+      shopAppId && onSnapshot(query(collection(database, 'shops'), where('urlName', '==', shopAppId)), (snapshot) => {
+         // console.log(snapshot.docs.length);
+         if (snapshot.docs.length == 0) {
+            setShopNotExistOnServer(true);
+            sessionStorage.removeItem('shop-details');
+         }
+      });
+   }, [database, shopAppId]);
 
    useEffect(() => {
       dispatch(setAppShopDetailsAsync(shopAppId));
@@ -83,6 +95,8 @@ const Shop: NextPage = () => {
                      </Stack>
                   )}
                </ShopAdmin_layout>
+            )) || (((secure === '404') || shopNotExistOnServer) && (
+               <NotFound />
             )) || (((secure === '401') || (secure === '403')) && (
                <Public_layout>
                   {(fetchDelayOver && (prodDetails.length < 1)) ? (
@@ -108,8 +122,6 @@ const Shop: NextPage = () => {
                      </Stack>
                   )}
                </Public_layout>
-            )) || ((secure === '404') && (
-               <NotFound />
             ))}
          </>
       </>

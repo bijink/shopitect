@@ -122,7 +122,11 @@ export default function Public_navBar() {
                      aria-label="information about the shop"
                      color="inherit"
                      onClick={() => {
-                        router.push(`/${shopDetails?.data?.urlName}/info/about`);
+                        // router.push(`/${shopDetails?.data?.urlName}/info/about`);
+                        router.push({
+                           pathname: `/${shopAppId}/info`,
+                           query: { tab: 'about' },
+                        });
                      }}
                   >
                      <InfoIcon />

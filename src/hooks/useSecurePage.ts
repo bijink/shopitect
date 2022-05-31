@@ -10,6 +10,8 @@ import { selectShopDetails, setAppShopDetailsAsync } from "../redux/slices/shopD
 const useSecurePage = (shopAppId: string | string[] | undefined) => {
    const dispatch = useAppDispatch();
    const shopDetails = useAppSelector(selectShopDetails);
+   // console.log(shopAppId);
+
 
    const [userData, setUserData] = useState<User | null | undefined>(undefined);
    const [secure, setSecure] = useState<'loading' | '200' | '401' | '403' | '404'>('loading');
@@ -32,18 +34,21 @@ const useSecurePage = (shopAppId: string | string[] | undefined) => {
 
    useEffect(() => {
       if (shopAppId && shopDetails) {
-         if (userData && (shopDetails.length === 1)) {
+         if ((shopDetails.length === null) || (userData === undefined)) {
+            setSecure('loading');
+         }
+         else if (userData && (shopDetails.length === 1)) {
             if (userData.uid === shopDetails.data?.accountID) {
                setSecure('200');
             } else {
                setSecure('403');
             }
-         } else if (userData === null) {
-            setSecure('401');
-         } else if ((shopDetails.length === 0)) {
+         }
+         else if ((shopDetails.length === 0)) {
             setSecure('404');
-         } else if ((shopDetails.length === null) || (userData === undefined)) {
-            setSecure('loading');
+         }
+         else if (userData === null) {
+            setSecure('401');
          }
       }
    }, [shopDetails, userData]);

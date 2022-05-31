@@ -71,7 +71,11 @@ export default function Public_sideBar() {
                <Box sx={{ overflow: 'auto' }}>
                   <List>
                      <ListItem button onClick={() => {
-                        router.push(`/${shopAppId}/info/about`);
+                        // router.push(`/${shopAppId}/info/about`);
+                        router.push({
+                           pathname: `/${shopAppId}/info`,
+                           query: { tab: 'about' },
+                        });
                      }} >
                         <ListItemIcon><InfoIcon /></ListItemIcon>
                         <ListItemText primary='About Us' />
@@ -80,7 +84,11 @@ export default function Public_sideBar() {
                   <Divider />
                   <List>
                      <ListItem button onClick={() => {
-                        router.push(`/${shopAppId}/info/admin`);
+                        // router.push(`/${shopAppId}/info/admin`);
+                        router.push({
+                           pathname: `/${shopAppId}/info`,
+                           query: { tab: 'admin' },
+                        });
                      }} >
                         <ListItemIcon><AdminPanelSettingsIcon /></ListItemIcon>
                         <ListItemText primary='Admin' sx={{ color: 'GrayText' }} />

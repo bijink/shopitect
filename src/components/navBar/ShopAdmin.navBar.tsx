@@ -132,7 +132,11 @@ export default function ShopAdmin_navBar() {
       >
          <MenuItem onClick={() => {
             handleMenuClose();
-            router.push(`/${shopAppId}/settings/profile`);
+            // router.push(`/${shopAppId}/settings`);
+            router.push({
+               pathname: `/${shopAppId}/settings`,
+               query: { tab: 'profile' },
+            });
          }}>Settings</MenuItem>
 
          <MenuItem onClick={() => {
