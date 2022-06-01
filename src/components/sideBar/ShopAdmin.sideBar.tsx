@@ -9,7 +9,7 @@ import ListItemText from '@mui/material/ListItemText';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import ListItemButton from '@mui/material/ListItemButton';
-import { capitalize, styled, Typography } from '@mui/material';
+import { capitalize, IconButton, Stack, styled, Typography } from '@mui/material';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { database } from '../../config/firebase.config';
 import { useAppSelector } from '../../redux/hooks';
@@ -17,6 +17,7 @@ import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { selectPageId } from '../../redux/slices/pageId.slice';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 
 const drawerWidth = 240;
@@ -70,26 +71,22 @@ export default function ShopAdmin_sideBar() {
       >
          <Toolbar />
          <DrawerHeader>
-            <Typography variant='h6' component="p" >Category</Typography>
+            <Stack direction="row" width="100%" justifyContent="space-between" alignItems="center" >
+               <Typography variant='h6' component="p" >Category</Typography>
+               <IconButton onClick={() => setCategoryOpen(false)} >
+                  <ArrowBackIosNewIcon />
+               </IconButton>
+            </Stack>
          </DrawerHeader>
          <Box
             sx={{ width: drawerWidth }}
             role="presentation"
-            onClick={() => setCategoryOpen(false)}
-         // onKeyDown={() => setCategoryOpen(false)}
          >
             <List>
                {categoryList && categoryList.map((text, index) => (
-                  // <ListItem key={index} button disablePadding sx={{ backgroundColor: (category === text) ? 'gray' : 'transparent' }} onClick={() => {
-                  <ListItem key={index} button disablePadding sx={{ backgroundColor: ((text === 'all') && ((category === 'all') || (!category))) ? 'gray' : ((category === text) ? 'gray' : 'transparent') }} onClick={() => {
+                  <ListItem key={index} button disablePadding sx={{ backgroundColor: ((text === 'all') && ((category === 'all') || (!category))) ? '#bdbdbd' : ((category === text) ? '#bdbdbd' : 'transparent') }} onClick={() => {
                      if (text === 'all') {
-                        (category === 'all')
-                           // ? router.push(`/${(pageId === 'shopHome_page') ? shopAppId : `${shopAppId}/dashboard`}`)
-                           ? router.push((pageId === 'shopHome_page') ? `/${shopAppId}` : `/${shopAppId}/dashboard`)
-                           : router.push({
-                              pathname: (pageId === 'shopHome_page') ? `/${shopAppId}` : `/${shopAppId}/dashboard`,
-                              query: { category: 'all' },
-                           });
+                        router.push((pageId === 'shopHome_page') ? `/${shopAppId}` : `/${shopAppId}/dashboard`);
                      } else {
                         router.push({
                            pathname: (pageId === 'shopHome_page') ? `/${shopAppId}` : `/${shopAppId}/dashboard`,

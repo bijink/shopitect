@@ -27,10 +27,13 @@ import EditProduct_modal from './EditProduct.modal';
 import { ref, deleteObject } from "firebase/storage";
 
 
-const Row = ({ rowBgColor, shopUrlName, prodId, prodCodeName, prodName, prodCategory, prodBrand, prodImg, quantity, getPrice, sellPrice, profitAmount, profitPercentage, createdAt }: ProductTableRowProps) => {
+const Row = ({ rowBgColor, shopUrlName, prodId, prodNo, prodCodeName, prodName, prodCategory, prodBrand, prodImg, quantity, getPrice, sellPrice, profitAmount, profitPercentage, createdAt }: ProductTableRowProps) => {
    const [open, setOpen] = useState(false);
    let date = createdAt.toDate().toUTCString().slice(0, 16);
-   let time = `${createdAt.toDate().getHours()}:${createdAt.toDate().getMinutes()}`;
+   let minute = createdAt.toDate().getMinutes();
+   let hour = createdAt.toDate().getHours();
+   let time = `${hour}:${(minute < 10) ? `0${minute}` : minute}`;
+
 
    const moreDetails = [
       { title: 'Get Price (Rs)', value: getPrice },
@@ -38,7 +41,7 @@ const Row = ({ rowBgColor, shopUrlName, prodId, prodCodeName, prodName, prodCate
       { title: 'Profit Amount (Rs)', value: profitAmount },
       { title: 'Quantity', value: quantity },
       { title: 'Brand', value: capitalize(prodBrand) },
-      { title: 'Created At', value: `${date} ${time}` },
+      // { title: 'Added At', value: `${date} ${time}` },
    ];
 
 
@@ -56,6 +59,7 @@ const Row = ({ rowBgColor, shopUrlName, prodId, prodCodeName, prodName, prodCate
    return (
       <>
          <TableRow sx={{ '& > *': { backgroundColor: rowBgColor, borderBottom: 'unset', borderTop: '1.05px solid gray' } }} >
+            <TableCell component="th" scope="row" align="left" >{prodNo}</TableCell>
             <TableCell component="th" scope="row" align="left" sx={{ fontWeight: 'bold' }} >{capitalize(prodCodeName)}</TableCell>
             <TableCell component="th" scope="row" align="left" sx={{ fontWeight: '500' }} >{capitalize(prodName)}</TableCell>
             <TableCell>
@@ -75,9 +79,9 @@ const Row = ({ rowBgColor, shopUrlName, prodId, prodCodeName, prodName, prodCate
          </TableRow>
 
          <TableRow>
-            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={4} >
+            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5} >
                <Collapse in={open} timeout="auto" unmountOnExit>
-                  <Box my={1} >
+                  <Box my={0.5} >
                      <Typography variant="h6" gutterBottom component="div">
                         More Details
                      </Typography>
@@ -91,6 +95,9 @@ const Row = ({ rowBgColor, shopUrlName, prodId, prodCodeName, prodName, prodCate
                            ))}
                         </TableBody>
                      </Table>
+                     <Typography variant="body2" component="div" pt={1} sx={{ fontSize: '12px' }} color="GrayText" >
+                        {`${date} ${time}`}
+                     </Typography>
                   </Box>
                </Collapse>
             </TableCell>
@@ -151,6 +158,7 @@ export default function ProductTable({ shopData, products }: ProductTableProps) 
          <Table aria-label="collapsible table" size="small" >
             <TableHead >
                <TableRow sx={{ backgroundColor: '#616161' }}>
+                  <TableCell align="left" sx={{ color: '#ffffff' }} >No.</TableCell>
                   <TableCell align="left" sx={{ color: '#ffffff' }} >Code</TableCell>
                   <TableCell align="left" sx={{ color: '#ffffff', paddingTop: '18px', paddingBottom: '18px' }} >Name</TableCell>
                   <TableCell align="left" sx={{ color: '#ffffff' }}>Image</TableCell>
@@ -166,6 +174,7 @@ export default function ProductTable({ shopData, products }: ProductTableProps) 
 
                      shopUrlName={shopData?.urlName}
 
+                     prodNo={index + 1}
                      prodId={prod.id}
                      prodCodeName={prod.data().codeName}
                      prodName={prod.data().name}

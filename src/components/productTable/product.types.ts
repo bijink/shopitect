@@ -21,6 +21,7 @@ export interface ProductTableRowProps {
    shopUrlName: string;
 
    prodId: string;
+   prodNo: number;
    prodName: string;
    prodCodeName: string;
    prodBrand: string;
