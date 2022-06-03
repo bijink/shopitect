@@ -18,6 +18,7 @@ import { useSecurePage } from '../../../hooks';
 import ShopPagesHead from '../../../components/shopPagesHead';
 import Popover from '@mui/material/Popover';
 import PopupState, { bindTrigger, bindPopover } from 'material-ui-popup-state';
+import { selectProdSearchInput, setProdSearchInput } from '../../../redux/slices/prodSearchInput.slice';
 
 
 const Dashboard: NextPage = () => {
@@ -28,6 +29,8 @@ const Dashboard: NextPage = () => {
 
    const dispatch = useAppDispatch();
    const shop = useAppSelector(selectShopDetails);
+   const searchInput_prod = useAppSelector(selectProdSearchInput);
+   // console.log(searchInput_prod);
 
    const secure = useSecurePage(shopAppId);
    // console.log(secure);
@@ -40,10 +43,18 @@ const Dashboard: NextPage = () => {
    const [pageNoInput, setPageNoInput] = useState<number | string>(1);
 
 
+   //create a new array by filtering the original array
+   const filteredProducts = prodDetails.filter((obj: DocumentData) => {
+      if (searchInput_prod !== '') {
+         return obj.data().name.toLowerCase().includes(searchInput_prod);
+      }
+   });
+
+
    useEffect(() => {
       (shop?.data) && onSnapshot(query(collection(database, 'shops', shop.data?.urlName, 'products'), orderBy('codeName')), (snapshot) => {
          setProdDetails(snapshot.docs);
-         setProdDocLength(prodDetails.length);
+         // setProdDocLength(prodDetails.length);
       });
    }, [database, shop]);
 
@@ -51,6 +62,8 @@ const Dashboard: NextPage = () => {
       setProdDocLength(prodDetails.length);
 
       if (category) {
+         dispatch(setProdSearchInput(''));
+
          if (category === 'all') {
             setProdDetails_category(prodDetails);
 
@@ -62,21 +75,6 @@ const Dashboard: NextPage = () => {
             setTimeout(() => setFetchDelayOver(true), 5000);
          }
       } else {
-         // setProdDetails_category(prodDetails);
-         // setProdDocLength(prodDetails.length);
-
-         // //*
-         // // const arr = [[0, 3], [3, 6], [6, 9], [9, 12], [12, 15], [15, 18]];
-         // // console.log(arr[0][1]);
-
-         // let testArr = [];
-         // let testDiff = 10;
-         // for (let i = 1; i <= (Math.ceil(prodDocLength / testDiff)); i++) {
-         //    testArr.push([((i * testDiff) - testDiff), (i * testDiff)]);
-         // }
-         // console.log(testArr);
-         // //*
-
          if ((page && prodDocLength)) {
             let arr = [];
             let pageInt;
@@ -104,7 +102,7 @@ const Dashboard: NextPage = () => {
 
          setTimeout(() => setFetchDelayOver(true), 5000);
       }
-   }, [database, category, prodDetails, page, prodDocLength]);
+   }, [database, category, prodDetails, page, prodDocLength, searchInput_prod]);
 
    useEffect(() => {
       (secure === '401') && signInProvider('google', { redirect: false, callbackUrl: `/auth/signup` });
@@ -138,9 +136,10 @@ const Dashboard: NextPage = () => {
                   </Stack>
                   {(prodDocLength > 0) ?
                      <>
-                        <ProductTable shopData={shop.data} products={prodDetails_category} />
+                        {/* <ProductTable shopData={shop.data} products={prodDetails_category} /> */}
+                        <ProductTable shopData={shop.data} products={(filteredProducts.length ? filteredProducts : prodDetails_category)} />
                         <Stack direction='row' spacing={1} pt={2} justifyContent="center" alignItems="center" >
-                           {!category && (
+                           {(!category && !(filteredProducts.length > 0)) && (
                               <>
                                  <Button
                                     variant='outlined'

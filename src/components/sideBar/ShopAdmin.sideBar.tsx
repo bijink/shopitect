@@ -12,7 +12,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import { capitalize, IconButton, Stack, styled, Typography } from '@mui/material';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { database } from '../../config/firebase.config';
-import { useAppSelector } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
@@ -36,6 +36,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 export default function ShopAdmin_sideBar() {
    const router = useRouter();
    const { shopAppId, category } = router.query;
+   const dispatch = useAppDispatch();
    const shop = useAppSelector(selectShopDetails);
    const pageId = useAppSelector(selectPageId);
 

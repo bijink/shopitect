@@ -17,6 +17,7 @@ import { Button, CircularProgress, Stack, TextField, Typography } from '@mui/mat
 import NotFound from '../404';
 import Popover from '@mui/material/Popover';
 import PopupState, { bindTrigger, bindPopover } from 'material-ui-popup-state';
+import { selectProdSearchInput, setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
 
 
 const Shop: NextPage = () => {
@@ -26,11 +27,13 @@ const Shop: NextPage = () => {
 
    const dispatch = useAppDispatch();
    const shop = useAppSelector(selectShopDetails);
+   const searchInput_prod = useAppSelector(selectProdSearchInput);
+   // console.log(searchInput_prod);
 
    const secure = useSecurePage(shopAppId);
    // console.log(secure);
 
-   const listLength = 15;
+   const listLength = 10;
    const [prodDetails, setProdDetails] = useState<DocumentData>([]);
    const [prodDetails_category, setProdDetails_category] = useState<DocumentData>([]);
    const [fetchDelayOver, setFetchDelayOver] = useState(false);
@@ -39,25 +42,33 @@ const Shop: NextPage = () => {
    const [pageNoInput, setPageNoInput] = useState<number | string>(1);
 
 
+   //create a new array by filtering the original array
+   const filteredProducts = prodDetails.filter((obj: DocumentData) => {
+      if (searchInput_prod !== '') {
+         return obj.data().name.toLowerCase().includes(searchInput_prod);
+      }
+   });
+
+
    useEffect(() => {
       (shop?.data) && onSnapshot(query(collection(database, 'shops', shop.data?.urlName, 'products'), orderBy('createdAt', 'desc')), (snapshot) => {
          setProdDetails(snapshot.docs);
-         setProdDocLength(prodDetails.length);
       });
+      // }, [database, shop, searchInput_prod]);
    }, [database, shop]);
 
    useEffect(() => {
       setProdDocLength(prodDetails.length);
 
       if (category) {
+         dispatch(setProdSearchInput(''));
+
          if (category === 'all') {
             setProdDetails_category(prodDetails);
-
             setTimeout(() => setFetchDelayOver(true), 5000);
          } else {
             const categoryFilter: Array<DocumentData> = prodDetails.filter((item: DocumentData) => item.data().category === category);
             setProdDetails_category(categoryFilter);
-
             setTimeout(() => setFetchDelayOver(true), 5000);
          }
       } else {
@@ -88,7 +99,7 @@ const Shop: NextPage = () => {
 
          setTimeout(() => setFetchDelayOver(true), 5000);
       }
-   }, [database, category, prodDetails, page, prodDocLength]);
+   }, [database, category, prodDetails, page, prodDocLength, searchInput_prod]);
 
    useEffect(() => {
       shopAppId && onSnapshot(query(collection(database, 'shops'), where('urlName', '==', shopAppId)), (snapshot) => {
@@ -126,8 +137,9 @@ const Shop: NextPage = () => {
                      {(prodDocLength > 0) ?
                         <>
                            <Stack direction={'row'} justifyContent="center" alignItems="center" flexWrap="wrap" >
-                              {prodDetails_category.map((prod: ProdDetailsTypes, index: number) => (
-                                 <ProductCard key={index}
+                              {/* {prodDetails_category.map((prod: ProdDetailsTypes, index: number) => ( */}
+                              {(filteredProducts.length ? filteredProducts : prodDetails_category).map((prod: ProdDetailsTypes, index: number) => (
+                                 < ProductCard key={index}
                                     shopUrlName={shop?.data?.urlName}
 
                                     prodId={prod.id}
@@ -142,7 +154,7 @@ const Shop: NextPage = () => {
                               ))}
                            </Stack>
                            <Stack direction='row' spacing={1} pt={2} justifyContent="center" alignItems="center" >
-                              {!category && (
+                              {(!category && !(filteredProducts.length > 0)) && (
                                  <>
                                     <Button
                                        variant='outlined'
