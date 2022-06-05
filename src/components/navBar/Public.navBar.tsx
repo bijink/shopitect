@@ -7,7 +7,7 @@ import {
    InputBase,
 } from '@mui/material';
 import { useRouter } from 'next/router';
-import { useAppSelector } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import { selectPageId } from '../../redux/slices/pageId.slice';
@@ -15,6 +15,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import InfoIcon from '@mui/icons-material/Info';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled, alpha } from '@mui/material/styles';
+import { setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
+import { useState } from 'react';
 
 
 
@@ -61,10 +63,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function Public_navBar() {
    const router = useRouter();
-   const { shopAppId } = router.query;
+   const { shopAppId, category } = router.query;
 
+   const dispatch = useAppDispatch();
    const shopDetails = useAppSelector(selectShopDetails);
    const pageId = useAppSelector(selectPageId);
+
+   const [searchInput, setSearchInput] = useState('');
 
 
    return (
@@ -109,10 +114,24 @@ export default function Public_navBar() {
                      <SearchIconWrapper>
                         <SearchIcon />
                      </SearchIconWrapper>
-                     <StyledInputBase
-                        placeholder="Search…"
-                        inputProps={{ 'aria-label': 'search' }}
-                     />
+                     <form onSubmit={(e: any) => {
+                        e.preventDefault();
+                        dispatch(setProdSearchInput(searchInput));
+                     }} >
+                        <StyledInputBase
+                           placeholder="Search…"
+                           inputProps={{ 'aria-label': 'search' }}
+                           value={category ? '' : searchInput}
+                           onInput={(e: any) => {
+                              setSearchInput(e.target.value);
+                           }}
+                           onFocus={() => {
+                              router.push(`/${shopAppId}`);
+                              setSearchInput('');
+                              dispatch(setProdSearchInput(''));
+                           }}
+                        />
+                     </form>
                   </Search>
                )}
                <Box sx={{ flexGrow: 1 }} />

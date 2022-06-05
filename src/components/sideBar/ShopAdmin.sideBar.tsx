@@ -1,15 +1,20 @@
-import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import Divider from '@mui/material/Divider';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import SwipeableDrawer from '@mui/material/SwipeableDrawer';
-import ListItemButton from '@mui/material/ListItemButton';
-import { capitalize, IconButton, Stack, styled, Typography } from '@mui/material';
+import {
+   Box,
+   Drawer,
+   Toolbar,
+   List,
+   Divider,
+   ListItem,
+   ListItemText,
+   SwipeableDrawer,
+   ListItemButton,
+   ListItemIcon,
+   capitalize,
+   IconButton,
+   Stack,
+   styled,
+   Typography
+} from '@mui/material';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { database } from '../../config/firebase.config';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -17,6 +22,7 @@ import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { selectPageId } from '../../redux/slices/pageId.slice';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 
@@ -88,6 +94,7 @@ export default function ShopAdmin_sideBar() {
                   <ListItem key={index} button disablePadding sx={{ backgroundColor: ((text === 'all') && ((category === 'all') || (!category))) ? '#bdbdbd' : ((category === text) ? '#bdbdbd' : 'transparent') }} onClick={() => {
                      if (text === 'all') {
                         router.push((pageId === 'shopHome_page') ? `/${shopAppId}` : `/${shopAppId}/dashboard`);
+                        // dispatch(setProdSearchInput(''));
                      } else {
                         router.push({
                            pathname: (pageId === 'shopHome_page') ? `/${shopAppId}` : `/${shopAppId}/dashboard`,

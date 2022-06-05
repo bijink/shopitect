@@ -242,28 +242,110 @@ const Shop: NextPage = () => {
                <NotFound />
             )) || (((secure === '401') || (secure === '403')) && (
                <Public_layout>
-                  {(fetchDelayOver && (prodDetails.length < 1)) ? (
-                     <Stack justifyContent="center" alignItems="center" >
-                        <Typography variant="h5" component="p" >No Products</Typography>
-                     </Stack>
-                  ) : (
-                     <Stack direction={'row'} justifyContent="center" alignItems="center" flexWrap="wrap" >
-                        {prodDetails.map((prod: ProdDetailsTypes, index: number) => (
-                           <ProductCard key={index}
-                              shopUrlName={shop?.data?.urlName}
+                  <Stack direction={'column'} >
+                     {(prodDocLength > 0) ?
+                        <>
+                           <Stack direction={'row'} justifyContent="center" alignItems="center" flexWrap="wrap" >
+                              {/* {prodDetails_category.map((prod: ProdDetailsTypes, index: number) => ( */}
+                              {(filteredProducts.length ? filteredProducts : prodDetails_category).map((prod: ProdDetailsTypes, index: number) => (
+                                 < ProductCard key={index}
+                                    shopUrlName={shop?.data?.urlName}
 
-                              prodId={prod.id}
-                              prodName={prod.data().name}
-                              prodImg={prod.data().imageUrl}
-                              prodBrand={prod.data().brand}
-                              prodCategory={prod.data().category}
-                              quantity={prod.data().quantity}
-                              sellPrice={prod.data().sellPrice}
-                              createdAt={prod.data().createdAt}
-                           />
-                        ))}
-                     </Stack>
-                  )}
+                                    prodId={prod.id}
+                                    prodName={prod.data().name}
+                                    prodImg={prod.data().imageUrl}
+                                    prodBrand={prod.data().brand}
+                                    prodCategory={prod.data().category}
+                                    quantity={prod.data().quantity}
+                                    sellPrice={prod.data().sellPrice}
+                                    createdAt={prod.data().createdAt}
+                                 />
+                              ))}
+                           </Stack>
+                           <Stack direction='row' spacing={1} pt={2} justifyContent="center" alignItems="center" >
+                              {(!category && !(filteredProducts.length > 0)) && (
+                                 <>
+                                    <Button
+                                       variant='outlined'
+                                       size='small'
+                                       onClick={() => {
+                                          page && router.push(`/${shop.data?.urlName}?page=${parseInt(page.toString()) - 1}`);
+                                       }}
+                                       disabled={!(page && (parseInt(page.toString()) > 1))}
+                                    >prev</Button>
+
+                                    <PopupState variant="popover" popupId="demo-popup-popover">
+                                       {(popupState) => (
+                                          <div>
+                                             <Typography sx={{ "&:hover": { cursor: "pointer" } }} {...bindTrigger(popupState)} >Page No: {page ? parseInt(page.toString()) : '1'}/{Math.ceil(prodDocLength / listLength)}</Typography>
+                                             <Popover
+                                                {...bindPopover(popupState)}
+                                                anchorOrigin={{
+                                                   vertical: 'bottom',
+                                                   // vertical: 'center',
+                                                   horizontal: 'center',
+                                                }}
+                                                transformOrigin={{
+                                                   vertical: 'top',
+                                                   // vertical: 'center',
+                                                   horizontal: 'center',
+                                                }}
+                                             >
+                                                <form onSubmit={(e: any) => {
+                                                   e.preventDefault();
+                                                   ((pageNoInput <= 0)
+                                                      ? router.push(`/${shop.data?.urlName}`)
+                                                      : ((pageNoInput > (Math.ceil(prodDocLength / listLength)))
+                                                         ? router.push(`/${shop.data?.urlName}?page=${Math.ceil(prodDocLength / listLength)}`)
+                                                         : router.push(`/${shop.data?.urlName}?page=${pageNoInput}`)
+                                                      )
+                                                   );
+                                                }}>
+                                                   <TextField
+                                                      size='small'
+                                                      type="number"
+                                                      sx={{ width: '5rem' }}
+                                                      value={pageNoInput}
+                                                      onInput={(e: any) => setPageNoInput(e.target.value)}
+                                                      onBlur={() => {
+                                                         ((pageNoInput <= 0)
+                                                            ? router.push(`/${shop.data?.urlName}`).then(() => setPageNoInput(''))
+                                                            : ((pageNoInput > (Math.ceil(prodDocLength / listLength)))
+                                                               ? router.push(`/${shop.data?.urlName}?page=${Math.ceil(prodDocLength / listLength)}`).then(() => setPageNoInput(''))
+                                                               : router.push(`/${shop.data?.urlName}?page=${pageNoInput}`).then(() => setPageNoInput(''))
+                                                            )
+                                                         );
+                                                      }}
+                                                   />
+                                                </form>
+                                             </Popover>
+                                          </div>
+                                       )}
+                                    </PopupState>
+
+                                    <Button
+                                       variant='outlined'
+                                       size='small'
+                                       onClick={() => {
+                                          page
+                                             ? router.push(`/${shop.data?.urlName}?page=${parseInt(page.toString()) + 1}`)
+                                             : router.push(`/${shop.data?.urlName}?page=2`);
+                                       }}
+                                       disabled={(page && !((parseInt(page.toString())) < (Math.ceil(prodDocLength / listLength)))) || ((Math.ceil(prodDocLength / listLength)) === 1) || false}
+                                    >next</Button>
+                                 </>
+                              )}
+                           </Stack>
+                        </>
+                        :
+                        <Stack justifyContent="center" alignItems="center" >
+                           {(fetchDelayOver)
+                              ? <Typography variant="h5" component="p" >No Products</Typography>
+                              : <CircularProgress />
+                           }
+                        </Stack>
+                     }
+                  </Stack>
                </Public_layout>
             ))}
          </>

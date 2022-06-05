@@ -245,21 +245,15 @@ export default function ShopAdmin_navBar() {
                         <StyledInputBase
                            placeholder="Search…"
                            inputProps={{ 'aria-label': 'search' }}
-                           // value={searchInput}
                            value={category ? '' : searchInput}
-                           // value={searchInput_prod}
                            onInput={(e: any) => {
                               setSearchInput(e.target.value);
-                              // dispatch(setProdSearchInput(e.target.value));
                            }}
                            onFocus={() => {
-                              router.push(`/${shop?.data?.urlName}${(pageId === 'dashboard_page') ? '/dashboard' : ''}`);
+                              router.push(`/${shopAppId}${(pageId === 'dashboard_page') ? '/dashboard' : ''}`);
                               setSearchInput('');
                               dispatch(setProdSearchInput(''));
                            }}
-                        // onBlur={() => {
-                        //    dispatch(setProdSearchInput(''));
-                        // }}
                         />
                      </form>
                   </Search>
