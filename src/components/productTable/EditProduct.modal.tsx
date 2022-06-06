@@ -23,6 +23,8 @@ import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
 import { doc, updateDoc } from 'firebase/firestore';
 import { database } from '../../config/firebase.config';
 import amountCalculate from '../../utility/amountCalculate';
+import { useAppDispatch } from '../../redux/hooks';
+import { changeProdTableCollapse } from '../../redux/slices/prodTableCollapse.slice';
 
 
 const style = {
@@ -40,6 +42,8 @@ const style = {
 
 
 export default function EditProduct_modal({ shopUrlName, prodId, prodName, prodCodeName, prodBrand, prodCategory, quantity, getPrice, sellPrice, profitAmount, profitPercentage }: EditProductModalProps) {
+   const dispatch = useAppDispatch();
+
    const [open, setOpen] = useState(false);
    const [loading, setLoading] = useState(false);
 
@@ -92,6 +96,7 @@ export default function EditProduct_modal({ shopUrlName, prodId, prodName, prodC
    const handleSubmit = async (e: any) => {
       e.preventDefault();
       setLoading(true);
+      dispatch(changeProdTableCollapse());
 
       await updateDoc(doc(database, "shops", shopUrlName, "products", prodId), {
          name: prodNameInput,
@@ -137,7 +142,7 @@ export default function EditProduct_modal({ shopUrlName, prodId, prodName, prodC
    return (
       <>
          <Tooltip title="Edit" placement="left" arrow >
-            <IconButton size='small' sx={{ backgroundColor: 'orange' }}
+            <IconButton size='small' sx={{ color: 'orange' }}
                onClick={handleOpen}
             >
                <EditIcon />

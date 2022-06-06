@@ -24,6 +24,7 @@ import { useRouter } from 'next/router';
 import { selectPageId } from '../../redux/slices/pageId.slice';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import { changeProdTableCollapse } from '../../redux/slices/prodTableCollapse.slice';
 
 
 const drawerWidth = 240;
@@ -91,17 +92,20 @@ export default function ShopAdmin_sideBar() {
          >
             <List>
                {categoryList && categoryList.map((text, index) => (
-                  <ListItem key={index} button disablePadding sx={{ backgroundColor: ((text === 'all') && ((category === 'all') || (!category))) ? '#bdbdbd' : ((category === text) ? '#bdbdbd' : 'transparent') }} onClick={() => {
-                     if (text === 'all') {
-                        router.push((pageId === 'shopHome_page') ? `/${shopAppId}` : `/${shopAppId}/dashboard`);
-                        // dispatch(setProdSearchInput(''));
-                     } else {
-                        router.push({
-                           pathname: (pageId === 'shopHome_page') ? `/${shopAppId}` : `/${shopAppId}/dashboard`,
-                           query: { category: text },
-                        });
-                     }
-                  }}>
+                  <ListItem key={index} button disablePadding sx={{ backgroundColor: ((text === 'all') && ((category === 'all') || (!category))) ? '#bdbdbd' : ((category === text) ? '#bdbdbd' : 'transparent') }}
+                     onClick={() => {
+                        dispatch(changeProdTableCollapse());
+
+                        if (text === 'all') {
+                           router.push((pageId === 'shopHome_page') ? `/${shopAppId}` : `/${shopAppId}/dashboard`);
+                           // dispatch(setProdSearchInput(''));
+                        } else {
+                           router.push({
+                              pathname: (pageId === 'shopHome_page') ? `/${shopAppId}` : `/${shopAppId}/dashboard`,
+                              query: { category: text },
+                           });
+                        }
+                     }}>
                      <ListItemButton sx={{ paddingTop: 0, paddingBottom: 0 }} >
                         <ListItemText primary={capitalize(text)} />
                      </ListItemButton>

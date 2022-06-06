@@ -13,7 +13,7 @@ import { selectShopDetails, setAppShopDetailsAsync } from '../../redux/slices/sh
 import { setAppPageId } from '../../redux/slices/pageId.slice';
 import { PageLoading_layout, Public_layout, ShopAdmin_layout } from '../../layouts';
 import { useSecurePage } from '../../hooks';
-import { Button, CircularProgress, Stack, TextField, Typography } from '@mui/material';
+import { Button, CircularProgress, Pagination, Stack, TextField, Typography } from '@mui/material';
 import NotFound from '../404';
 import Popover from '@mui/material/Popover';
 import PopupState, { bindTrigger, bindPopover } from 'material-ui-popup-state';
@@ -155,76 +155,14 @@ const Shop: NextPage = () => {
                            </Stack>
                            <Stack direction='row' spacing={1} pt={2} justifyContent="center" alignItems="center" >
                               {(!category && !(filteredProducts.length > 0)) && (
-                                 <>
-                                    <Button
-                                       variant='outlined'
-                                       size='small'
-                                       onClick={() => {
-                                          page && router.push(`/${shop.data?.urlName}?page=${parseInt(page.toString()) - 1}`);
-                                       }}
-                                       disabled={!(page && (parseInt(page.toString()) > 1))}
-                                    >prev</Button>
-
-                                    <PopupState variant="popover" popupId="demo-popup-popover">
-                                       {(popupState) => (
-                                          <div>
-                                             <Typography sx={{ "&:hover": { cursor: "pointer" } }} {...bindTrigger(popupState)} >Page No: {page ? parseInt(page.toString()) : '1'}/{Math.ceil(prodDocLength / listLength)}</Typography>
-                                             <Popover
-                                                {...bindPopover(popupState)}
-                                                anchorOrigin={{
-                                                   vertical: 'bottom',
-                                                   // vertical: 'center',
-                                                   horizontal: 'center',
-                                                }}
-                                                transformOrigin={{
-                                                   vertical: 'top',
-                                                   // vertical: 'center',
-                                                   horizontal: 'center',
-                                                }}
-                                             >
-                                                <form onSubmit={(e: any) => {
-                                                   e.preventDefault();
-                                                   ((pageNoInput <= 0)
-                                                      ? router.push(`/${shop.data?.urlName}`)
-                                                      : ((pageNoInput > (Math.ceil(prodDocLength / listLength)))
-                                                         ? router.push(`/${shop.data?.urlName}?page=${Math.ceil(prodDocLength / listLength)}`)
-                                                         : router.push(`/${shop.data?.urlName}?page=${pageNoInput}`)
-                                                      )
-                                                   );
-                                                }}>
-                                                   <TextField
-                                                      size='small'
-                                                      type="number"
-                                                      sx={{ width: '5rem' }}
-                                                      value={pageNoInput}
-                                                      onInput={(e: any) => setPageNoInput(e.target.value)}
-                                                      onBlur={() => {
-                                                         ((pageNoInput <= 0)
-                                                            ? router.push(`/${shop.data?.urlName}`).then(() => setPageNoInput(''))
-                                                            : ((pageNoInput > (Math.ceil(prodDocLength / listLength)))
-                                                               ? router.push(`/${shop.data?.urlName}?page=${Math.ceil(prodDocLength / listLength)}`).then(() => setPageNoInput(''))
-                                                               : router.push(`/${shop.data?.urlName}?page=${pageNoInput}`).then(() => setPageNoInput(''))
-                                                            )
-                                                         );
-                                                      }}
-                                                   />
-                                                </form>
-                                             </Popover>
-                                          </div>
-                                       )}
-                                    </PopupState>
-
-                                    <Button
-                                       variant='outlined'
-                                       size='small'
-                                       onClick={() => {
-                                          page
-                                             ? router.push(`/${shop.data?.urlName}?page=${parseInt(page.toString()) + 1}`)
-                                             : router.push(`/${shop.data?.urlName}?page=2`);
-                                       }}
-                                       disabled={(page && !((parseInt(page.toString())) < (Math.ceil(prodDocLength / listLength)))) || ((Math.ceil(prodDocLength / listLength)) === 1) || false}
-                                    >next</Button>
-                                 </>
+                                 <Pagination
+                                    count={Math.ceil(prodDocLength / listLength)}
+                                    page={page ? (parseInt(page.toString())) : 1}
+                                    onChange={(_, value: number) => {
+                                       router.push(`/${shop.data?.urlName}?page=${value}`);
+                                    }}
+                                    showFirstButton showLastButton
+                                 />
                               )}
                            </Stack>
                         </>
@@ -264,76 +202,14 @@ const Shop: NextPage = () => {
                            </Stack>
                            <Stack direction='row' spacing={1} pt={2} justifyContent="center" alignItems="center" >
                               {(!category && !(filteredProducts.length > 0)) && (
-                                 <>
-                                    <Button
-                                       variant='outlined'
-                                       size='small'
-                                       onClick={() => {
-                                          page && router.push(`/${shop.data?.urlName}?page=${parseInt(page.toString()) - 1}`);
-                                       }}
-                                       disabled={!(page && (parseInt(page.toString()) > 1))}
-                                    >prev</Button>
-
-                                    <PopupState variant="popover" popupId="demo-popup-popover">
-                                       {(popupState) => (
-                                          <div>
-                                             <Typography sx={{ "&:hover": { cursor: "pointer" } }} {...bindTrigger(popupState)} >Page No: {page ? parseInt(page.toString()) : '1'}/{Math.ceil(prodDocLength / listLength)}</Typography>
-                                             <Popover
-                                                {...bindPopover(popupState)}
-                                                anchorOrigin={{
-                                                   vertical: 'bottom',
-                                                   // vertical: 'center',
-                                                   horizontal: 'center',
-                                                }}
-                                                transformOrigin={{
-                                                   vertical: 'top',
-                                                   // vertical: 'center',
-                                                   horizontal: 'center',
-                                                }}
-                                             >
-                                                <form onSubmit={(e: any) => {
-                                                   e.preventDefault();
-                                                   ((pageNoInput <= 0)
-                                                      ? router.push(`/${shop.data?.urlName}`)
-                                                      : ((pageNoInput > (Math.ceil(prodDocLength / listLength)))
-                                                         ? router.push(`/${shop.data?.urlName}?page=${Math.ceil(prodDocLength / listLength)}`)
-                                                         : router.push(`/${shop.data?.urlName}?page=${pageNoInput}`)
-                                                      )
-                                                   );
-                                                }}>
-                                                   <TextField
-                                                      size='small'
-                                                      type="number"
-                                                      sx={{ width: '5rem' }}
-                                                      value={pageNoInput}
-                                                      onInput={(e: any) => setPageNoInput(e.target.value)}
-                                                      onBlur={() => {
-                                                         ((pageNoInput <= 0)
-                                                            ? router.push(`/${shop.data?.urlName}`).then(() => setPageNoInput(''))
-                                                            : ((pageNoInput > (Math.ceil(prodDocLength / listLength)))
-                                                               ? router.push(`/${shop.data?.urlName}?page=${Math.ceil(prodDocLength / listLength)}`).then(() => setPageNoInput(''))
-                                                               : router.push(`/${shop.data?.urlName}?page=${pageNoInput}`).then(() => setPageNoInput(''))
-                                                            )
-                                                         );
-                                                      }}
-                                                   />
-                                                </form>
-                                             </Popover>
-                                          </div>
-                                       )}
-                                    </PopupState>
-
-                                    <Button
-                                       variant='outlined'
-                                       size='small'
-                                       onClick={() => {
-                                          page
-                                             ? router.push(`/${shop.data?.urlName}?page=${parseInt(page.toString()) + 1}`)
-                                             : router.push(`/${shop.data?.urlName}?page=2`);
-                                       }}
-                                       disabled={(page && !((parseInt(page.toString())) < (Math.ceil(prodDocLength / listLength)))) || ((Math.ceil(prodDocLength / listLength)) === 1) || false}
-                                    >next</Button>
-                                 </>
+                                 <Pagination
+                                    count={Math.ceil(prodDocLength / listLength)}
+                                    page={page ? (parseInt(page.toString())) : 1}
+                                    onChange={(_, value: number) => {
+                                       router.push(`/${shop.data?.urlName}?page=${value}`);
+                                    }}
+                                    showFirstButton showLastButton
+                                 />
                               )}
                            </Stack>
                         </>

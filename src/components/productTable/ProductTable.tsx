@@ -21,14 +21,24 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { database, storage } from '../../config/firebase.config';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditProduct_modal from './EditProduct.modal';
 import { ref, deleteObject } from "firebase/storage";
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { changeProdTableCollapse, selectProdTableCloseCollapse } from '../../redux/slices/prodTableCollapse.slice';
+import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 
 
 const Row = ({ rowBgColor, shopUrlName, prodId, prodNo, prodCodeName, prodName, prodCategory, prodBrand, prodImg, quantity, getPrice, sellPrice, profitAmount, profitPercentage, createdAt }: ProductTableRowProps) => {
    const [open, setOpen] = useState(false);
+
+   const dispatch = useAppDispatch();
+   const tableCollapse = useAppSelector(selectProdTableCloseCollapse);
+
+   useEffect(() => setOpen(false), [tableCollapse]);
+
+
    let date = createdAt.toDate().toUTCString().slice(0, 16);
    let minute = createdAt.toDate().getMinutes();
    let hour = createdAt.toDate().getHours();
@@ -46,9 +56,12 @@ const Row = ({ rowBgColor, shopUrlName, prodId, prodNo, prodCodeName, prodName, 
 
 
    const handleProdRemove = async () => {
+      dispatch(changeProdTableCollapse());
+
       const imageRef = ref(storage, `/product-images/${shopUrlName}/PRODUCT_IMG:${prodId}`);
       await deleteObject(imageRef).then(() => {
-         deleteDoc(doc(database, "shops", shopUrlName, "products", prodId));
+         deleteDoc(doc(database, "shops", shopUrlName, "products", prodId)).then(() => {
+         });
          // File deleted successfully
       }).catch((error) => {
          // Uh-oh, an error occurred!
@@ -133,7 +146,7 @@ const Row = ({ rowBgColor, shopUrlName, prodId, prodNo, prodCodeName, prodName, 
                            <TableRow >
                               <TableCell component="th" scope="row" align="center"  >
                                  <Tooltip title="Remove" placement="left" arrow >
-                                    <IconButton size='small' sx={{ backgroundColor: 'red' }}
+                                    <IconButton size='small' sx={{ color: 'red' }}
                                        onClick={handleProdRemove}
                                     >
                                        <DeleteIcon />
@@ -153,6 +166,8 @@ const Row = ({ rowBgColor, shopUrlName, prodId, prodNo, prodCodeName, prodName, 
 
 
 export default function ProductTable({ shopData, products }: ProductTableProps) {
+   const dispatch = useAppDispatch();
+
    return (
       <TableContainer component={Paper}>
          <Table aria-label="collapsible table" size="small" >
@@ -164,7 +179,15 @@ export default function ProductTable({ shopData, products }: ProductTableProps) 
                   <TableCell align="left" sx={{ color: '#ffffff' }}>Image</TableCell>
                   <TableCell align="left" sx={{ color: '#ffffff' }}>Catagory</TableCell>
                   <TableCell align="right" sx={{ color: '#ffffff' }}>Sell Price&nbsp;(Rs)</TableCell>
-                  <TableCell />
+                  <TableCell align="center">
+                     <IconButton
+                        aria-label="close expanded rows"
+                        size="small"
+                        onClick={() => dispatch(changeProdTableCollapse())}
+                     >
+                        <KeyboardDoubleArrowUpIcon />
+                     </IconButton>
+                  </TableCell>
                </TableRow>
             </TableHead>
             <TableBody>
