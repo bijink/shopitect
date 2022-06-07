@@ -1,6 +1,4 @@
-import PageLoading_layout from "./PageLoading.layout";
-import Public_layout from "./Public.layout";
-import ShopAdmin_layout from "./ShopAdmin.layout";
-import SettingsPage_layout from "./SettingsPage.layout";
+import Page_layout from "./Page.layout";
+import PageSkeleton_layout from "./PageSkeleton.layout";
 
-export { PageLoading_layout, Public_layout, ShopAdmin_layout, SettingsPage_layout };
+export { Page_layout, PageSkeleton_layout };

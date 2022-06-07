@@ -1,13 +1,8 @@
 import { ReactNode } from "react";
 
-interface LayoutTypes {
+export interface PageLayoutProps {
    children: ReactNode;
-};
-interface SettingsPageLayoutProps {
+   navbar: JSX.Element;
+   sidebar: JSX.Element;
    title?: string;
-}
-
-export type PublicLayoutTypes = LayoutTypes;
-export type ShopAdminLayoutTypes = LayoutTypes;
-export type InfoPageLayoutTypes = LayoutTypes;
-export type SettingsPageLayoutTypes = LayoutTypes & SettingsPageLayoutProps;
+};

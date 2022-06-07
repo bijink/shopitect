@@ -63,7 +63,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function Public_navBar() {
    const router = useRouter();
-   const { shopAppId, category } = router.query;
+   const { shopAppUrl, category } = router.query;
 
    const dispatch = useAppDispatch();
    const shopDetails = useAppSelector(selectShopDetails);
@@ -83,7 +83,7 @@ export default function Public_navBar() {
                      color="inherit"
                      aria-label="open drawer"
                      sx={{ mr: 2 }}
-                  // onClick={() => router.push(`/${shopAppId}`)}
+                  // onClick={() => router.push(`/${shopAppUrl}`)}
                   >
                      <MenuIcon />
                   </IconButton>
@@ -94,7 +94,7 @@ export default function Public_navBar() {
                      color="inherit"
                      aria-label="open drawer"
                      sx={{ mr: 2 }}
-                     onClick={() => router.push(`/${shopAppId}`)}
+                     onClick={() => router.push(`/${shopAppUrl}`)}
                   >
                      <ArrowBackIosNewIcon />
                   </IconButton>
@@ -104,7 +104,7 @@ export default function Public_navBar() {
                   noWrap
                   component="div"
                   sx={{ display: { xs: 'none', sm: 'block' }, cursor: 'pointer' }}
-                  onClick={() => router.push(`/${shopAppId}`)}
+                  onClick={() => router.push(`/${shopAppUrl}`)}
                >
                   {shopDetails?.data?.name}
                </Typography>
@@ -126,7 +126,7 @@ export default function Public_navBar() {
                               setSearchInput(e.target.value);
                            }}
                            onFocus={() => {
-                              router.push(`/${shopAppId}`);
+                              router.push(`/${shopAppUrl}`);
                               setSearchInput('');
                               dispatch(setProdSearchInput(''));
                            }}
@@ -135,17 +135,18 @@ export default function Public_navBar() {
                   </Search>
                )}
                <Box sx={{ flexGrow: 1 }} />
-               {!((pageId === `about_page`) || (pageId === `admin_page`)) && (
+               {/* {!((pageId === `about_page`) || (pageId === `admin_page`)) && ( */}
+               {(pageId !== `info_page`) && (
                   <IconButton
                      size="small"
                      aria-label="information about the shop"
                      color="inherit"
                      onClick={() => {
-                        // router.push(`/${shopDetails?.data?.urlName}/info/about`);
-                        router.push({
-                           pathname: `/${shopAppId}/info`,
-                           query: { tab: 'about' },
-                        });
+                        router.push(`/${shopAppUrl}/info/about`);
+                        // router.push({
+                        //    pathname: `/${shopAppUrl}/info`,
+                        //    query: { tab: 'about' },
+                        // });
                      }}
                   >
                      <InfoIcon />

@@ -19,19 +19,21 @@ import { useRouter } from "next/router";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { selectShopDetails } from "../../redux/slices/shopDetails.slice";
 import { setAppPageId } from "../../redux/slices/pageId.slice";
-import { PageLoading_layout, Public_layout, ShopAdmin_layout } from "../../layouts";
+import { PageSkeleton_layout, Page_layout } from "../../layouts";
 import { useSecurePage } from "../../hooks";
 import NotFound from "../404";
+import { Public_navBar, ShopAdmin_navBar } from "../../components/navBar";
+import { Public_sideBar, ShopAdmin_sideBar } from "../../components/sideBar";
 
 
 const Product: NextPage = () => {
    const router = useRouter();
-   const { id: productId, shopAppId } = router.query;
+   const { id: productId, shopAppUrl } = router.query;
 
    const dispatch = useAppDispatch();
    const shop = useAppSelector(selectShopDetails);
 
-   const secure = useSecurePage(shopAppId);
+   const secure = useSecurePage(shopAppUrl);
    // console.log(secure);
 
    const [prodDetails, setProdDetails] = useState({} as ProductTypes | DocumentData);
@@ -61,9 +63,9 @@ const Product: NextPage = () => {
          </Head>
 
          {((secure === 'loading') && (
-            <PageLoading_layout />
+            <PageSkeleton_layout />
          )) || ((secure === '200' && prodDetails) && (
-            <ShopAdmin_layout>
+            <Page_layout navbar={<ShopAdmin_navBar />} sidebar={<ShopAdmin_sideBar />} >
                <Box p={1.5} >
                   <Card sx={{ width: '70vw', height: '70vh' }}>
                      <CardActionArea>
@@ -87,9 +89,9 @@ const Product: NextPage = () => {
                      </CardActionArea>
                   </Card>
                </Box >
-            </ShopAdmin_layout >
+            </Page_layout >
          )) || ((((secure === '401') || (secure === '403')) && prodDetails) && (
-            <Public_layout>
+            <Page_layout navbar={<Public_navBar />} sidebar={<Public_sideBar />} >
                <Box p={1.5} >
                   <Card sx={{ width: '70vw', height: '70vh' }}>
                      <CardActionArea>
@@ -113,7 +115,7 @@ const Product: NextPage = () => {
                      </CardActionArea>
                   </Card>
                </Box >
-            </Public_layout >
+            </Page_layout >
          )) || (((secure === '404') || !prodDetails || !productId) && (
             <NotFound />
          ))}

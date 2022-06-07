@@ -16,20 +16,16 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import { useRouter } from 'next/router';
-import { auth, database } from '../../config/firebase.config';
-import { collection, DocumentData, onSnapshot, query, where } from 'firebase/firestore';
+import { auth } from '../../config/firebase.config';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
-import { getSession, signIn as signInProvider, signOut as signOutProvider, useSession } from 'next-auth/react';
+import { signOut as signOutProvider, useSession } from 'next-auth/react';
 import { signOut as signOutAccount } from 'firebase/auth';
 import { useSecurePage, useUser } from '../../hooks';
 import InfoIcon from '@mui/icons-material/Info';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import { selectPageId } from '../../redux/slices/pageId.slice';
 import { selectProdSearchInput, setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
 
@@ -80,11 +76,11 @@ export default function ShopAdmin_navBar() {
    // console.log(session?.user);
 
    const router = useRouter();
-   const { shopAppId, category } = router.query;
+   const { shopAppUrl, category, productPages } = router.query;
 
    const dispatch = useAppDispatch();
 
-   const secure = useSecurePage(shopAppId);
+   const secure = useSecurePage(shopAppUrl);
    const { user, status: serStatus } = useUser();
    // console.log(user);
 
@@ -138,15 +134,11 @@ export default function ShopAdmin_navBar() {
       >
          <MenuItem onClick={() => {
             handleMenuClose();
-            // router.push(`/${shopAppId}/settings`);
-            router.push({
-               pathname: `/${shopAppId}/settings`,
-               query: { tab: 'profile' },
-            });
+            router.push(`/${shopAppUrl}/settings/profile`);
          }}>Settings</MenuItem>
 
          <MenuItem onClick={() => {
-            router.push(`/${shopAppId}`).then(() => {
+            router.push(`/${shopAppUrl}`).then(() => {
                signOutProvider({ redirect: false }).then(() => {
                   signOutAccount(auth);
                });
@@ -173,14 +165,6 @@ export default function ShopAdmin_navBar() {
          open={isMobileMenuOpen}
          onClose={handleMobileMenuClose}
       >
-         {/* <MenuItem>
-            <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-               <Badge badgeContent={4} color="error">
-                  <MailIcon />
-               </Badge>
-            </IconButton>
-            <p>Messages</p>
-         </MenuItem> */}
          <MenuItem>
             <IconButton
                size="large"
@@ -227,13 +211,14 @@ export default function ShopAdmin_navBar() {
                   noWrap
                   component="div"
                   sx={{ display: { xs: 'none', sm: 'block' }, cursor: 'pointer' }}
-                  onClick={() => router.push(`/${shop?.data?.urlName}`)}
+                  onClick={() => router.push(`/${shopAppUrl}`)}
                >
                   {shop?.data?.name}
                </Typography>
                <Box sx={{ flexGrow: 1 }} />
 
-               {((pageId === 'shopHome_page') || (pageId === 'dashboard_page')) && (
+               {/* {((pageId === 'shopHome_page') || (pageId === 'product_page')) && ( */}
+               {((pageId === 'shopHome_page') || (productPages === 'table')) && (
                   <Search sx={{ flexGrow: 2 }}>
                      <SearchIconWrapper>
                         <SearchIcon />
@@ -250,7 +235,7 @@ export default function ShopAdmin_navBar() {
                               setSearchInput(e.target.value);
                            }}
                            onFocus={() => {
-                              router.push(`/${shopAppId}${(pageId === 'dashboard_page') ? '/dashboard' : ''}`);
+                              router.push(`/${shopAppUrl}${(productPages === 'table') ? '/product/table' : ''}`);
                               setSearchInput('');
                               dispatch(setProdSearchInput(''));
                            }}
@@ -263,26 +248,17 @@ export default function ShopAdmin_navBar() {
                   {((secure === '200') && (
                      <>
                         <Box sx={{ display: { xs: 'none', md: 'flex' } }} justifyContent="center" alignItems="center" >
-                           {!(pageId === 'dashboard_page') && (
-                              <Tooltip title="Dashboard" arrow >
-                                 <IconButton size="large" aria-label="show 4 new mails" color="inherit"
-                                    onClick={() => {
-                                       router.push(`/${shop?.data?.urlName}/dashboard`);
-                                    }}
-                                 >
-                                    <DashboardRoundedIcon />
-                                 </IconButton>
-                              </Tooltip>
-                           )}
-                           <IconButton
-                              size="large"
-                              aria-label="show 17 new notifications"
-                              color="inherit"
-                           >
-                              <Badge badgeContent={17} color="error">
-                                 <NotificationsIcon />
-                              </Badge>
-                           </IconButton>
+                           <Tooltip title="Notification" arrow >
+                              <IconButton
+                                 size="large"
+                                 aria-label="show 5 new notifications"
+                                 color="inherit"
+                              >
+                                 <Badge badgeContent={5} color="error">
+                                    <NotificationsIcon />
+                                 </Badge>
+                              </IconButton>
+                           </Tooltip>
                            {(user?.photoURL) && (
                               <Button
                                  size="large"
@@ -291,7 +267,6 @@ export default function ShopAdmin_navBar() {
                                  aria-haspopup="true"
                                  onClick={(e) => {
                                     handleProfileMenuOpen(e);
-                                    // router.push(`/${shopAppId}/account/profile`);
                                  }}
                                  color="inherit"
                                  sx={{ borderRadius: '50%' }}
@@ -319,7 +294,7 @@ export default function ShopAdmin_navBar() {
                         aria-label="information about the shop"
                         color="inherit"
                         onClick={() => {
-                           router.push(`/${shop?.data?.urlName}/info/about`);
+                           router.push(`/${shopAppUrl}/info/about`);
                         }}
                      >
                         <InfoIcon />

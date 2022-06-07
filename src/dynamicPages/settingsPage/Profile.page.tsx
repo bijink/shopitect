@@ -1,18 +1,18 @@
 import { Box, Stack, TextareaAutosize, TextField, Typography } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { setAppPageId } from "../../../redux/slices/pageId.slice";
-import { selectShopDetails, setAppShopDetailsAsync } from "../../../redux/slices/shopDetails.slice";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { setAppPageId } from "../../redux/slices/pageId.slice";
+import { selectShopDetails, setAppShopDetailsAsync } from "../../redux/slices/shopDetails.slice";
 import { collection, doc, onSnapshot, query, updateDoc, where } from "firebase/firestore";
-import { database } from "../../../config/firebase.config";
-import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
+import { database } from "../../config/firebase.config";
 import { LoadingButton } from "@mui/lab";
 import { useRouter } from "next/router";
+import UpdateIcon from '@mui/icons-material/Update';
 
 
-const Profile_tab = () => {
+const Profile_page = () => {
    const router = useRouter();
-   const { shopAppId } = router.query;
+   const { shopAppUrl } = router.query;
 
    const dispatch = useAppDispatch();
 
@@ -44,7 +44,7 @@ const Profile_tab = () => {
 
 
    useEffect(() => {
-      shopAppId && onSnapshot(query(collection(database, 'shops'), where('urlName', '==', shopAppId)), (snapshot) => {
+      shopAppUrl && onSnapshot(query(collection(database, 'shops'), where('urlName', '==', shopAppUrl)), (snapshot) => {
          let docsLength = null;
          let doc = null;
 
@@ -67,9 +67,9 @@ const Profile_tab = () => {
 
          sessionStorage.setItem('shop-details', JSON.stringify(shopDetails));
 
-         dispatch(setAppShopDetailsAsync(shopAppId));
+         dispatch(setAppShopDetailsAsync(shopAppUrl));
       });
-   }, [shopAppId, database]);
+   }, [shopAppUrl, database]);
 
    // useEffect(() => {
    //    (secure === '401') && signInProvider('google', { redirect: false, callbackUrl: `/auth/signup` });
@@ -95,17 +95,6 @@ const Profile_tab = () => {
                      onInput={(e: ChangeEvent<HTMLInputElement>) => setShopName(e.target.value)}
                   />
                </Box>
-               {/* <Box>
-                       <Typography variant="body1" sx={{ fontWeight: '500' }} gutterBottom >Shop Url Name</Typography>
-                       <TextField
-                          size="small"
-                          id="outlined-required"
-                          fullWidth
-                          required
-                          value={shopUrlName}
-                          onInput={(e: ChangeEvent<HTMLInputElement>) => setShopUrlName(e.target.value)}
-                       />
-                    </Box> */}
                <Box>
                   <Typography variant="body1" sx={{ fontWeight: '500' }} gutterBottom >Owner Name</Typography>
                   <TextField
@@ -160,7 +149,7 @@ const Profile_tab = () => {
                      sx={{ textTransform: 'none' }}
                      loading={loading}
                      loadingPosition="start"
-                     startIcon={<PublishRoundedIcon />}
+                     startIcon={<UpdateIcon />}
                   >Update Profile</LoadingButton>
                </Box>
             </Stack>
@@ -169,4 +158,4 @@ const Profile_tab = () => {
    );
 };
 
-export default Profile_tab;
+export default Profile_page;

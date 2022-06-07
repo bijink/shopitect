@@ -7,10 +7,10 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectShopDetails, setAppShopDetailsAsync } from "../redux/slices/shopDetails.slice";
 
 
-const useSecurePage = (shopAppId: string | string[] | undefined) => {
+const useSecurePage = (shopAppUrl: string | string[] | undefined) => {
    const dispatch = useAppDispatch();
    const shopDetails = useAppSelector(selectShopDetails);
-   // console.log(shopAppId);
+   // console.log(shopAppUrl);
 
 
    const [userData, setUserData] = useState<User | null | undefined>(undefined);
@@ -28,12 +28,12 @@ const useSecurePage = (shopAppId: string | string[] | undefined) => {
    }));
 
    useEffect(() => {
-      dispatch(setAppShopDetailsAsync(shopAppId));
-   }, [shopAppId]);
+      dispatch(setAppShopDetailsAsync(shopAppUrl));
+   }, [shopAppUrl]);
 
 
    useEffect(() => {
-      if (shopAppId && shopDetails) {
+      if (shopAppUrl && shopDetails) {
          if ((shopDetails.length === null) || (userData === undefined)) {
             setSecure('loading');
          }

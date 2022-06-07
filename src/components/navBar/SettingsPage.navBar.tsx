@@ -16,19 +16,14 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import { useRouter } from 'next/router';
-import { auth, database } from '../../config/firebase.config';
-import { collection, DocumentData, onSnapshot, query, where } from 'firebase/firestore';
+import { auth } from '../../config/firebase.config';
 import { useAppSelector } from '../../redux/hooks';
 import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
-import { getSession, signIn as signInProvider, signOut as signOutProvider, useSession } from 'next-auth/react';
+import { signOut as signOutProvider, useSession } from 'next-auth/react';
 import { signOut as signOutAccount } from 'firebase/auth';
-import InfoIcon from '@mui/icons-material/Info';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import { selectPageId } from '../../redux/slices/pageId.slice';
 import { useUser } from '../../hooks';
 
@@ -78,7 +73,7 @@ export default function SettingsPage_navBar() {
    const { data: session } = useSession();
 
    const router = useRouter();
-   const { shopAppId } = router.query;
+   const { shopAppUrl } = router.query;
    // console.log(session?.user);
 
    const { user } = useUser();
@@ -133,11 +128,9 @@ export default function SettingsPage_navBar() {
          open={isMenuOpen}
          onClose={handleMenuClose}
       >
-         {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem> */}
-         {/* <MenuItem onClick={handleMenuClose}>Account</MenuItem> */}
          <MenuItem onClick={(e: any) => {
             e.preventDefault();
-            router.push(`/${shopAppId}`).then(() => {
+            router.push(`/${shopAppUrl}`).then(() => {
                signOutProvider({ redirect: false }).then(() => {
                   signOutAccount(auth);
                });
@@ -164,14 +157,6 @@ export default function SettingsPage_navBar() {
          open={isMobileMenuOpen}
          onClose={handleMobileMenuClose}
       >
-         {/* <MenuItem>
-            <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-               <Badge badgeContent={4} color="error">
-                  <MailIcon />
-               </Badge>
-            </IconButton>
-            <p>Messages</p>
-         </MenuItem> */}
          <MenuItem>
             <IconButton
                size="large"
@@ -218,7 +203,7 @@ export default function SettingsPage_navBar() {
                   noWrap
                   component="div"
                   sx={{ display: { xs: 'none', sm: 'block' }, cursor: 'pointer' }}
-                  onClick={() => router.push(`/${shopDetails?.data?.urlName}`)}
+                  onClick={() => router.push(`/${shopAppUrl}`)}
                >
                   {shopDetails?.data?.name}
                </Typography>
@@ -235,42 +220,17 @@ export default function SettingsPage_navBar() {
                <Box sx={{ flexGrow: 1 }} />
                <Box display="flex" justifyContent="center" alignItems="center">
                   <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                     {!(pageId === 'dashboard_page') && (
-                        <Tooltip title="Dashboard" arrow >
-                           <IconButton size="large" aria-label="show 4 new mails" color="inherit"
-                              onClick={() => {
-                                 router.push(`/${shopDetails?.data?.urlName}/dashboard`);
-                              }}
-                           >
-                              <DashboardRoundedIcon />
-                           </IconButton>
-                        </Tooltip>
-                     )}
-                     {/* <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                              <Badge badgeContent={4} color="error">
-                                 <MailIcon />
-                              </Badge>
-                           </IconButton> */}
-                     <IconButton
-                        size="large"
-                        aria-label="show 17 new notifications"
-                        color="inherit"
-                     >
-                        <Badge badgeContent={17} color="error">
-                           <NotificationsIcon />
-                        </Badge>
-                     </IconButton>
-                     {/* <IconButton
+                     <Tooltip title="Notification" arrow >
+                        <IconButton
                            size="large"
-                           edge="end"
-                           aria-label="account of current user"
-                           aria-controls={menuId}
-                           aria-haspopup="true"
-                           onClick={handleProfileMenuOpen}
+                           aria-label="show 10 new notifications"
                            color="inherit"
                         >
-                           <AccountCircle />
-                        </IconButton> */}
+                           <Badge badgeContent={10} color="error">
+                              <NotificationsIcon />
+                           </Badge>
+                        </IconButton>
+                     </Tooltip>
                      {(user?.photoURL) && (
                         <Button
                            size="large"
@@ -279,7 +239,7 @@ export default function SettingsPage_navBar() {
                            aria-haspopup="true"
                            onClick={(event) => {
                               handleProfileMenuOpen(event);
-                              // router.push(`/${shopAppId}/settings/profile`);
+                              // router.push(`/${shopAppUrl}/settings/profile`);
                            }}
                            color="inherit"
                            sx={{ borderRadius: '50%' }}

@@ -22,9 +22,12 @@ import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { selectPageId } from '../../redux/slices/pageId.slice';
-import FilterListIcon from '@mui/icons-material/FilterList';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import { changeProdTableCollapse } from '../../redux/slices/prodTableCollapse.slice';
+import CategoryIcon from '@mui/icons-material/Category';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import HomeIcon from '@mui/icons-material/Home';
+import DashboardIcon from '@mui/icons-material/Dashboard';
 
 
 const drawerWidth = 240;
@@ -42,7 +45,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 export default function ShopAdmin_sideBar() {
    const router = useRouter();
-   const { shopAppId, category } = router.query;
+   const { shopAppUrl, category } = router.query;
    const dispatch = useAppDispatch();
    const shop = useAppSelector(selectShopDetails);
    const pageId = useAppSelector(selectPageId);
@@ -80,7 +83,7 @@ export default function ShopAdmin_sideBar() {
          <Toolbar />
          <DrawerHeader>
             <Stack direction="row" width="100%" justifyContent="space-between" alignItems="center" >
-               <Typography variant='h6' component="p" >Category</Typography>
+               <Typography variant='h6' component="p" >Categories</Typography>
                <IconButton onClick={() => setCategoryOpen(false)} >
                   <ArrowBackIosNewIcon />
                </IconButton>
@@ -97,11 +100,11 @@ export default function ShopAdmin_sideBar() {
                         dispatch(changeProdTableCollapse());
 
                         if (text === 'all') {
-                           router.push((pageId === 'shopHome_page') ? `/${shopAppId}` : `/${shopAppId}/dashboard`);
+                           router.push((pageId === 'shopHome_page') ? `/${shopAppUrl}` : `/${shopAppUrl}/product/table`);
                            // dispatch(setProdSearchInput(''));
                         } else {
                            router.push({
-                              pathname: (pageId === 'shopHome_page') ? `/${shopAppId}` : `/${shopAppId}/dashboard`,
+                              pathname: (pageId === 'shopHome_page') ? `/${shopAppUrl}` : `/${shopAppUrl}/product/table`,
                               query: { category: text },
                            });
                         }
@@ -131,9 +134,29 @@ export default function ShopAdmin_sideBar() {
             <Toolbar />
             <Box sx={{ overflow: 'auto', '& > *': { padding: 0 } }}>
                <List>
+                  <ListItem button onClick={() => router.push(`/${shopAppUrl}`)} >
+                     <ListItemIcon>
+                        <HomeIcon />
+                     </ListItemIcon>
+                     <ListItemText primary={'Home'} />
+                  </ListItem>
+                  <Divider />
+                  <ListItem button onClick={() => router.push(`/${shopAppUrl}/dashboard`)} >
+                     <ListItemIcon>
+                        <DashboardIcon />
+                     </ListItemIcon>
+                     <ListItemText primary={'Dashboard'} />
+                  </ListItem>
+                  <ListItem button onClick={() => router.push(`/${shopAppUrl}/product/table`)} >
+                     <ListItemIcon>
+                        <ShoppingCartIcon />
+                     </ListItemIcon>
+                     <ListItemText primary={'Product'} />
+                  </ListItem>
+                  <Divider />
                   <ListItem button onClick={() => setCategoryOpen(true)} >
                      <ListItemIcon>
-                        <FilterListIcon />
+                        <CategoryIcon />
                      </ListItemIcon>
                      <ListItemText primary={'Category'} />
                   </ListItem>

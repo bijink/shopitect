@@ -6,11 +6,11 @@ import { selectShopDetails } from "../../redux/slices/shopDetails.slice";
 
 const ShopPagesHead = ({ title = '' }: { title: string; }) => {
    const router = useRouter();
-   const { shopAppId } = router.query;
+   const { shopAppUrl } = router.query;
 
    const shop = useAppSelector(selectShopDetails);
 
-   const secure = useSecurePage(shopAppId);
+   const secure = useSecurePage(shopAppUrl);
    // console.log(secure);
 
 

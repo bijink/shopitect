@@ -44,7 +44,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 export default function Public_sideBar() {
    const router = useRouter();
-   const { shopAppId, category } = router.query;
+   const { shopAppUrl, category } = router.query;
    const dispatch = useAppDispatch();
    const shop = useAppSelector(selectShopDetails);
    const pageId = useAppSelector(selectPageId);
@@ -96,11 +96,11 @@ export default function Public_sideBar() {
                {categoryList && categoryList.map((text, index) => (
                   <ListItem key={index} button disablePadding sx={{ backgroundColor: ((text === 'all') && ((category === 'all') || (!category))) ? '#bdbdbd' : ((category === text) ? '#bdbdbd' : 'transparent') }} onClick={() => {
                      if (text === 'all') {
-                        router.push(((pageId === 'shopHome_page') || (pageId === 'productView_page')) ? `/${shopAppId}` : `/${shopAppId}/dashboard`);
+                        router.push(((pageId === 'shopHome_page') || (pageId === 'productView_page')) ? `/${shopAppUrl}` : `/${shopAppUrl}/dashboard`);
                         // dispatch(setProdSearchInput(''));
                      } else {
                         router.push({
-                           pathname: ((pageId === 'shopHome_page') || (pageId === 'productView_page')) ? `/${shopAppId}` : `/${shopAppId}/dashboard`,
+                           pathname: ((pageId === 'shopHome_page') || (pageId === 'productView_page')) ? `/${shopAppUrl}` : `/${shopAppUrl}/dashboard`,
                            query: { category: text },
                         });
                      }
@@ -132,7 +132,7 @@ export default function Public_sideBar() {
                   <Box sx={{ overflow: 'auto', '& > *': { padding: 0 } }}>
                      <List>
                         <ListItem button onClick={() => {
-                           // router.push(`/${shopAppId}/info/about`);
+                           // router.push(`/${shopAppUrl}/info/about`);
                            setCategoryOpen(true);
                         }} >
                            <ListItemIcon><FilterListRoundedIcon /></ListItemIcon>
@@ -142,7 +142,7 @@ export default function Public_sideBar() {
                      <Divider />
                      {/* <List>
                      <ListItem button onClick={() => {
-                        // router.push(`/${shopAppId}/info/admin`);
+                        // router.push(`/${shopAppUrl}/info/admin`);
                      }} >
                         <ListItemIcon><AdminPanelSettingsIcon /></ListItemIcon>
                         <ListItemText primary='Admin' sx={{ color: 'GrayText' }} />
@@ -165,10 +165,11 @@ export default function Public_sideBar() {
                <Box sx={{ overflow: 'auto' }}>
                   <List>
                      <ListItem button onClick={() => {
-                        router.push({
-                           pathname: `/${shopAppId}/info`,
-                           query: { tab: 'about' },
-                        });
+                        // router.push({
+                        //    pathname: `/${shopAppUrl}/info`,
+                        //    query: { tab: 'about' },
+                        // });
+                        router.push(`/${shopAppUrl}/info/about`);
                      }} >
                         <ListItemIcon><InfoIcon /></ListItemIcon>
                         <ListItemText primary='About Us' />
@@ -177,10 +178,11 @@ export default function Public_sideBar() {
                   <Divider />
                   <List>
                      <ListItem button onClick={() => {
-                        router.push({
-                           pathname: `/${shopAppId}/info`,
-                           query: { tab: 'admin' },
-                        });
+                        // router.push({
+                        //    pathname: `/${shopAppUrl}/info`,
+                        //    query: { tab: 'admin' },
+                        // });
+                        router.push(`/${shopAppUrl}/info/admin`);
                      }} >
                         <ListItemIcon><AdminPanelSettingsIcon /></ListItemIcon>
                         <ListItemText primary='Admin' sx={{ color: 'GrayText' }} />

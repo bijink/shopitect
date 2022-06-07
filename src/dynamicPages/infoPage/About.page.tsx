@@ -1,7 +1,7 @@
 import { Typography } from "@mui/material";
 
 
-const About_tab = () => {
+const About_page = () => {
    return (
       <>
          <Typography variant="h4" gutterBottom >About Us</Typography>
@@ -10,4 +10,4 @@ const About_tab = () => {
    );
 };
 
-export default About_tab;
+export default About_page;

@@ -11,26 +11,26 @@ import { database } from '../../config/firebase.config';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { selectShopDetails, setAppShopDetailsAsync } from '../../redux/slices/shopDetails.slice';
 import { setAppPageId } from '../../redux/slices/pageId.slice';
-import { PageLoading_layout, Public_layout, ShopAdmin_layout } from '../../layouts';
+import { PageSkeleton_layout, Page_layout } from '../../layouts';
 import { useSecurePage } from '../../hooks';
-import { Button, CircularProgress, Pagination, Stack, TextField, Typography } from '@mui/material';
+import { CircularProgress, Pagination, Stack, Typography } from '@mui/material';
 import NotFound from '../404';
-import Popover from '@mui/material/Popover';
-import PopupState, { bindTrigger, bindPopover } from 'material-ui-popup-state';
 import { selectProdSearchInput, setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
+import { Public_navBar, ShopAdmin_navBar } from '../../components/navBar';
+import { Public_sideBar, ShopAdmin_sideBar } from '../../components/sideBar';
 
 
 const Shop: NextPage = () => {
    const router = useRouter();
-   const { shopAppId, category, page } = router.query;
-   // console.log(shopAppId);
+   const { shopAppUrl, category, page } = router.query;
+   // console.log(shopAppUrl);
 
    const dispatch = useAppDispatch();
    const shop = useAppSelector(selectShopDetails);
    const searchInput_prod = useAppSelector(selectProdSearchInput);
    // console.log(searchInput_prod);
 
-   const secure = useSecurePage(shopAppId);
+   const secure = useSecurePage(shopAppUrl);
    // console.log(secure);
 
    const listLength = 10;
@@ -39,7 +39,7 @@ const Shop: NextPage = () => {
    const [fetchDelayOver, setFetchDelayOver] = useState(false);
    const [shopNotExistOnServer, setShopNotExistOnServer] = useState(false);
    const [prodDocLength, setProdDocLength] = useState(0);
-   const [pageNoInput, setPageNoInput] = useState<number | string>(1);
+   const [pageLength, setPageLength] = useState(1);
 
 
    //create a new array by filtering the original array
@@ -59,6 +59,7 @@ const Shop: NextPage = () => {
 
    useEffect(() => {
       setProdDocLength(prodDetails.length);
+      setPageLength(Math.ceil(prodDetails.length / listLength));
 
       if (category) {
          dispatch(setProdSearchInput(''));
@@ -77,16 +78,16 @@ const Shop: NextPage = () => {
             let pageInt;
 
             // #creating 2D array to store prodDetails slice start&end points
-            for (let i = 1; i <= (Math.ceil(prodDocLength / listLength)); i++) {
+            for (let i = 1; i <= pageLength; i++) {
                arr.push([((i * listLength) - listLength), (i * listLength)]);
             }
 
             // #to catch and solve page breaking due to unmatchable page number
             if ((parseInt(page.toString()) > arr.length)) {
-               router.push(`/${shop.data?.urlName}?page=${Math.ceil(prodDocLength / listLength)}`);
-               pageInt = (Math.ceil(prodDocLength / listLength));
+               router.push(`/${shopAppUrl}?page=${pageLength}`);
+               pageInt = pageLength;
             } else if ((parseInt(page.toString()) < 1) || (isNaN(parseInt(page.toString())))) {
-               router.push(`/${shop.data?.urlName}?page=${'1'}`);
+               router.push(`/${shopAppUrl}?page=${'1'}`);
                pageInt = 1;
             } else {
                pageInt = parseInt(page.toString());
@@ -99,21 +100,21 @@ const Shop: NextPage = () => {
 
          setTimeout(() => setFetchDelayOver(true), 5000);
       }
-   }, [database, category, prodDetails, page, prodDocLength, searchInput_prod]);
+   }, [database, category, prodDetails, page, prodDocLength, pageLength, searchInput_prod]);
 
    useEffect(() => {
-      shopAppId && onSnapshot(query(collection(database, 'shops'), where('urlName', '==', shopAppId)), (snapshot) => {
+      shopAppUrl && onSnapshot(query(collection(database, 'shops'), where('urlName', '==', shopAppUrl)), (snapshot) => {
          // console.log(snapshot.docs.length);
          if (snapshot.docs.length == 0) {
             setShopNotExistOnServer(true);
             sessionStorage.removeItem('shop-details');
          }
       });
-   }, [database, shopAppId]);
+   }, [database, shopAppUrl]);
 
    useEffect(() => {
-      dispatch(setAppShopDetailsAsync(shopAppId));
-   }, [shopAppId]);
+      dispatch(setAppShopDetailsAsync(shopAppUrl));
+   }, [shopAppUrl]);
 
    useEffect(() => {
       dispatch(setAppPageId('shopHome_page'));
@@ -130,14 +131,13 @@ const Shop: NextPage = () => {
 
          <>
             {((secure === 'loading') && (
-               <PageLoading_layout />
+               <PageSkeleton_layout />
             )) || ((secure === '200') && (
-               <ShopAdmin_layout>
+               <Page_layout navbar={<ShopAdmin_navBar />} sidebar={<ShopAdmin_sideBar />} >
                   <Stack direction={'column'} >
                      {(prodDocLength > 0) ?
                         <>
                            <Stack direction={'row'} justifyContent="center" alignItems="center" flexWrap="wrap" >
-                              {/* {prodDetails_category.map((prod: ProdDetailsTypes, index: number) => ( */}
                               {(filteredProducts.length ? filteredProducts : prodDetails_category).map((prod: ProdDetailsTypes, index: number) => (
                                  < ProductCard key={index}
                                     shopUrlName={shop?.data?.urlName}
@@ -156,10 +156,10 @@ const Shop: NextPage = () => {
                            <Stack direction='row' spacing={1} pt={2} justifyContent="center" alignItems="center" >
                               {(!category && !(filteredProducts.length > 0)) && (
                                  <Pagination
-                                    count={Math.ceil(prodDocLength / listLength)}
+                                    count={pageLength}
                                     page={page ? (parseInt(page.toString())) : 1}
                                     onChange={(_, value: number) => {
-                                       router.push(`/${shop.data?.urlName}?page=${value}`);
+                                       router.push(`/${shopAppUrl}?page=${value}`);
                                     }}
                                     showFirstButton showLastButton
                                  />
@@ -175,16 +175,15 @@ const Shop: NextPage = () => {
                         </Stack>
                      }
                   </Stack>
-               </ShopAdmin_layout>
+               </Page_layout>
             )) || (((secure === '404') || shopNotExistOnServer) && (
                <NotFound />
             )) || (((secure === '401') || (secure === '403')) && (
-               <Public_layout>
+               <Page_layout navbar={<Public_navBar />} sidebar={<Public_sideBar />} >
                   <Stack direction={'column'} >
                      {(prodDocLength > 0) ?
                         <>
                            <Stack direction={'row'} justifyContent="center" alignItems="center" flexWrap="wrap" >
-                              {/* {prodDetails_category.map((prod: ProdDetailsTypes, index: number) => ( */}
                               {(filteredProducts.length ? filteredProducts : prodDetails_category).map((prod: ProdDetailsTypes, index: number) => (
                                  < ProductCard key={index}
                                     shopUrlName={shop?.data?.urlName}
@@ -203,10 +202,10 @@ const Shop: NextPage = () => {
                            <Stack direction='row' spacing={1} pt={2} justifyContent="center" alignItems="center" >
                               {(!category && !(filteredProducts.length > 0)) && (
                                  <Pagination
-                                    count={Math.ceil(prodDocLength / listLength)}
+                                    count={pageLength}
                                     page={page ? (parseInt(page.toString())) : 1}
                                     onChange={(_, value: number) => {
-                                       router.push(`/${shop.data?.urlName}?page=${value}`);
+                                       router.push(`/${shopAppUrl}?page=${value}`);
                                     }}
                                     showFirstButton showLastButton
                                  />
@@ -222,7 +221,7 @@ const Shop: NextPage = () => {
                         </Stack>
                      }
                   </Stack>
-               </Public_layout>
+               </Page_layout>
             ))}
          </>
       </>

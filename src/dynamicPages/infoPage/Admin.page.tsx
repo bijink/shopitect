@@ -1,14 +1,14 @@
 import { Button } from "@mui/material";
 import { useRouter } from "next/router";
 import { signIn as signInProvider, signOut as signOutProvider } from "next-auth/react";
-import { auth } from "../../../config/firebase.config";
+import { auth } from "../../config/firebase.config";
 import { signOut as signOutAccount } from "firebase/auth";
-import { useUser } from "../../../hooks";
+import { useUser } from "../../hooks";
 
 
-const Admin_tab = () => {
+const Admin_page = () => {
    const router = useRouter();
-   const { shopAppId } = router.query;
+   const { shopAppUrl } = router.query;
 
    const { user, status: userStatus } = useUser();
 
@@ -19,10 +19,10 @@ const Admin_tab = () => {
             <Button variant="contained" onClick={() => {
                signInProvider('google', { redirect: false, callbackUrl: `/auth/login` });
             }} >login</Button>
-         ) : (shopAppId && (
+         ) : (shopAppUrl && (
             <Button variant="contained" style={{ textTransform: 'none' }} onClick={() => {
                signOutAccount(auth).then(() => {
-                  signOutProvider({ redirect: false, callbackUrl: `/${shopAppId}/info/admin` });
+                  signOutProvider({ redirect: false, callbackUrl: `/${shopAppUrl}/info/admin` });
                });
             }} >{`${'logout'.toUpperCase()} ${user?.displayName}`}</Button>
          ))}
@@ -30,4 +30,4 @@ const Admin_tab = () => {
    );
 };
 
-export default Admin_tab;
+export default Admin_page;

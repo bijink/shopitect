@@ -1,8 +1,8 @@
 import { Box, Typography } from "@mui/material";
-import AccountDeleteModal from "../../accountDeleteModal";
+import AccountDeleteModal from "../../components/accountDeleteModal";
 
 
-const Account_tab = () => {
+const Account_page = () => {
    return (
       <>
          <Box>
@@ -13,4 +13,4 @@ const Account_tab = () => {
    );
 };
 
-export default Account_tab;
+export default Account_page;

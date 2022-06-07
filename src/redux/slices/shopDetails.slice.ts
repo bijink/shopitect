@@ -26,9 +26,9 @@ interface shopDeatilsState {
 }
 
 
-function fetchShopDetails(shopAppId: string | string[] | undefined) {
+function fetchShopDetails(shopAppUrl: string | string[] | undefined) {
    return new Promise<{ data: DocumentData | null, length: number | null; }>((resolve) => {
-      onSnapshot(query(collection(database, 'shops'), where('urlName', '==', shopAppId)), (snapshot) => {
+      onSnapshot(query(collection(database, 'shops'), where('urlName', '==', shopAppUrl)), (snapshot) => {
          let docsLength = null;
          let doc = null;
 
@@ -58,23 +58,23 @@ const initialState: shopDeatilsState = {
 
 export const setAppShopDetailsAsync = createAsyncThunk(
    'shop-details/fetchshopDetails',
-   async (shopAppId: string | string[] | undefined) => {
-      // const response = await fetchShopDetails(shopAppId);
+   async (shopAppUrl: string | string[] | undefined) => {
+      // const response = await fetchShopDetails(shopAppUrl);
 
       let response;
       let details = sessionStorage.getItem('shop-details');
       let parseDetails = JSON.parse(details!);
 
       if (!details || !(parseDetails.data)) {
-         const details = await fetchShopDetails(shopAppId);
+         const details = await fetchShopDetails(shopAppUrl);
          response = details;
 
          sessionStorage.setItem('shop-details', JSON.stringify(details));
       } else {
-         if (parseDetails.data.urlName === shopAppId) {
+         if (parseDetails.data.urlName === shopAppUrl) {
             response = parseDetails;
          } else {
-            const details = await fetchShopDetails(shopAppId);
+            const details = await fetchShopDetails(shopAppUrl);
             response = details;
 
             sessionStorage.setItem('shop-details', JSON.stringify(details));
