@@ -20,9 +20,14 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import amountCalculate from "../../utility/amountCalculate";
+import Snackbars from "../snackbars";
+import { useAppDispatch } from "../../redux/hooks";
+import { setSnackbarState } from "../../redux/slices/snackbarState.slice";
 
 
 const ProductInputForm = ({ shopData }: ProductInputProps) => {
+   const dispatch = useAppDispatch();
+
    const inputFocusRef = useRef<any>(null);
 
    const [prodName, setProdName] = useState('');
@@ -93,6 +98,8 @@ const ProductInputForm = ({ shopData }: ProductInputProps) => {
                   updateDoc(doc(database, 'shops', shopData?.urlName, 'products', res.id), {
                      imageUrl: url,
                   }).then(() => {
+                     dispatch(setSnackbarState({ id: 'prod_add', open: true, message: 'Product successfully added...' }));
+
                      setProdName('');
                      setProdCodeName('');
                      setProdCategory('');
@@ -200,7 +207,7 @@ const ProductInputForm = ({ shopData }: ProductInputProps) => {
                   <Box>
                      <label htmlFor="upload-image">
                         {prodImage ? (
-                           <img width={150} height={150} src={prodImage ? URL.createObjectURL(prodImage) : ''} alt="product" />
+                           <img width={150} height={150} style={{ cursor: 'pointer' }} src={prodImage ? URL.createObjectURL(prodImage) : ''} alt="product" />
                         ) : (
                            <Typography
                               px={1} py={0.4}
@@ -227,7 +234,7 @@ const ProductInputForm = ({ shopData }: ProductInputProps) => {
                <Box>
                   <Stack direction="row" spacing="auto" pb={1} sx={{ alignItems: 'center' }}>
                      <FormControl>
-                        <FormLabel id="row-radio-buttons-group-label">Calculation Method</FormLabel>
+                        <FormLabel id="row-radio-buttons-group-label">Amount Calculation</FormLabel>
                         <RadioGroup
                            row
                            aria-labelledby="row-radio-buttons-group-label"
@@ -398,6 +405,8 @@ const ProductInputForm = ({ shopData }: ProductInputProps) => {
                >Submit</LoadingButton>
             </Stack>
          </form>
+
+         {<Snackbars />}
       </>
    );
 };

@@ -132,7 +132,7 @@ export default function ShopAdmin_sideBar() {
             }}
          >
             <Toolbar />
-            <Box sx={{ overflow: 'auto', '& > *': { padding: 0 } }}>
+            <Box sx={{ overflow: 'auto', '& > *': { padding: 0, margin: 0 } }}>
                <List>
                   <ListItem button onClick={() => router.push(`/${shopAppUrl}`)} >
                      <ListItemIcon>

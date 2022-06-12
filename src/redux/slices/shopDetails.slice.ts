@@ -4,7 +4,7 @@ import { collection, DocumentData, onSnapshot, query, where } from "firebase/fir
 import { database } from "../../config/firebase.config";
 
 
-interface shopDeatilsState {
+interface shopDetailsState {
    value: {
       data: {
          address: string,
@@ -48,7 +48,7 @@ function fetchShopDetails(shopAppUrl: string | string[] | undefined) {
 }
 
 
-const initialState: shopDeatilsState = {
+const initialState: shopDetailsState = {
    value: {
       data: null,
       length: null

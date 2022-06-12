@@ -25,6 +25,7 @@ import { database } from '../../config/firebase.config';
 import amountCalculate from '../../utility/amountCalculate';
 import { useAppDispatch } from '../../redux/hooks';
 import { changeProdTableCollapse } from '../../redux/slices/prodTableCollapse.slice';
+import { setSnackbarState } from '../../redux/slices/snackbarState.slice';
 
 
 const style = {
@@ -53,16 +54,23 @@ export default function EditProduct_modal({ shopUrlName, prodId, prodName, prodC
    const [prodBrandInput, setProdBrandInput] = useState(prodBrand);
    const [quantityInput, setQuantityInput] = useState(quantity.toString());
 
-   const [getPriceInput, setGetPriceInput] = useState<string>(getPrice.toString());
-   const [sellPriceInput, setSellPriceInput] = useState<string>(sellPrice.toString());
-   const [profitAmountInput, setProfitAmountInput] = useState<string>(profitAmount.toString());
-   const [profitPercentageInput, setProfitPercentageInput] = useState<string>(profitPercentage.toString());
+   const [getPriceInput, setGetPriceInput] = useState<string>('');
+   const [sellPriceInput, setSellPriceInput] = useState<string>('');
+   const [profitAmountInput, setProfitAmountInput] = useState<string>('');
+   const [profitPercentageInput, setProfitPercentageInput] = useState<string>('');
 
    const [calcMethod, setCalcMethod] = useState('method-1');
    const [canCalcuProceed, setCanCalcuProceed] = useState(false);
 
 
-   const handleOpen = () => setOpen(true);
+   const handleOpen = () => {
+      setOpen(true);
+
+      setGetPriceInput(getPrice.toString());
+      setSellPriceInput(sellPrice.toString());
+      setProfitAmountInput(profitAmount.toString());
+      setProfitPercentageInput(profitPercentage.toString());
+   };
    const handleClose = () => setOpen(false);
 
    const calculate = () => {
@@ -111,6 +119,7 @@ export default function EditProduct_modal({ shopUrlName, prodId, prodName, prodC
       }).then(() => {
          setLoading(false);
          setOpen(false);
+         dispatch(setSnackbarState({ id: 'prod_edit', open: true, message: 'Product details successfully edited...' }));
       });
    };
 
@@ -277,7 +286,7 @@ export default function EditProduct_modal({ shopUrlName, prodId, prodName, prodC
                         <Box>
                            <Stack direction="row" spacing="auto" pb={1} sx={{ alignItems: 'center' }}>
                               <FormControl>
-                                 <FormLabel id="row-radio-buttons-group-label">Calculation Method</FormLabel>
+                                 <FormLabel id="row-radio-buttons-group-label">Amount Calculation</FormLabel>
                                  <RadioGroup
                                     row
                                     aria-labelledby="row-radio-buttons-group-label"

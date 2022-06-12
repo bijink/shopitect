@@ -1,5 +1,6 @@
 import type { DocumentData, Timestamp } from "firebase/firestore";
 
+
 export interface ProductTableProps {
    shopData: {
       address: string;

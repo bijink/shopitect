@@ -129,7 +129,7 @@ export default function Public_sideBar() {
                   }}
                >
                   <Toolbar />
-                  <Box sx={{ overflow: 'auto', '& > *': { padding: 0 } }}>
+                  <Box sx={{ overflow: 'auto', '& > *': { padding: 0, margin: 0 } }}>
                      <List>
                         <ListItem button onClick={() => {
                            // router.push(`/${shopAppUrl}/info/about`);
@@ -162,7 +162,7 @@ export default function Public_sideBar() {
                }}
             >
                <Toolbar />
-               <Box sx={{ overflow: 'auto' }}>
+               <Box sx={{ overflow: 'auto', '& > *': { padding: 0, margin: 0 } }}>
                   <List>
                      <ListItem button onClick={() => {
                         // router.push({

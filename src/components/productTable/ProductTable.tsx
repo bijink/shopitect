@@ -16,6 +16,12 @@ import {
    tableCellClasses,
    Tooltip,
    capitalize,
+   Button,
+   Dialog,
+   DialogActions,
+   DialogContent,
+   DialogContentText,
+   DialogTitle,
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -28,16 +34,18 @@ import { ref, deleteObject } from "firebase/storage";
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changeProdTableCollapse, selectProdTableCloseCollapse } from '../../redux/slices/prodTableCollapse.slice';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
+import { LoadingButton } from "@mui/lab";
+import Snackbars from '../snackbars';
+import { setSnackbarState } from '../../redux/slices/snackbarState.slice';
 
 
 const Row = ({ rowBgColor, shopUrlName, prodId, prodNo, prodCodeName, prodName, prodCategory, prodBrand, prodImg, quantity, getPrice, sellPrice, profitAmount, profitPercentage, createdAt }: ProductTableRowProps) => {
-   const [open, setOpen] = useState(false);
+   const [collapseOpen, setCollapseOpen] = useState(false);
+   const [dialogOpen, setDialogOpen] = useState(false);
+   const [loading_remove, setLoading_remove] = useState(false);
 
    const dispatch = useAppDispatch();
    const tableCollapse = useAppSelector(selectProdTableCloseCollapse);
-
-   useEffect(() => setOpen(false), [tableCollapse]);
-
 
    let date = createdAt.toDate().toUTCString().slice(0, 16);
    let minute = createdAt.toDate().getMinutes();
@@ -51,22 +59,37 @@ const Row = ({ rowBgColor, shopUrlName, prodId, prodNo, prodCodeName, prodName, 
       { title: 'Profit Amount (Rs)', value: profitAmount },
       { title: 'Quantity', value: quantity },
       { title: 'Brand', value: capitalize(prodBrand) },
-      // { title: 'Added At', value: `${date} ${time}` },
    ];
 
 
+   const handleDialogOpen = () => {
+      setDialogOpen(true);
+   };
+
+   const handleDialogClose = () => {
+      setDialogOpen(false);
+   };
+
    const handleProdRemove = async () => {
+      setLoading_remove(true);
       dispatch(changeProdTableCollapse());
 
       const imageRef = ref(storage, `/product-images/${shopUrlName}/PRODUCT_IMG:${prodId}`);
       await deleteObject(imageRef).then(() => {
          deleteDoc(doc(database, "shops", shopUrlName, "products", prodId)).then(() => {
+            handleDialogClose();
+            setLoading_remove(false);
+            dispatch(setSnackbarState({ id: 'prod_remove', open: true, message: 'Product successfully removed...' }));
          });
          // File deleted successfully
       }).catch((error) => {
          // Uh-oh, an error occurred!
+         console.error(error.messageh);
       });
    };
+
+
+   useEffect(() => setCollapseOpen(false), [tableCollapse]);
 
 
    return (
@@ -84,16 +107,16 @@ const Row = ({ rowBgColor, shopUrlName, prodId, prodNo, prodCodeName, prodName, 
                <IconButton
                   aria-label="expand row"
                   size="small"
-                  onClick={() => setOpen(!open)}
+                  onClick={() => setCollapseOpen(!collapseOpen)}
                >
-                  {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                  {collapseOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                </IconButton>
             </TableCell>
          </TableRow>
 
          <TableRow>
             <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5} >
-               <Collapse in={open} timeout="auto" unmountOnExit>
+               <Collapse in={collapseOpen} timeout="auto" unmountOnExit>
                   <Box my={0.5} >
                      <Typography variant="h6" gutterBottom component="div">
                         More Details
@@ -116,11 +139,11 @@ const Row = ({ rowBgColor, shopUrlName, prodId, prodNo, prodCodeName, prodName, 
             </TableCell>
 
             <TableCell style={{ padding: 0 }} colSpan={1} >
-               <Collapse in={open} timeout="auto" unmountOnExit />
+               <Collapse in={collapseOpen} timeout="auto" unmountOnExit />
             </TableCell>
 
             <TableCell style={{ padding: 0 }} colSpan={1} >
-               <Collapse in={open} timeout="auto" unmountOnExit>
+               <Collapse in={collapseOpen} timeout="auto" unmountOnExit>
                   <Box>
                      <Table size="small" aria-label="purchases"
                         sx={{ [`& .${tableCellClasses.root}`]: { borderBottom: "none" } }}
@@ -147,7 +170,7 @@ const Row = ({ rowBgColor, shopUrlName, prodId, prodNo, prodCodeName, prodName, 
                               <TableCell component="th" scope="row" align="center"  >
                                  <Tooltip title="Remove" placement="left" arrow >
                                     <IconButton size='small' sx={{ color: 'red' }}
-                                       onClick={handleProdRemove}
+                                       onClick={handleDialogOpen}
                                     >
                                        <DeleteIcon />
                                     </IconButton>
@@ -160,6 +183,33 @@ const Row = ({ rowBgColor, shopUrlName, prodId, prodNo, prodCodeName, prodName, 
                </Collapse>
             </TableCell>
          </TableRow>
+
+         <Dialog
+            open={dialogOpen}
+            onClose={handleDialogClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+         >
+            <DialogTitle id="alert-dialog-title">
+               Remove this product?
+            </DialogTitle>
+            <DialogContent>
+               <DialogContentText id="alert-dialog-description">
+                  Doing so will permanently remove the data of this product.
+               </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+               <Button onClick={handleDialogClose}>cancel</Button>
+               <LoadingButton
+                  color="error"
+                  onClick={handleProdRemove}
+                  loadingPosition="center"
+                  loading={loading_remove}
+               >remove</LoadingButton>
+            </DialogActions>
+         </Dialog>
+
+         {<Snackbars />}
       </>
    );
 };

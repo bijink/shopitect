@@ -1,9 +1,6 @@
 import * as React from 'react';
-import { styled, alpha } from '@mui/material/styles';
-import AppBar from '@mui/material/AppBar';
 import {
    Box,
-   Button,
    IconButton,
    Toolbar,
    Typography,
@@ -12,7 +9,10 @@ import {
    MenuItem,
    Menu,
    Tooltip,
+   AppBar,
+   Avatar,
 } from '@mui/material';
+import { styled, alpha } from '@mui/material/styles';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
@@ -81,7 +81,7 @@ export default function ShopAdmin_navBar() {
    const dispatch = useAppDispatch();
 
    const secure = useSecurePage(shopAppUrl);
-   const { user, status: serStatus } = useUser();
+   const { user, status: userStatus } = useUser();
    // console.log(user);
 
    const shop = useAppSelector(selectShopDetails);
@@ -259,20 +259,13 @@ export default function ShopAdmin_navBar() {
                                  </Badge>
                               </IconButton>
                            </Tooltip>
-                           {(user?.photoURL) && (
-                              <Button
-                                 size="large"
-                                 aria-label="account of current user"
-                                 aria-controls={menuId}
-                                 aria-haspopup="true"
-                                 onClick={(e) => {
-                                    handleProfileMenuOpen(e);
-                                 }}
-                                 color="inherit"
-                                 sx={{ borderRadius: '50%' }}
-                              >
-                                 <img style={{ width: '40px', borderRadius: '50%' }} src={user.photoURL!} alt="" />
-                              </Button>
+                           {(user || session?.user) && (
+                              <Avatar
+                                 alt={session?.user.name!}
+                                 src={user?.photoURL! || session?.user.image!}
+                                 sx={{ marginLeft: 1, cursor: 'pointer' }}
+                                 onClick={handleProfileMenuOpen}
+                              />
                            )}
                         </Box>
                         <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
