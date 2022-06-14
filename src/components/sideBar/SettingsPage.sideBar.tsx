@@ -31,8 +31,8 @@ export default function SettingsPage_sideBar() {
             }}
          >
             <Toolbar />
-            <Box sx={{ overflow: 'auto', '& > *': { padding: 0, margin: 0 } }}>
-               <List>
+            <Box sx={{ overflow: 'auto' }}>
+               <List sx={{ padding: 0 }} >
                   <ListItem button onClick={() => router.push(`/${shopAppUrl}`)} >
                      <ListItemIcon>
                         <HomeIcon />

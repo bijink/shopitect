@@ -121,7 +121,7 @@ export default function Public_navBar() {
                   </Search>
                )}
                {(pageId !== `info_page`) && (
-                  <Tooltip title="Informations" arrow >
+                  <Tooltip title="App Information" arrow >
                      <IconButton
                         size="small"
                         aria-label="information about the shop"

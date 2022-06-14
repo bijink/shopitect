@@ -19,7 +19,7 @@ const ProductCard = ({ shopUrlName, prodId, prodName, prodCategory, prodImg, sel
       <Box p={1} >
          <Card sx={{ width: cardWidth }} onClick={() => {
             router.push({
-               pathname: `/${shopUrlName}/product&view`,
+               pathname: `/${shopUrlName}/product/view`,
                query: { id: prodId },
             });
          }}>
@@ -34,14 +34,14 @@ const ProductCard = ({ shopUrlName, prodId, prodName, prodCategory, prodImg, sel
                   style={{ borderBottomLeftRadius: 4, borderBottomRightRadius: 4, }}
                />
                <CardContent sx={{ paddingX: 1, paddingY: 0.5 }} >
-                  <Typography gutterBottom variant="body1" component="h3" mb={-0.2} sx={{ fontWeight: 600 }} >
+                  <Typography variant="body1" component="h3" sx={{ fontWeight: 600 }} >
                      {capitalize(prodName)}
                   </Typography>
                   <Typography variant="inherit" component="p" color="GrayText" >
                      {capitalize(prodCategory)}
                   </Typography>
                   <Typography variant="subtitle2" component="p">
-                     Rs. {sellPrice}
+                     &#x20B9; {sellPrice}
                   </Typography>
                </CardContent>
             </CardActionArea>

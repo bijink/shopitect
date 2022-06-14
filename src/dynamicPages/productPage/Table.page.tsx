@@ -133,7 +133,6 @@ const ProductTable_page = () => {
                      />
                   )}
                </Stack>
-               {<Snackbars />}
             </>
             :
             <Stack justifyContent="center" alignItems="center" >
@@ -143,6 +142,7 @@ const ProductTable_page = () => {
                }
             </Stack>
          }
+         {<Snackbars />}
       </>
    );
 };

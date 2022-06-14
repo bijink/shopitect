@@ -54,9 +54,9 @@ const Row = ({ rowBgColor, shopUrlName, prodId, prodNo, prodCodeName, prodName, 
 
 
    const moreDetails = [
-      { title: 'Get Price (Rs)', value: getPrice },
-      { title: 'Profit Percentage (%)', value: `${profitPercentage} %` },
-      { title: 'Profit Amount (Rs)', value: profitAmount },
+      { title: 'Get Price', value: `₹ ${getPrice}` },
+      { title: 'Profit Amount', value: `₹ ${profitAmount}` },
+      { title: 'Profit Percentage', value: `${profitPercentage} %` },
       { title: 'Quantity', value: quantity },
       { title: 'Brand', value: capitalize(prodBrand) },
    ];
@@ -110,7 +110,7 @@ const Row = ({ rowBgColor, shopUrlName, prodId, prodNo, prodCodeName, prodName, 
                </Avatar>
             </TableCell>
             <TableCell align="left" >{capitalize(prodCategory)}</TableCell>
-            <TableCell align="right" sx={{ fontWeight: 'bold' }} >{sellPrice}</TableCell>
+            <TableCell align="right" sx={{ fontWeight: 'bold' }} >{`₹ ${sellPrice}`}</TableCell>
             <TableCell align="center">
                <IconButton
                   aria-label="expand row"
@@ -234,7 +234,7 @@ export default function ProductTable({ shopData, products }: ProductTableProps) 
                   <TableCell align="left" sx={{ color: '#ffffff', paddingTop: '18px', paddingBottom: '18px' }} >Name</TableCell>
                   <TableCell align="left" sx={{ color: '#ffffff' }}>Image</TableCell>
                   <TableCell align="left" sx={{ color: '#ffffff' }}>Catagory</TableCell>
-                  <TableCell align="right" sx={{ color: '#ffffff' }}>Sell Price&nbsp;(Rs)</TableCell>
+                  <TableCell align="right" sx={{ color: '#ffffff' }}>Sell Price</TableCell>
                   <TableCell align="center">
                      <IconButton
                         aria-label="close expanded rows"

@@ -27,6 +27,7 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import InfoIcon from '@mui/icons-material/Info';
 import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded';
 import { setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
+import HomeIcon from '@mui/icons-material/Home';
 
 
 const drawerWidth = 240;
@@ -129,25 +130,26 @@ export default function Public_sideBar() {
                   }}
                >
                   <Toolbar />
-                  <Box sx={{ overflow: 'auto', '& > *': { padding: 0, margin: 0 } }}>
-                     <List>
+                  <Box sx={{ overflow: 'auto' }}>
+                     <List sx={{ padding: 0 }} >
                         <ListItem button onClick={() => {
-                           // router.push(`/${shopAppUrl}/info/about`);
-                           setCategoryOpen(true);
+                           router.push(`/${shopAppUrl}`);
                         }} >
-                           <ListItemIcon><FilterListRoundedIcon /></ListItemIcon>
-                           <ListItemText primary='Category' />
+                           <ListItemIcon><HomeIcon /></ListItemIcon>
+                           <ListItemText primary='Home' />
                         </ListItem>
+                        {!(pageId === 'productView_page') && (
+                           <>
+                              <Divider />
+                              <ListItem button onClick={() => {
+                                 setCategoryOpen(true);
+                              }} >
+                                 <ListItemIcon><FilterListRoundedIcon /></ListItemIcon>
+                                 <ListItemText primary='Category' />
+                              </ListItem>
+                           </>
+                        )}
                      </List>
-                     <Divider />
-                     {/* <List>
-                     <ListItem button onClick={() => {
-                        // router.push(`/${shopAppUrl}/info/admin`);
-                     }} >
-                        <ListItemIcon><AdminPanelSettingsIcon /></ListItemIcon>
-                        <ListItemText primary='Admin' sx={{ color: 'GrayText' }} />
-                     </ListItem>
-                  </List> */}
                   </Box>
                </Drawer>
                {SwipeableTemporaryDrawer}
@@ -162,26 +164,22 @@ export default function Public_sideBar() {
                }}
             >
                <Toolbar />
-               <Box sx={{ overflow: 'auto', '& > *': { padding: 0, margin: 0 } }}>
-                  <List>
+               <Box sx={{ overflow: 'auto' }}>
+                  <List sx={{ padding: 0 }} >
                      <ListItem button onClick={() => {
-                        // router.push({
-                        //    pathname: `/${shopAppUrl}/info`,
-                        //    query: { tab: 'about' },
-                        // });
+                        router.push(`/${shopAppUrl}`);
+                     }} >
+                        <ListItemIcon><HomeIcon /></ListItemIcon>
+                        <ListItemText primary='Home' />
+                     </ListItem>
+                     <Divider />
+                     <ListItem button onClick={() => {
                         router.push(`/${shopAppUrl}/info/about`);
                      }} >
                         <ListItemIcon><InfoIcon /></ListItemIcon>
                         <ListItemText primary='About Us' />
                      </ListItem>
-                  </List>
-                  <Divider />
-                  <List>
                      <ListItem button onClick={() => {
-                        // router.push({
-                        //    pathname: `/${shopAppUrl}/info`,
-                        //    query: { tab: 'admin' },
-                        // });
                         router.push(`/${shopAppUrl}/info/admin`);
                      }} >
                         <ListItemIcon><AdminPanelSettingsIcon /></ListItemIcon>

@@ -100,11 +100,14 @@ export default function ShopAdmin_sideBar() {
                         dispatch(changeProdTableCollapse());
 
                         if (text === 'all') {
-                           router.push((pageId === 'shopHome_page') ? `/${shopAppUrl}` : `/${shopAppUrl}/product/table`);
-                           // dispatch(setProdSearchInput(''));
+                           router.push(((pageId === 'shopHome_page'))
+                              ? `/${shopAppUrl}`
+                              : `/${shopAppUrl}/product/table`);
                         } else {
                            router.push({
-                              pathname: (pageId === 'shopHome_page') ? `/${shopAppUrl}` : `/${shopAppUrl}/product/table`,
+                              pathname: ((pageId === 'shopHome_page'))
+                                 ? `/${shopAppUrl}`
+                                 : `/${shopAppUrl}/product/table`,
                               query: { category: text },
                            });
                         }
@@ -132,8 +135,8 @@ export default function ShopAdmin_sideBar() {
             }}
          >
             <Toolbar />
-            <Box sx={{ overflow: 'auto', '& > *': { padding: 0, margin: 0 } }}>
-               <List>
+            <Box sx={{ overflow: 'auto' }}>
+               <List sx={{ padding: 0 }} >
                   <ListItem button onClick={() => router.push(`/${shopAppUrl}`)} >
                      <ListItemIcon>
                         <HomeIcon />
@@ -153,13 +156,17 @@ export default function ShopAdmin_sideBar() {
                      </ListItemIcon>
                      <ListItemText primary={'Product'} />
                   </ListItem>
-                  <Divider />
-                  <ListItem button onClick={() => setCategoryOpen(true)} >
-                     <ListItemIcon>
-                        <CategoryIcon />
-                     </ListItemIcon>
-                     <ListItemText primary={'Category'} />
-                  </ListItem>
+                  {!(pageId === 'productView_page') && (
+                     <>
+                        <Divider />
+                        <ListItem button onClick={() => setCategoryOpen(true)} >
+                           <ListItemIcon>
+                              <CategoryIcon />
+                           </ListItemIcon>
+                           <ListItemText primary={'Category'} />
+                        </ListItem>
+                     </>
+                  )}
                </List>
             </Box>
          </Drawer>

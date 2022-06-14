@@ -10,9 +10,9 @@ import NotFound from "../../404";
 import { useEffect } from "react";
 import { useAppDispatch } from "../../../redux/hooks";
 import { setAppPageId } from "../../../redux/slices/pageId.slice";
-import { ProductAdd_page, ProductTable_page } from "../../../dynamicPages/productPage";
-import { ShopAdmin_navBar } from "../../../components/navBar";
-import { ShopAdmin_sideBar } from "../../../components/sideBar";
+import { ProductAdd_page, ProductTable_page, ProductView_page } from "../../../dynamicPages/productPage";
+import { Public_navBar, ShopAdmin_navBar } from "../../../components/navBar";
+import { Public_sideBar, ShopAdmin_sideBar } from "../../../components/sideBar";
 
 
 const ProductPages: NextPage = () => {
@@ -24,10 +24,10 @@ const ProductPages: NextPage = () => {
    const secure = useSecurePage(shopAppUrl);
 
 
-
    useEffect(() => {
       dispatch(setAppPageId('product_page'));
    }, []);
+
 
    return (
       <>
@@ -36,7 +36,7 @@ const ProductPages: NextPage = () => {
          {((secure === 'loading') && (
             <PageSkeleton_layout />
          )) || (((secure === 404)
-            || !((productPages === 'table') || (productPages === 'add'))) && (
+            || !((productPages === 'table') || (productPages === 'add') || (productPages === 'view'))) && (
                <NotFound />
             )) || ((secure === 200) && (
                <Page_layout navbar={<ShopAdmin_navBar />} sidebar={<ShopAdmin_sideBar />} >
@@ -44,12 +44,21 @@ const ProductPages: NextPage = () => {
                      ((productPages === 'table') && <ProductTable_page />)
                      ||
                      ((productPages === 'add') && <ProductAdd_page />)
+                     ||
+                     ((productPages === 'view') && <ProductView_page />)
                   }
                </Page_layout>
-            )) || ((secure === 403) && (
-               <Forbidden />
+            )) || (((secure === 401) || (secure === 403)) && (
+               ((productPages === 'view') ? (
+                  <Page_layout navbar={<Public_navBar />} sidebar={<Public_sideBar />} >
+                     <ProductView_page />
+                  </Page_layout>
+               ) : (
+                  <Forbidden />
+               ))
             ))}
       </>
    );
 };
+
 export default ProductPages;

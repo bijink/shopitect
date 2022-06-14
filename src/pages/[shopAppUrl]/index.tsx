@@ -121,6 +121,48 @@ const Shop: NextPage = () => {
    }, []);
 
 
+   const ProductCardWrap = () => (
+      <Stack direction={'column'} >
+         {(prodDocLength > 0) ?
+            <>
+               <Stack direction={'row'} justifyContent="center" alignItems="center" flexWrap="wrap" >
+                  {(filteredProducts.length ? filteredProducts : prodDetails_category).map((prod: ProdDetailsTypes, index: number) => (
+                     <ProductCard key={index}
+                        shopUrlName={shop?.data?.urlName}
+
+                        prodId={prod.id}
+                        prodName={prod.data().name}
+                        prodImg={prod.data().imageUrl}
+                        prodCategory={prod.data().category}
+                        sellPrice={prod.data().sellPrice}
+                     />
+                  ))}
+               </Stack>
+               <Stack direction='row' spacing={1} pt={2} justifyContent="center" alignItems="center" >
+                  {(!category && !(filteredProducts.length > 0)) && (
+                     <Pagination
+                        count={pageLength}
+                        page={page ? (parseInt(page.toString())) : 1}
+                        onChange={(_, value: number) => {
+                           router.push(`/${shopAppUrl}?page=${value}`);
+                        }}
+                        showFirstButton showLastButton
+                     />
+                  )}
+               </Stack>
+            </>
+            :
+            <Stack justifyContent="center" alignItems="center" >
+               {(fetchDelayOver)
+                  ? <Typography variant="h5" component="p" >No Products</Typography>
+                  : <CircularProgress />
+               }
+            </Stack>
+         }
+      </Stack>
+   );
+
+
    return (
       <>
          <Head>
@@ -134,90 +176,13 @@ const Shop: NextPage = () => {
                <PageSkeleton_layout />
             )) || ((secure === 200) && (
                <Page_layout navbar={<ShopAdmin_navBar />} sidebar={<ShopAdmin_sideBar />} >
-                  <Stack direction={'column'} >
-                     {(prodDocLength > 0) ?
-                        <>
-                           <Stack direction={'row'} justifyContent="center" alignItems="center" flexWrap="wrap" >
-                              {(filteredProducts.length ? filteredProducts : prodDetails_category).map((prod: ProdDetailsTypes, index: number) => (
-                                 <ProductCard key={index}
-                                    shopUrlName={shop?.data?.urlName}
-
-                                    prodId={prod.id}
-                                    prodName={prod.data().name}
-                                    prodImg={prod.data().imageUrl}
-                                    prodCategory={prod.data().category}
-                                    sellPrice={prod.data().sellPrice}
-                                 />
-                              ))}
-                           </Stack>
-                           <Stack direction='row' spacing={1} pt={2} justifyContent="center" alignItems="center" >
-                              {(!category && !(filteredProducts.length > 0)) && (
-                                 <Pagination
-                                    count={pageLength}
-                                    page={page ? (parseInt(page.toString())) : 1}
-                                    onChange={(_, value: number) => {
-                                       router.push(`/${shopAppUrl}?page=${value}`);
-                                    }}
-                                    showFirstButton showLastButton
-                                 />
-                              )}
-                           </Stack>
-                        </>
-                        :
-                        <Stack justifyContent="center" alignItems="center" >
-                           {(fetchDelayOver)
-                              ? <Typography variant="h5" component="p" >No Products</Typography>
-                              : <CircularProgress />
-                           }
-                        </Stack>
-                     }
-                  </Stack>
+                  <ProductCardWrap />
                </Page_layout>
             )) || (((secure === 404) || shopNotExistOnServer) && (
                <NotFound />
             )) || (((secure === 401) || (secure === 403)) && (
                <Page_layout navbar={<Public_navBar />} sidebar={<Public_sideBar />} >
-                  <Stack direction={'column'} >
-                     {(prodDocLength > 0) ?
-                        <>
-                           <Stack direction={'row'} justifyContent="center" alignItems="center" flexWrap="wrap" >
-                              {(filteredProducts.length ? filteredProducts : prodDetails_category).map((prod: ProdDetailsTypes, index: number) => (
-                                 <ProductCard key={index}
-                                    shopUrlName={shop?.data?.urlName}
-
-                                    prodId={prod.id}
-                                    prodName={prod.data().name}
-                                    prodImg={prod.data().imageUrl}
-                                    // prodBrand={prod.data().brand}
-                                    prodCategory={prod.data().category}
-                                    // quantity={prod.data().quantity}
-                                    sellPrice={prod.data().sellPrice}
-                                 // createdAt={prod.data().createdAt}
-                                 />
-                              ))}
-                           </Stack>
-                           <Stack direction='row' spacing={1} pt={2} justifyContent="center" alignItems="center" >
-                              {(!category && !(filteredProducts.length > 0)) && (
-                                 <Pagination
-                                    count={pageLength}
-                                    page={page ? (parseInt(page.toString())) : 1}
-                                    onChange={(_, value: number) => {
-                                       router.push(`/${shopAppUrl}?page=${value}`);
-                                    }}
-                                    showFirstButton showLastButton
-                                 />
-                              )}
-                           </Stack>
-                        </>
-                        :
-                        <Stack justifyContent="center" alignItems="center" >
-                           {(fetchDelayOver)
-                              ? <Typography variant="h5" component="p" >No Products</Typography>
-                              : <CircularProgress />
-                           }
-                        </Stack>
-                     }
-                  </Stack>
+                  <ProductCardWrap />
                </Page_layout>
             ))}
          </>
