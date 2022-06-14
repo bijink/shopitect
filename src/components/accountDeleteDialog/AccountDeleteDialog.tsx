@@ -11,7 +11,7 @@ import {
    DialogContent,
    DialogTitle,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { LoadingButton } from '@mui/lab';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { useSession, signOut as signOutProvider } from "next-auth/react";
@@ -99,7 +99,7 @@ export default function AccountDeleteDialog() {
       });
    }
 
-   const handleSubmit = async (e: any) => {
+   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
       if (isUrlConfirmed && session) {
@@ -198,7 +198,6 @@ export default function AccountDeleteDialog() {
                      />
                   }
                   <TextField
-                     autoFocus
                      margin="dense"
                      id="name"
                      fullWidth
@@ -207,7 +206,7 @@ export default function AccountDeleteDialog() {
                      size="small"
                      type='text'
                      value={shopUrlNameInput}
-                     onInput={(e: any) => {
+                     onInput={(e: ChangeEvent<HTMLInputElement>) => {
                         setShopUrlNameInput(e.target.value.split(" ").join("").toLowerCase());
                      }}
                      helperText={(shopUrlNameInput === '') ? "* Enter your Shop Url Name" : (isUrlConfirmed ? '' : "* You entered wrong Url Name")}
@@ -224,7 +223,7 @@ export default function AccountDeleteDialog() {
                      size="small"
                      type={showPassword ? 'text' : 'password'}
                      value={password}
-                     onInput={(e: any) => setPassword(e.target.value)}
+                     onInput={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                      InputProps={{
                         endAdornment: <InputAdornment position="end">
                            <IconButton

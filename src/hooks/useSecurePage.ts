@@ -10,11 +10,9 @@ import { selectShopDetails, setAppShopDetailsAsync } from "../redux/slices/shopD
 const useSecurePage = (shopAppUrl: string | string[] | undefined) => {
    const dispatch = useAppDispatch();
    const shopDetails = useAppSelector(selectShopDetails);
-   // console.log(shopAppUrl);
-
 
    const [userData, setUserData] = useState<User | null | undefined>(undefined);
-   const [secure, setSecure] = useState<'loading' | '200' | '401' | '403' | '404'>('loading');
+   const [secure, setSecure] = useState<'loading' | 200 | 401 | 403 | 404>('loading');
    /**
     *# 200 - OK - (user authorized, have content access)
     *# 401 - Unauthorized - (user not authorized, not have content access)
@@ -39,16 +37,16 @@ const useSecurePage = (shopAppUrl: string | string[] | undefined) => {
          }
          else if (userData && (shopDetails.length === 1)) {
             if (userData.uid === shopDetails.data?.accountID) {
-               setSecure('200');
+               setSecure(200);
             } else {
-               setSecure('403');
+               setSecure(403);
             }
          }
          else if ((shopDetails.length === 0)) {
-            setSecure('404');
+            setSecure(404);
          }
          else if (userData === null) {
-            setSecure('401');
+            setSecure(401);
          }
       }
    }, [shopDetails, userData]);

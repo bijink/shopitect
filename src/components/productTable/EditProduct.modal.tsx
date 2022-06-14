@@ -1,4 +1,4 @@
-import type { EditProductModalProps } from './product.types';
+import type { EditProductModalProps } from './productTable.types';
 
 import {
    Box,
@@ -16,7 +16,7 @@ import {
    FormControlLabel,
    Radio,
 } from '@mui/material';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import { LoadingButton } from '@mui/lab';
 import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
@@ -101,7 +101,7 @@ export default function EditProduct_modal({ shopUrlName, prodId, prodName, prodC
       setProfitPercentageInput('');
    };
 
-   const handleSubmit = async (e: any) => {
+   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       setLoading(true);
       dispatch(changeProdTableCollapse());

@@ -5,6 +5,9 @@ import {
    Toolbar,
    Typography,
    InputBase,
+   Tooltip,
+   Stack,
+   Avatar,
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -16,7 +19,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled, alpha } from '@mui/material/styles';
 import { setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
-import { useState } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 
 
 
@@ -66,55 +69,38 @@ export default function Public_navBar() {
    const { shopAppUrl, category } = router.query;
 
    const dispatch = useAppDispatch();
-   const shopDetails = useAppSelector(selectShopDetails);
+   const shop = useAppSelector(selectShopDetails);
    const pageId = useAppSelector(selectPageId);
 
    const [searchInput, setSearchInput] = useState('');
 
 
    return (
-      <Box sx={{ flexGrow: 1 }}>
+      <>
          <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }} >
             <Toolbar >
-               {(pageId === 'shopHome_page') ? (
-                  <IconButton
-                     size="small"
-                     edge="start"
-                     color="inherit"
-                     aria-label="open drawer"
-                     sx={{ mr: 2 }}
-                  // onClick={() => router.push(`/${shopAppUrl}`)}
-                  >
-                     <MenuIcon />
-                  </IconButton>
-               ) : (
-                  <IconButton
-                     size="small"
-                     edge="start"
-                     color="inherit"
-                     aria-label="open drawer"
-                     sx={{ mr: 2 }}
+               <Stack direction="row" alignItems="center" spacing={1.5} pr={3} >
+                  <Tooltip title={shop?.data?.name} arrow >
+                     {/* <Avatar alt={shop?.data?.name} src={} /> */}
+                     <Avatar alt={shop?.data?.name} >{shop?.data?.name.slice(0, 1)}</Avatar>
+                  </Tooltip>
+                  <Typography
+                     variant="h6"
+                     noWrap
+                     component="h1"
+                     sx={{ display: { xs: 'none', sm: 'block' }, cursor: 'pointer' }}
                      onClick={() => router.push(`/${shopAppUrl}`)}
                   >
-                     <ArrowBackIosNewIcon />
-                  </IconButton>
-               )}
-               <Typography
-                  variant="h6"
-                  noWrap
-                  component="div"
-                  sx={{ display: { xs: 'none', sm: 'block' }, cursor: 'pointer' }}
-                  onClick={() => router.push(`/${shopAppUrl}`)}
-               >
-                  {shopDetails?.data?.name}
-               </Typography>
-               <Box sx={{ flexGrow: 1 }} />
+                     {shop?.data?.name}
+                  </Typography>
+               </Stack>
+               <Box sx={{ flexGrow: 10 }} />
                {(pageId === 'shopHome_page') && (
                   <Search sx={{ flexGrow: 2 }}>
                      <SearchIconWrapper>
                         <SearchIcon />
                      </SearchIconWrapper>
-                     <form onSubmit={(e: any) => {
+                     <form onSubmit={(e: FormEvent<HTMLFormElement>) => {
                         e.preventDefault();
                         dispatch(setProdSearchInput(searchInput));
                      }} >
@@ -122,7 +108,7 @@ export default function Public_navBar() {
                            placeholder="Search…"
                            inputProps={{ 'aria-label': 'search' }}
                            value={category ? '' : searchInput}
-                           onInput={(e: any) => {
+                           onInput={(e: ChangeEvent<HTMLInputElement>) => {
                               setSearchInput(e.target.value);
                            }}
                            onFocus={() => {
@@ -134,26 +120,22 @@ export default function Public_navBar() {
                      </form>
                   </Search>
                )}
-               <Box sx={{ flexGrow: 1 }} />
-               {/* {!((pageId === `about_page`) || (pageId === `admin_page`)) && ( */}
                {(pageId !== `info_page`) && (
-                  <IconButton
-                     size="small"
-                     aria-label="information about the shop"
-                     color="inherit"
-                     onClick={() => {
-                        router.push(`/${shopAppUrl}/info/about`);
-                        // router.push({
-                        //    pathname: `/${shopAppUrl}/info`,
-                        //    query: { tab: 'about' },
-                        // });
-                     }}
-                  >
-                     <InfoIcon />
-                  </IconButton>
+                  <Tooltip title="Informations" arrow >
+                     <IconButton
+                        size="small"
+                        aria-label="information about the shop"
+                        color="inherit"
+                        onClick={() => {
+                           router.push(`/${shopAppUrl}/info/about`);
+                        }}
+                     >
+                        <InfoIcon />
+                     </IconButton>
+                  </Tooltip>
                )}
             </Toolbar>
          </AppBar>
-      </Box>
+      </>
    );
 };

@@ -1,4 +1,4 @@
-import type { ProdDetailsTypes, ProductTableProps, ProductTableRowProps } from './product.types';
+import type { ProdDetailsTypes, ProductTableProps, ProductTableRowProps } from './productTable.types';
 
 import {
    Table,
@@ -35,8 +35,8 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changeProdTableCollapse, selectProdTableCloseCollapse } from '../../redux/slices/prodTableCollapse.slice';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import { LoadingButton } from "@mui/lab";
-import Snackbars from '../snackbars';
 import { setSnackbarState } from '../../redux/slices/snackbarState.slice';
+import Image from 'next/image';
 
 
 const Row = ({ rowBgColor, shopUrlName, prodId, prodNo, prodCodeName, prodName, prodCategory, prodBrand, prodImg, quantity, getPrice, sellPrice, profitAmount, profitPercentage, createdAt }: ProductTableRowProps) => {
@@ -99,7 +99,15 @@ const Row = ({ rowBgColor, shopUrlName, prodId, prodNo, prodCodeName, prodName, 
             <TableCell component="th" scope="row" align="left" sx={{ fontWeight: 'bold' }} >{capitalize(prodCodeName)}</TableCell>
             <TableCell component="th" scope="row" align="left" sx={{ fontWeight: '500' }} >{capitalize(prodName)}</TableCell>
             <TableCell>
-               <Avatar src={prodImg} alt={capitalize(prodName)} variant="rounded" />
+               <Avatar variant="rounded">
+                  <Image
+                     alt={`product:${capitalize(prodName)}`}
+                     src={prodImg}
+                     placeholder='blur'
+                     blurDataURL={prodImg}
+                     layout="fill"
+                  />
+               </Avatar>
             </TableCell>
             <TableCell align="left" >{capitalize(prodCategory)}</TableCell>
             <TableCell align="right" sx={{ fontWeight: 'bold' }} >{sellPrice}</TableCell>
@@ -208,8 +216,6 @@ const Row = ({ rowBgColor, shopUrlName, prodId, prodNo, prodCodeName, prodName, 
                >remove</LoadingButton>
             </DialogActions>
          </Dialog>
-
-         {<Snackbars />}
       </>
    );
 };

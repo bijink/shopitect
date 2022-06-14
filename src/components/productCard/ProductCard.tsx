@@ -1,45 +1,47 @@
-import type { ProdDetailsProps } from "../productCard/product.types";
+import type { ProdCardProps } from "./productCard.types";
 
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { capitalize, CardActionArea } from '@mui/material';
 import { Box } from "@mui/material";
 import { useRouter } from 'next/router';
+import Image from "next/image";
 
 
-const ProductCard = ({ createdAt, shopUrlName, prodId, prodName, prodCategory, prodBrand, prodImg, quantity, sellPrice }: ProdDetailsProps) => {
+const ProductCard = ({ shopUrlName, prodId, prodName, prodCategory, prodImg, sellPrice }: ProdCardProps) => {
    const router = useRouter();
+
+   const cardWidth = 220;
 
 
    return (
-      <Box p={1.5} onClick={() => {
-         router.push({
-            pathname: `/${shopUrlName}/product&view`,
-            query: { id: prodId },
-         });
-      }}>
-         <Card sx={{ width: 220 }}>
+      <Box p={1} >
+         <Card sx={{ width: cardWidth }} onClick={() => {
+            router.push({
+               pathname: `/${shopUrlName}/product&view`,
+               query: { id: prodId },
+            });
+         }}>
             <CardActionArea>
-               <CardMedia
-                  component="img"
-                  height="140"
-                  image={prodImg}
-                  alt={capitalize(prodName)}
+               <Image
+                  alt={`product:${capitalize(prodName)}`}
+                  src={prodImg}
+                  placeholder='blur'
+                  blurDataURL={prodImg}
+                  width={cardWidth}
+                  height={130}
+                  style={{ borderBottomLeftRadius: 4, borderBottomRightRadius: 4, }}
                />
-               <CardContent>
-                  <Typography gutterBottom variant="h5" component="div">
+               <CardContent sx={{ paddingX: 1, paddingY: 0.5 }} >
+                  <Typography gutterBottom variant="body1" component="h3" mb={-0.2} sx={{ fontWeight: 600 }} >
                      {capitalize(prodName)}
                   </Typography>
-                  <Typography variant="subtitle1" component="div">
+                  <Typography variant="inherit" component="p" color="GrayText" >
                      {capitalize(prodCategory)}
                   </Typography>
-                  <Typography variant="h6" component="div">
+                  <Typography variant="subtitle2" component="p">
                      Rs. {sellPrice}
-                  </Typography>
-                  <Typography variant="inherit" component="div" color="GrayText" >
-                     {createdAt.toDate().toDateString()}
                   </Typography>
                </CardContent>
             </CardActionArea>

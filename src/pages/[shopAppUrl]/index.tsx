@@ -124,7 +124,7 @@ const Shop: NextPage = () => {
    return (
       <>
          <Head>
-            <title>{shop?.data ? shop.data.name : ((secure !== '404') ? 'Loading...' : '404')}</title>
+            <title>{shop?.data ? shop.data.name : ((secure !== 404) ? 'Loading...' : '404')}</title>
             <meta name="description" content="" />
             <meta property="og:title" content={shop?.data?.name} key="title" />
          </Head>
@@ -132,24 +132,21 @@ const Shop: NextPage = () => {
          <>
             {((secure === 'loading') && (
                <PageSkeleton_layout />
-            )) || ((secure === '200') && (
+            )) || ((secure === 200) && (
                <Page_layout navbar={<ShopAdmin_navBar />} sidebar={<ShopAdmin_sideBar />} >
                   <Stack direction={'column'} >
                      {(prodDocLength > 0) ?
                         <>
                            <Stack direction={'row'} justifyContent="center" alignItems="center" flexWrap="wrap" >
                               {(filteredProducts.length ? filteredProducts : prodDetails_category).map((prod: ProdDetailsTypes, index: number) => (
-                                 < ProductCard key={index}
+                                 <ProductCard key={index}
                                     shopUrlName={shop?.data?.urlName}
 
                                     prodId={prod.id}
                                     prodName={prod.data().name}
                                     prodImg={prod.data().imageUrl}
-                                    prodBrand={prod.data().brand}
                                     prodCategory={prod.data().category}
-                                    quantity={prod.data().quantity}
                                     sellPrice={prod.data().sellPrice}
-                                    createdAt={prod.data().createdAt}
                                  />
                               ))}
                            </Stack>
@@ -176,26 +173,26 @@ const Shop: NextPage = () => {
                      }
                   </Stack>
                </Page_layout>
-            )) || (((secure === '404') || shopNotExistOnServer) && (
+            )) || (((secure === 404) || shopNotExistOnServer) && (
                <NotFound />
-            )) || (((secure === '401') || (secure === '403')) && (
+            )) || (((secure === 401) || (secure === 403)) && (
                <Page_layout navbar={<Public_navBar />} sidebar={<Public_sideBar />} >
                   <Stack direction={'column'} >
                      {(prodDocLength > 0) ?
                         <>
                            <Stack direction={'row'} justifyContent="center" alignItems="center" flexWrap="wrap" >
                               {(filteredProducts.length ? filteredProducts : prodDetails_category).map((prod: ProdDetailsTypes, index: number) => (
-                                 < ProductCard key={index}
+                                 <ProductCard key={index}
                                     shopUrlName={shop?.data?.urlName}
 
                                     prodId={prod.id}
                                     prodName={prod.data().name}
                                     prodImg={prod.data().imageUrl}
-                                    prodBrand={prod.data().brand}
+                                    // prodBrand={prod.data().brand}
                                     prodCategory={prod.data().category}
-                                    quantity={prod.data().quantity}
+                                    // quantity={prod.data().quantity}
                                     sellPrice={prod.data().sellPrice}
-                                    createdAt={prod.data().createdAt}
+                                 // createdAt={prod.data().createdAt}
                                  />
                               ))}
                            </Stack>

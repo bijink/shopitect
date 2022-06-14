@@ -64,7 +64,7 @@ const Product: NextPage = () => {
 
          {((secure === 'loading') && (
             <PageSkeleton_layout />
-         )) || ((secure === '200' && prodDetails) && (
+         )) || (((secure === 200) && prodDetails) && (
             <Page_layout navbar={<ShopAdmin_navBar />} sidebar={<ShopAdmin_sideBar />} >
                <Box p={1.5} >
                   <Card sx={{ width: '70vw', height: '70vh' }}>
@@ -90,7 +90,7 @@ const Product: NextPage = () => {
                   </Card>
                </Box >
             </Page_layout >
-         )) || ((((secure === '401') || (secure === '403')) && prodDetails) && (
+         )) || ((((secure === 401) || (secure === 403)) && prodDetails) && (
             <Page_layout navbar={<Public_navBar />} sidebar={<Public_sideBar />} >
                <Box p={1.5} >
                   <Card sx={{ width: '70vw', height: '70vh' }}>
@@ -116,7 +116,7 @@ const Product: NextPage = () => {
                   </Card>
                </Box >
             </Page_layout >
-         )) || (((secure === '404') || !prodDetails || !productId) && (
+         )) || (((secure === 404) || !prodDetails || !productId) && (
             <NotFound />
          ))}
       </>

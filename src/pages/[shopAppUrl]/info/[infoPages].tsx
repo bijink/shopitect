@@ -51,9 +51,9 @@ const InfoPages: NextPage = () => {
          {((secure === 'loading') && (
             <PageSkeleton_layout />
          )) || ((!((infoPages === 'about') || (infoPages === 'admin'))
-            || ((secure === '200') || (secure === '404') || shopNotExistOnServer)) && (
+            || ((secure === 200) || (secure === 404) || shopNotExistOnServer)) && (
                <NotFound />
-            )) || (((secure === '401') || (secure === '403')) && (
+            )) || (((secure === 401) || (secure === 403)) && (
                <Page_layout navbar={<Public_navBar />} sidebar={<Public_sideBar />} >
                   {
                      ((infoPages === 'about') && <About_page />)

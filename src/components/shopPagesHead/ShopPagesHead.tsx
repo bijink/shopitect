@@ -16,7 +16,7 @@ const ShopPagesHead = ({ title = '' }: { title: string; }) => {
 
    return (
       <Head>
-         <title>{shop?.data ? `${title} · ${shop.data.name}` : ((secure !== '404') ? 'Loading...' : '404')}</title>
+         <title>{shop?.data ? `${title} · ${shop.data.name}` : ((secure !== 404) ? 'Loading...' : '404')}</title>
          {/* <meta name="description" content="" /> */}
          <meta property="og:title" content={shop?.data?.name} key="title" />
       </Head>

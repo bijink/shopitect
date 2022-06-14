@@ -35,10 +35,10 @@ const ProductPages: NextPage = () => {
 
          {((secure === 'loading') && (
             <PageSkeleton_layout />
-         )) || (((secure === '404')
+         )) || (((secure === 404)
             || !((productPages === 'table') || (productPages === 'add'))) && (
                <NotFound />
-            )) || ((secure === '200') && (
+            )) || ((secure === 200) && (
                <Page_layout navbar={<ShopAdmin_navBar />} sidebar={<ShopAdmin_sideBar />} >
                   {
                      ((productPages === 'table') && <ProductTable_page />)
@@ -46,7 +46,7 @@ const ProductPages: NextPage = () => {
                      ((productPages === 'add') && <ProductAdd_page />)
                   }
                </Page_layout>
-            )) || ((secure === '403') && (
+            )) || ((secure === 403) && (
                <Forbidden />
             ))}
       </>

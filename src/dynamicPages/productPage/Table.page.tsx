@@ -11,6 +11,7 @@ import { database } from '../../config/firebase.config';
 import { useSecurePage } from '../../hooks';
 import { selectProdSearchInput, setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
 import { changeProdTableCollapse } from '../../redux/slices/prodTableCollapse.slice';
+import Snackbars from '../../components/snackbars';
 
 
 const ProductTable_page = () => {
@@ -98,7 +99,7 @@ const ProductTable_page = () => {
    }, [database, category, prodDetails, page, prodDocLength, pageLength, searchInput_prod]);
 
    useEffect(() => {
-      (secure === '401') && signInProvider('google', { redirect: false, callbackUrl: `/auth/signup` });
+      (secure === 401) && signInProvider('google', { redirect: false, callbackUrl: `/auth/signup` });
    }, [secure]);
 
 
@@ -132,6 +133,7 @@ const ProductTable_page = () => {
                      />
                   )}
                </Stack>
+               {<Snackbars />}
             </>
             :
             <Stack justifyContent="center" alignItems="center" >

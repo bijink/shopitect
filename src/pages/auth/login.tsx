@@ -2,7 +2,7 @@
 import { useSession, signOut as signOutFromProvider, signIn as signInToProvider } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { Box, Button, CircularProgress, IconButton, InputAdornment, Stack, TextField, Typography } from "@mui/material";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { auth, database } from "../../config/firebase.config";
@@ -38,7 +38,7 @@ const LoginConfirm = () => {
    const [loading, setLoading] = useState(false);
 
 
-   const handleSubmit = (e: any) => {
+   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       setLoading(true);
 
@@ -133,7 +133,7 @@ const LoginConfirm = () => {
                                  size="small"
                                  type='text'
                                  value={shopUrlNameInput}
-                                 onInput={(e: any) => {
+                                 onInput={(e: ChangeEvent<HTMLInputElement>) => {
                                     setShopUrlNameInput(e.target.value.split(" ").join("").toLowerCase());
                                  }}
                                  helperText={(shopUrlNameInput === '') ? "* Enter your Shop Url Name" : (isUrlConfirmed ? '' : "* You entered Url Name doesn't exist")}
@@ -148,7 +148,7 @@ const LoginConfirm = () => {
                                  fullWidth
                                  type={showPassword ? 'text' : 'password'}
                                  value={password}
-                                 onInput={(e: any) => setPassword(e.target.value)}
+                                 onInput={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                                  InputProps={{
                                     endAdornment: <InputAdornment position="end">
                                        <IconButton

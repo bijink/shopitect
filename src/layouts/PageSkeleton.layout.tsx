@@ -42,7 +42,7 @@ const PageSkeleton_layout = () => {
                   }}
                >
                   <Toolbar />
-                  <Box sx={{ overflow: 'auto', '& > *': { padding: 0 } }}>
+                  <Box sx={{ overflow: 'auto', '& > *': { padding: 0, margin: 0 } }}>
                      {[1, 2, 3].map((_, index) => (
                         <List key={index} >
                            <ListItem >

@@ -7,6 +7,7 @@ import { useAppSelector } from "../../redux/hooks";
 import { selectShopDetails } from "../../redux/slices/shopDetails.slice";
 import { useSecurePage } from "../../hooks";
 import { signIn as signInProvider } from "next-auth/react";
+import Snackbars from "../../components/snackbars";
 
 
 const ProductAdd_page = () => {
@@ -20,7 +21,7 @@ const ProductAdd_page = () => {
 
 
    useEffect(() => {
-      (secure === '401') && signInProvider('google', { redirect: false, callbackUrl: `/auth/signup` });
+      (secure === 401) && signInProvider('google', { redirect: false, callbackUrl: `/auth/signup` });
    }, [secure]);
 
 
@@ -30,6 +31,7 @@ const ProductAdd_page = () => {
             <Typography variant="h4" component='div' >Add Product Details</Typography>
          </Stack>
          <ProductInputForm shopData={shop?.data && shop.data} />
+         {<Snackbars />}
       </>
    );
 };

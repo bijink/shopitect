@@ -11,13 +11,11 @@ import {
    Tooltip,
    AppBar,
    Avatar,
+   Stack,
 } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
-import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
-import AccountCircle from '@mui/icons-material/AccountCircle';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import MoreIcon from '@mui/icons-material/MoreVert';
 import { useRouter } from 'next/router';
 import { auth } from '../../config/firebase.config';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -25,9 +23,12 @@ import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
 import { signOut as signOutProvider, useSession } from 'next-auth/react';
 import { signOut as signOutAccount } from 'firebase/auth';
 import { useSecurePage, useUser } from '../../hooks';
-import InfoIcon from '@mui/icons-material/Info';
 import { selectPageId } from '../../redux/slices/pageId.slice';
-import { selectProdSearchInput, setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
+import { setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -86,57 +87,49 @@ export default function ShopAdmin_navBar() {
 
    const shop = useAppSelector(selectShopDetails);
    const pageId = useAppSelector(selectPageId);
-   const searchInput_prod = useAppSelector(selectProdSearchInput);
-
 
    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
-   // const [shopDetails, setShopDetails] = React.useState<DocumentData>([]);
    const [searchInput, setSearchInput] = React.useState('');
-   // console.log(searchInput);
 
    const isMenuOpen = Boolean(anchorEl);
-   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
    const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
       setAnchorEl(event.currentTarget);
    };
 
-   const handleMobileMenuClose = () => {
-      setMobileMoreAnchorEl(null);
-   };
-
    const handleMenuClose = () => {
       setAnchorEl(null);
-      handleMobileMenuClose();
    };
 
-   const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-      setMobileMoreAnchorEl(event.currentTarget);
-   };
 
    const menuId = 'primary-search-account-menu';
    const renderMenu = (
       <Menu
-         anchorEl={anchorEl}
-         anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right',
-         }}
          id={menuId}
+         anchorEl={anchorEl}
          keepMounted
-         transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-         }}
+         anchorOrigin={{ vertical: 'bottom', horizontal: 'center', }}
+         transformOrigin={{ vertical: 'top', horizontal: 'right', }}
          open={isMenuOpen}
          onClose={handleMenuClose}
       >
-         <MenuItem onClick={() => {
+         <MenuItem sx={{ display: { xs: 'flex', sm: 'none' } }} onClick={() => {
             handleMenuClose();
-            router.push(`/${shopAppUrl}/settings/profile`);
-         }}>Settings</MenuItem>
-
+         }}>
+            <Badge variant="dot" overlap="circular" color="error" >
+               <NotificationsOutlinedIcon />
+            </Badge>
+            <Typography pl={1} >Notifications</Typography>
+         </MenuItem>
+         {!(pageId === 'settings_page') && (
+            <MenuItem onClick={() => {
+               handleMenuClose();
+               router.push(`/${shopAppUrl}/settings/profile`);
+            }}>
+               <SettingsOutlinedIcon />
+               <Typography pl={1} >Settings</Typography>
+            </MenuItem>
+         )}
          <MenuItem onClick={() => {
             router.push(`/${shopAppUrl}`).then(() => {
                signOutProvider({ redirect: false }).then(() => {
@@ -144,86 +137,40 @@ export default function ShopAdmin_navBar() {
                });
             });
             handleMenuClose();
-         }}>Sign Out</MenuItem>
-      </Menu>
-   );
-
-   const mobileMenuId = 'primary-search-account-menu-mobile';
-   const renderMobileMenu = (
-      <Menu
-         anchorEl={mobileMoreAnchorEl}
-         anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right',
-         }}
-         id={mobileMenuId}
-         keepMounted
-         transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-         }}
-         open={isMobileMenuOpen}
-         onClose={handleMobileMenuClose}
-      >
-         <MenuItem>
-            <IconButton
-               size="large"
-               aria-label="show 17 new notifications"
-               color="inherit"
-            >
-               <Badge badgeContent={17} color="error">
-                  <NotificationsIcon />
-               </Badge>
-            </IconButton>
-            <p>Notifications</p>
-         </MenuItem>
-         <MenuItem onClick={handleProfileMenuOpen}>
-            <IconButton
-               size="large"
-               aria-label="account of current user"
-               aria-controls="primary-search-account-menu"
-               aria-haspopup="true"
-               color="inherit"
-            >
-               <AccountCircle />
-            </IconButton>
-            <p>Account</p>
+         }}>
+            <LogoutOutlinedIcon />
+            <Typography pl={1} >Log out</Typography>
          </MenuItem>
       </Menu>
    );
 
 
    return (
-      <Box sx={{ flexGrow: 1 }} >
+      <>
          <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }} >
             <Toolbar >
-               <IconButton
-                  size="large"
-                  edge="start"
-                  color="inherit"
-                  aria-label="open drawer"
-                  sx={{ mr: 2 }}
-               >
-                  <MenuIcon />
-               </IconButton>
-               <Typography
-                  variant="h6"
-                  noWrap
-                  component="div"
-                  sx={{ display: { xs: 'none', sm: 'block' }, cursor: 'pointer' }}
-                  onClick={() => router.push(`/${shopAppUrl}`)}
-               >
-                  {shop?.data?.name}
-               </Typography>
-               <Box sx={{ flexGrow: 1 }} />
-
-               {/* {((pageId === 'shopHome_page') || (pageId === 'product_page')) && ( */}
+               <Stack direction="row" alignItems="center" spacing={1.5} pr={3} >
+                  <Tooltip title={shop?.data?.name} arrow >
+                     {/* <Avatar alt={shop?.data?.name} src={} /> */}
+                     <Avatar alt={shop?.data?.name} >{shop?.data?.name.slice(0, 1)}</Avatar>
+                  </Tooltip>
+                  <Typography
+                     variant="h6"
+                     noWrap
+                     component="h1"
+                     sx={{ display: { xs: 'none', sm: 'block' }, cursor: 'pointer' }}
+                     onClick={() => router.push(`/${shopAppUrl}`)}
+                  >
+                     {shop?.data?.name}
+                  </Typography>
+               </Stack>
+               <Box sx={{ flexGrow: 10 }} />
                {((pageId === 'shopHome_page') || (productPages === 'table')) && (
                   <Search sx={{ flexGrow: 2 }}>
                      <SearchIconWrapper>
                         <SearchIcon />
                      </SearchIconWrapper>
-                     <form onSubmit={(e: any) => {
+                     <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
                         e.preventDefault();
                         dispatch(setProdSearchInput(searchInput));
                      }} >
@@ -231,7 +178,7 @@ export default function ShopAdmin_navBar() {
                            placeholder="Search…"
                            inputProps={{ 'aria-label': 'search' }}
                            value={category ? '' : searchInput}
-                           onInput={(e: any) => {
+                           onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
                               setSearchInput(e.target.value);
                            }}
                            onFocus={() => {
@@ -243,61 +190,38 @@ export default function ShopAdmin_navBar() {
                      </form>
                   </Search>
                )}
-               <Box sx={{ flexGrow: 1 }} />
-               <Box>
-                  {((secure === '200') && (
-                     <>
-                        <Box sx={{ display: { xs: 'none', md: 'flex' } }} justifyContent="center" alignItems="center" >
-                           <Tooltip title="Notification" arrow >
-                              <IconButton
-                                 size="large"
-                                 aria-label="show 5 new notifications"
-                                 color="inherit"
-                              >
-                                 <Badge badgeContent={5} color="error">
-                                    <NotificationsIcon />
-                                 </Badge>
-                              </IconButton>
-                           </Tooltip>
-                           {(user || session?.user) && (
-                              <Avatar
-                                 alt={session?.user.name!}
-                                 src={user?.photoURL! || session?.user.image!}
-                                 sx={{ marginLeft: 1, cursor: 'pointer' }}
-                                 onClick={handleProfileMenuOpen}
-                              />
-                           )}
-                        </Box>
-                        <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-                           <IconButton
-                              size="large"
-                              aria-label="show more"
-                              aria-controls={mobileMenuId}
-                              aria-haspopup="true"
-                              onClick={handleMobileMenuOpen}
-                              color="inherit"
-                           >
-                              <MoreIcon />
-                           </IconButton>
-                        </Box>
-                     </>
-                  )) || ((secure === '401') && (
+               <Stack
+                  direction="row" justifyContent="center" alignItems="center"
+                  spacing={1}
+               >
+                  <Tooltip title="Notification" arrow >
                      <IconButton
-                        size="small"
-                        aria-label="information about the shop"
+                        size="medium"
+                        aria-label="show 5 new notifications"
                         color="inherit"
-                        onClick={() => {
-                           router.push(`/${shopAppUrl}/info/about`);
-                        }}
+                        sx={{ display: { xs: 'none', sm: 'flex' } }}
                      >
-                        <InfoIcon />
+                        <Badge badgeContent={5} color="error">
+                           <NotificationsIcon />
+                        </Badge>
                      </IconButton>
-                  ))}
-               </Box>
+                  </Tooltip>
+                  <Tooltip title="More" arrow >
+                     <IconButton
+                        size="medium"
+                        aria-label="show more"
+                        aria-controls={menuId}
+                        aria-haspopup="true"
+                        onClick={handleProfileMenuOpen}
+                        color="inherit"
+                     >
+                        <MoreVertIcon />
+                     </IconButton>
+                  </Tooltip>
+               </Stack>
             </Toolbar>
          </AppBar>
-         {renderMobileMenu}
          {renderMenu}
-      </Box>
+      </>
    );
 };

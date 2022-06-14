@@ -1,5 +1,5 @@
 import { Box, Stack, TextareaAutosize, TextField, Typography } from "@mui/material";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { setAppPageId } from "../../redux/slices/pageId.slice";
 import { selectShopDetails, setAppShopDetailsAsync } from "../../redux/slices/shopDetails.slice";
@@ -27,7 +27,7 @@ const Profile_page = () => {
    const [loading, setLoading] = useState(false);
 
 
-   const handleSubmit = async (e: any) => {
+   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       setLoading(true);
 
@@ -75,9 +75,9 @@ const Profile_page = () => {
    //    (secure === '401') && signInProvider('google', { redirect: false, callbackUrl: `/auth/signup` });
    // }, [secure]);
 
-   useEffect(() => {
-      dispatch(setAppPageId('profile_page'));
-   }, []);
+   // useEffect(() => {
+   //    dispatch(setAppPageId('profile_page'));
+   // }, []);
 
 
    return (

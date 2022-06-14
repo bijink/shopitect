@@ -1,6 +1,6 @@
 import type { ProductInputProps } from "./productInput.types";
 
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import {
    Box,
    InputAdornment,
@@ -75,7 +75,7 @@ const ProductInputForm = ({ shopData }: ProductInputProps) => {
       setProfitPercentageInput('');
    };
 
-   const handleFormSubmit = (e: any) => {
+   const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       setLoading(true);
 
@@ -161,7 +161,7 @@ const ProductInputForm = ({ shopData }: ProductInputProps) => {
                      size="small"
                      fullWidth
                      value={prodName}
-                     onInput={(e: any) => setProdName(e.target.value)}
+                     onInput={(e: ChangeEvent<HTMLInputElement>) => setProdName(e.target.value)}
                      required
                      inputRef={inputFocusRef}
                   />
@@ -169,7 +169,7 @@ const ProductInputForm = ({ shopData }: ProductInputProps) => {
                      label="Product Code"
                      size="small"
                      value={prodCodeName}
-                     onInput={(e: any) => setProdCodeName(e.target.value)}
+                     onInput={(e: ChangeEvent<HTMLInputElement>) => setProdCodeName(e.target.value)}
                      required
                   />
                </Stack>
@@ -179,7 +179,7 @@ const ProductInputForm = ({ shopData }: ProductInputProps) => {
                      size="small"
                      fullWidth
                      value={prodBrand}
-                     onInput={(e: any) => setProdBrand(e.target.value)}
+                     onInput={(e: ChangeEvent<HTMLInputElement>) => setProdBrand(e.target.value)}
                      required
                   />
                   <TextField
@@ -187,7 +187,7 @@ const ProductInputForm = ({ shopData }: ProductInputProps) => {
                      size="small"
                      fullWidth
                      value={prodCategory}
-                     onInput={(e: any) => setProdCategory(e.target.value)}
+                     onInput={(e: ChangeEvent<HTMLInputElement>) => setProdCategory(e.target.value)}
                      required
                   />
                </Stack>
@@ -199,7 +199,7 @@ const ProductInputForm = ({ shopData }: ProductInputProps) => {
                      // sx={{ width: '12.5%', paddingRight: '12px' }}
                      sx={{ width: '15%' }}
                      value={quantity}
-                     onInput={(e: any) => setQuantity(e.target.value)}
+                     onInput={(e: ChangeEvent<HTMLInputElement>) => setQuantity(e.target.value)}
                      required
                   />
                </Stack>

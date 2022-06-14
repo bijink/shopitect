@@ -3,7 +3,7 @@ import type { NextPage } from "next";
 import { LoadingButton } from "@mui/lab";
 import { Box, Button, CircularProgress, Container, IconButton, InputAdornment, Stack, TextareaAutosize, TextField, Typography } from "@mui/material";
 import { collection, doc, onSnapshot, query, setDoc, where } from "firebase/firestore";
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, MutableRefObject, RefObject, useEffect, useRef, useState } from "react";
 import { database, auth } from "../config/firebase.config";
 import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
 import { useRouter } from "next/router";
@@ -40,7 +40,7 @@ const Create_app: NextPage = () => {
    const [isAccountNotExist, setIsAccountNotExist] = useState(false);
 
 
-   const handleFormSubmit = async (e: any) => {
+   const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       setLoading(true);
 
@@ -156,7 +156,7 @@ const Create_app: NextPage = () => {
                            size="small"
                            fullWidth
                            value={shopName}
-                           onInput={(e: any) => setShopName(e.target.value)}
+                           onInput={(e: ChangeEvent<HTMLInputElement>) => setShopName(e.target.value)}
                            inputRef={inputFocusRef}
                            required
                         />
@@ -169,7 +169,7 @@ const Create_app: NextPage = () => {
                               : (isShopUrlNameUnique ? 'Url is unique' : 'Url is not unique')
                            }
                            value={shopUrlName}
-                           onInput={(e: any) => setShopUrlName(e.target.value.split(" ").join("").toLowerCase())}
+                           onInput={(e: ChangeEvent<HTMLInputElement>) => setShopUrlName(e.target.value.split(" ").join("").toLowerCase())}
                            required
                            error={!isShopUrlNameUnique}
                         />
@@ -178,7 +178,7 @@ const Create_app: NextPage = () => {
                            size="small"
                            fullWidth
                            value={shopCategory}
-                           onInput={(e: any) => setShopCategory(e.target.value)}
+                           onInput={(e: ChangeEvent<HTMLInputElement>) => setShopCategory(e.target.value)}
                            required
                         />
                         <TextField
@@ -186,7 +186,7 @@ const Create_app: NextPage = () => {
                            size="small"
                            fullWidth
                            value={shopOwnerName}
-                           onInput={(e: any) => setShopOwnerName(e.target.value)}
+                           onInput={(e: ChangeEvent<HTMLInputElement>) => setShopOwnerName(e.target.value)}
                            required
                         />
                         <TextareaAutosize
@@ -204,7 +204,7 @@ const Create_app: NextPage = () => {
                               outlineColor: '#1976d2',
                            }}
                            value={shopAddress}
-                           onInput={(e: any) => setShopAddress(e.target.value)}
+                           onInput={(e: ChangeEvent<HTMLTextAreaElement>) => setShopAddress(e.target.value)}
                            required
                         />
                         {session && (
@@ -224,7 +224,7 @@ const Create_app: NextPage = () => {
                                  fullWidth
                                  type={showPassword ? 'text' : 'password'}
                                  value={password}
-                                 onInput={(e: any) => setPassword(e.target.value)}
+                                 onInput={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                                  InputProps={{
                                     endAdornment: <InputAdornment position="end">
                                        <IconButton
