@@ -1,5 +1,5 @@
 // *Product-table page
-import { Button, capitalize, CircularProgress, Pagination, Stack, TextField, Typography } from '@mui/material';
+import { Button, capitalize, Pagination, Skeleton, Stack, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import ProductTable from '../../components/productTable';
@@ -135,12 +135,20 @@ const ProductTable_page = () => {
                </Stack>
             </>
             :
-            <Stack justifyContent="center" alignItems="center" >
+            <>
                {(fetchDelayOver)
-                  ? <Typography variant="h5" component="p" >No Products</Typography>
-                  : <CircularProgress />
+                  ? <Typography variant="h5" component="p" textAlign="center" >No Products</Typography>
+                  : (
+                     <Skeleton
+                        variant="rectangular"
+                        animation="wave"
+                        width="100%"
+                        height="50vh"
+                        sx={{ borderRadius: 1 }}
+                     />
+                  )
                }
-            </Stack>
+            </>
          }
          {<Snackbars />}
       </>

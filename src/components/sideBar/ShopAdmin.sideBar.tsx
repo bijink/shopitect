@@ -28,9 +28,8 @@ import CategoryIcon from '@mui/icons-material/Category';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import HomeIcon from '@mui/icons-material/Home';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import { sidebarWidth } from '../../layouts/Page.layout';
 
-
-const drawerWidth = 240;
 
 const DrawerHeader = styled('div')(({ theme }) => ({
    display: 'flex',
@@ -90,7 +89,7 @@ export default function ShopAdmin_sideBar() {
             </Stack>
          </DrawerHeader>
          <Box
-            sx={{ width: drawerWidth }}
+            sx={{ width: sidebarWidth }}
             role="presentation"
          >
             <List>
@@ -129,9 +128,9 @@ export default function ShopAdmin_sideBar() {
             variant="permanent"
             // variant="temporary"
             sx={{
-               width: drawerWidth,
+               width: sidebarWidth,
                flexShrink: 0,
-               [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+               [`& .MuiDrawer-paper`]: { width: sidebarWidth, boxSizing: 'border-box' },
             }}
          >
             <Toolbar />

@@ -13,6 +13,9 @@ export const store = configureStore({
       prodTableCloseCollapse: prodTableCloseCollapseReducer,
       snackbarState: snackbarStateReducer,
    },
+   middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+      serializableCheck: false,
+   }),
 });
 
 export type AppDispatch = typeof store.dispatch;

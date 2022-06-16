@@ -12,9 +12,8 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { useRouter } from 'next/router';
 import SettingsIcon from '@mui/icons-material/Settings';
 import HomeIcon from '@mui/icons-material/Home';
+import { sidebarWidth } from '../../layouts/Page.layout';
 
-
-const drawerWidth = 240;
 
 export default function SettingsPage_sideBar() {
    const router = useRouter();
@@ -25,9 +24,9 @@ export default function SettingsPage_sideBar() {
          <Drawer
             variant="permanent"
             sx={{
-               width: drawerWidth,
+               width: sidebarWidth,
                flexShrink: 0,
-               [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+               [`& .MuiDrawer-paper`]: { width: sidebarWidth, boxSizing: 'border-box' },
             }}
          >
             <Toolbar />

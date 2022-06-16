@@ -9,10 +9,8 @@ import {
    List,
    ListItem,
 } from '@mui/material';
-import Footer from '../components/footer';
+import { sidebarWidth } from './Page.layout';
 
-
-const drawerWidth = 240;
 
 const PageSkeleton_layout = () => {
    return (
@@ -25,7 +23,7 @@ const PageSkeleton_layout = () => {
                   <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }} >
                      <Toolbar >
                         <Skeleton variant='circular' width={40} height={40} sx={{ marginRight: 1.5 }} />
-                        <Skeleton animation="pulse" width={200} height={45} />
+                        <Skeleton width={200} height={45} />
                         <Box sx={{ flexGrow: 1 }} />
                         <Skeleton variant='circular' width={40} height={40} />
                         <Skeleton variant='circular' width={40} height={40} sx={{ marginLeft: 1 }} />
@@ -38,9 +36,9 @@ const PageSkeleton_layout = () => {
                <Drawer
                   variant="permanent"
                   sx={{
-                     width: drawerWidth,
+                     width: sidebarWidth,
                      flexShrink: 0,
-                     [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+                     [`& .MuiDrawer-paper`]: { width: sidebarWidth, boxSizing: 'border-box' },
                   }}
                >
                   <Toolbar />
@@ -57,12 +55,11 @@ const PageSkeleton_layout = () => {
                </Drawer>
             </Box>
             {/* Main-body */}
-            <Box component="main" sx={{ flexGrow: 1 }}>
+            <Box component="main" flexGrow={1} p={2} >
                <Toolbar />
-               <Box minHeight='80.5vh' p={3} sx={{ display: 'flex', justifyContent: 'center' }}>
+               <Box display="flex" justifyContent="center" p={3} >
                   <CircularProgress />
                </Box>
-               <Box component='footer' ><Footer /></Box>
             </Box>
          </Box>
       </Box >

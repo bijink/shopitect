@@ -28,9 +28,8 @@ import InfoIcon from '@mui/icons-material/Info';
 import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded';
 import { setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
 import HomeIcon from '@mui/icons-material/Home';
+import { sidebarWidth } from '../../layouts/Page.layout';
 
-
-const drawerWidth = 240;
 
 const DrawerHeader = styled('div')(({ theme }) => ({
    display: 'flex',
@@ -90,7 +89,7 @@ export default function Public_sideBar() {
             </Stack>
          </DrawerHeader>
          <Box
-            sx={{ width: drawerWidth }}
+            sx={{ width: sidebarWidth }}
             role="presentation"
          >
             <List>
@@ -124,9 +123,9 @@ export default function Public_sideBar() {
                <Drawer
                   variant="permanent"
                   sx={{
-                     width: drawerWidth,
+                     width: sidebarWidth,
                      flexShrink: 0,
-                     [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+                     [`& .MuiDrawer-paper`]: { width: sidebarWidth, boxSizing: 'border-box' },
                   }}
                >
                   <Toolbar />
@@ -158,9 +157,9 @@ export default function Public_sideBar() {
             <Drawer
                variant="permanent"
                sx={{
-                  width: drawerWidth,
+                  width: sidebarWidth,
                   flexShrink: 0,
-                  [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+                  [`& .MuiDrawer-paper`]: { width: sidebarWidth, boxSizing: 'border-box' },
                }}
             >
                <Toolbar />

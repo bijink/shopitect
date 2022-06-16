@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import { collection, DocumentData, onSnapshot, query, where } from "firebase/firestore";
+import { collection, DocumentData, onSnapshot, query, Timestamp, where } from "firebase/firestore";
 import { database } from "../../config/firebase.config";
 
 
@@ -15,10 +15,7 @@ interface shopDetailsState {
          name: string,
          ownerName: string,
          urlName: string,
-         createdAt: {
-            nanoseconds: number,
-            seconds: number,
-         };
+         createdAt: Timestamp;
       } | DocumentData | null;
       length: number | null;
    };

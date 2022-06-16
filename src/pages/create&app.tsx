@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 
 import { LoadingButton } from "@mui/lab";
 import { Box, Button, CircularProgress, Container, IconButton, InputAdornment, Stack, TextareaAutosize, TextField, Typography } from "@mui/material";
-import { collection, doc, onSnapshot, query, setDoc, where } from "firebase/firestore";
+import { collection, doc, onSnapshot, query, serverTimestamp, setDoc, where } from "firebase/firestore";
 import { ChangeEvent, FormEvent, MutableRefObject, RefObject, useEffect, useRef, useState } from "react";
 import { database, auth } from "../config/firebase.config";
 import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
@@ -63,7 +63,7 @@ const Create_app: NextPage = () => {
                   providerID: session?.user.uid,
                   // # accountID means 'firebase auth user uid'
                   accountID: auth.currentUser?.uid,
-                  createdAt: new Date(new Date().getTime()).toString(),
+                  createdAt: serverTimestamp(),
                }).then(() => {
                   setShopName('');
                   setShopUrlName('');
