@@ -113,14 +113,6 @@ export default function ShopAdmin_navBar() {
          open={isMenuOpen}
          onClose={handleMenuClose}
       >
-         <MenuItem sx={{ display: { xs: 'flex', sm: 'none' } }} onClick={() => {
-            handleMenuClose();
-         }}>
-            <Badge variant="dot" overlap="circular" color="error" >
-               <NotificationsOutlinedIcon />
-            </Badge>
-            <Typography pl={1} >Notifications</Typography>
-         </MenuItem>
          {!(pageId === 'settings_page') && (
             <MenuItem onClick={() => {
                handleMenuClose();
@@ -182,7 +174,7 @@ export default function ShopAdmin_navBar() {
                               setSearchInput(e.target.value);
                            }}
                            onFocus={() => {
-                              router.push(`/${shopAppUrl}${(productPages === 'table') ? '/product/table' : ''}`);
+                              category && router.push(`/${shopAppUrl}${(productPages === 'table') ? '/product/table' : ''}`);
                               setSearchInput('');
                               dispatch(setProdSearchInput(''));
                            }}
@@ -194,18 +186,6 @@ export default function ShopAdmin_navBar() {
                   direction="row" justifyContent="center" alignItems="center"
                   spacing={1}
                >
-                  <Tooltip title="Notification" arrow >
-                     <IconButton
-                        size="medium"
-                        aria-label="show 5 new notifications"
-                        color="inherit"
-                        sx={{ display: { xs: 'none', sm: 'flex' } }}
-                     >
-                        <Badge badgeContent={5} color="error">
-                           <NotificationsIcon />
-                        </Badge>
-                     </IconButton>
-                  </Tooltip>
                   <Tooltip title="More" arrow >
                      <IconButton
                         size="medium"

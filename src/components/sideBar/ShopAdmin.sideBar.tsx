@@ -155,17 +155,18 @@ export default function ShopAdmin_sideBar() {
                      </ListItemIcon>
                      <ListItemText primary={'Product'} />
                   </ListItem>
-                  {!(pageId === 'productView_page') && (
-                     <>
-                        <Divider />
-                        <ListItem button onClick={() => setCategoryOpen(true)} >
-                           <ListItemIcon>
-                              <CategoryIcon />
-                           </ListItemIcon>
-                           <ListItemText primary={'Category'} />
-                        </ListItem>
-                     </>
-                  )}
+                  {(!((pageId === 'productView_page') || (pageId === 'dashboard_page') || (pageId === 'productAdd_page'))
+                     && (categoryList.length > 1)) && (
+                        <>
+                           <Divider />
+                           <ListItem button onClick={() => setCategoryOpen(true)} >
+                              <ListItemIcon>
+                                 <CategoryIcon />
+                              </ListItemIcon>
+                              <ListItemText primary={'Category'} />
+                           </ListItem>
+                        </>
+                     )}
                </List>
             </Box>
          </Drawer>

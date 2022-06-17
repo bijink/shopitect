@@ -9,10 +9,11 @@ import {
    List,
    ListItem,
 } from '@mui/material';
+import { ReactNode } from 'react';
 import { sidebarWidth } from './Page.layout';
 
 
-const PageSkeleton_layout = () => {
+const PageSkeleton_layout = ({ children }: { children?: ReactNode; }) => {
    return (
       <Box>
          <CssBaseline />
@@ -26,7 +27,6 @@ const PageSkeleton_layout = () => {
                         <Skeleton width={200} height={45} />
                         <Box sx={{ flexGrow: 1 }} />
                         <Skeleton variant='circular' width={40} height={40} />
-                        <Skeleton variant='circular' width={40} height={40} sx={{ marginLeft: 1 }} />
                      </Toolbar>
                   </AppBar>
                </Box>
@@ -44,7 +44,7 @@ const PageSkeleton_layout = () => {
                   <Toolbar />
                   <Box sx={{ overflow: 'auto' }}>
                      <List sx={{ padding: 0 }} >
-                        {[1, 2, 3, 4].map((_, index) => (
+                        {[...Array(3)].map((_, index) => (
                            <ListItem key={index} >
                               <Skeleton variant='circular' width={31} height={31} sx={{ marginRight: 3 }} />
                               <Skeleton width={120} height={30} />
@@ -55,14 +55,21 @@ const PageSkeleton_layout = () => {
                </Drawer>
             </Box>
             {/* Main-body */}
-            <Box component="main" flexGrow={1} p={2} >
-               <Toolbar />
-               <Box display="flex" justifyContent="center" p={3} >
-                  <CircularProgress />
+            {children ? (
+               <Box component="main" flexGrow={1} >
+                  <Toolbar />
+                  <Box p={2}>{children}</Box>
                </Box>
-            </Box>
+            ) : (
+               <Box component="main" flexGrow={1} >
+                  <Toolbar />
+                  <Box display="flex" justifyContent="center" p={2} >
+                     <CircularProgress />
+                  </Box>
+               </Box>
+            )}
          </Box>
-      </Box >
+      </Box>
    );
 };
 

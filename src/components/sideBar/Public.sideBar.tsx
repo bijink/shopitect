@@ -137,7 +137,7 @@ export default function Public_sideBar() {
                            <ListItemIcon><HomeIcon /></ListItemIcon>
                            <ListItemText primary='Home' />
                         </ListItem>
-                        {!(pageId === 'productView_page') && (
+                        {((pageId !== 'productView_page') && (categoryList.length > 1)) && (
                            <>
                               <Divider />
                               <ListItem button onClick={() => {

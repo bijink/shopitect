@@ -12,27 +12,23 @@ import { useSecurePage } from '../../hooks';
 import { selectProdSearchInput, setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
 import { changeProdTableCollapse } from '../../redux/slices/prodTableCollapse.slice';
 import Snackbars from '../../components/snackbars';
+import { setAppPageId } from '../../redux/slices/pageId.slice';
 
 
 const ProductTable_page = () => {
    const router = useRouter();
    const { shopAppUrl, category, page } = router.query;
-   // console.log(category);
-   // console.log(page);
 
    const dispatch = useAppDispatch();
    const shop = useAppSelector(selectShopDetails);
    const searchInput_prod = useAppSelector(selectProdSearchInput);
-   // console.log(searchInput_prod);
 
    const secure = useSecurePage(shopAppUrl);
-   // console.log(secure);
 
    const listLength = 10;
    const [prodDetails, setProdDetails] = useState<DocumentData>([]);
-   const [prodDetails_category, setProdDetails_category] = useState<DocumentData>([]);
-   const [prodDocLength, setProdDocLength] = useState(0);
-   const [fetchDelayOver, setFetchDelayOver] = useState(false);
+   const [prodDetails_new, setProdDetails_new] = useState<DocumentData>([]);
+   const [prodDocLength, setProdDocLength] = useState<null | number>(null);
    const [pageLength, setPageLength] = useState(1);
 
 
@@ -47,26 +43,20 @@ const ProductTable_page = () => {
    useEffect(() => {
       (shop?.data) && onSnapshot(query(collection(database, 'shops', shop.data?.urlName, 'products'), orderBy('codeName')), (snapshot) => {
          setProdDetails(snapshot.docs);
-         // setProdDocLength(prodDetails.length);
+         setProdDocLength(snapshot.docs.length);
+         setPageLength(Math.ceil(snapshot.docs.length / listLength));
       });
    }, [database, shop]);
 
    useEffect(() => {
-      setProdDocLength(prodDetails.length);
-      setPageLength(Math.ceil(prodDetails.length / listLength));
-
       if (category) {
          dispatch(setProdSearchInput(''));
 
          if (category === 'all') {
-            setProdDetails_category(prodDetails);
-
-            setTimeout(() => setFetchDelayOver(true), 5000);
+            setProdDetails_new(prodDetails);
          } else {
             const categoryFilter: Array<DocumentData> = prodDetails.filter((item: DocumentData) => item.data().category === category);
-            setProdDetails_category(categoryFilter);
-
-            setTimeout(() => setFetchDelayOver(true), 5000);
+            setProdDetails_new(categoryFilter);
          }
       } else {
          if ((page && prodDocLength)) {
@@ -89,12 +79,10 @@ const ProductTable_page = () => {
                pageInt = parseInt(page.toString());
             }
 
-            setProdDetails_category(prodDetails.slice(arr[pageInt - 1][0], arr[pageInt - 1][1]));
+            setProdDetails_new(prodDetails.slice(arr[pageInt - 1][0], arr[pageInt - 1][1]));
          } else {
-            setProdDetails_category(prodDetails.slice(0, listLength));
+            setProdDetails_new(prodDetails.slice(0, listLength));
          }
-
-         setTimeout(() => setFetchDelayOver(true), 5000);
       }
    }, [database, category, prodDetails, page, prodDocLength, pageLength, searchInput_prod]);
 
@@ -102,12 +90,16 @@ const ProductTable_page = () => {
       (secure === 401) && signInProvider('google', { redirect: false, callbackUrl: `/auth/signup` });
    }, [secure]);
 
+   useEffect(() => {
+      dispatch(setAppPageId('productTable_page'));
+   }, []);
+
 
    return (
       <>
-         <Stack direction='row' spacing="auto" pb={2} alignItems="center" >
-            <Stack direction='row' spacing="auto" alignItems="end" >
-               <Typography variant="h5" component='p' gutterBottom >Product List</Typography>
+         <Stack direction='row' spacing="auto" pb={2} >
+            <Stack direction='row' alignItems="end" >
+               <Typography variant="h5" component='p' >Product List</Typography>
                <Typography variant="subtitle2" component='p' pl={0.3} >{category && `[${capitalize(category.toString())}]`}</Typography>
             </Stack>
             <Button
@@ -118,39 +110,38 @@ const ProductTable_page = () => {
                Add
             </Button>
          </Stack>
-         {(prodDocLength > 0) ?
+         {((prodDocLength! > 0) || (prodDocLength === null)) ? (
             <>
-               <ProductTable shopData={shop.data} products={(filteredProducts.length ? filteredProducts : prodDetails_category)} />
-               <Stack direction='row' spacing={1} pt={2} justifyContent="center" alignItems="center" >
-                  {(!category && !(filteredProducts.length > 0)) && (
-                     <Pagination
-                        count={pageLength}
-                        page={page ? (parseInt(page.toString())) : 1}
-                        onChange={(_, value: number) => {
-                           router.push(`/${shopAppUrl}/product/table?page=${value}`);
-                           dispatch(changeProdTableCollapse());
-                        }}
-                        showFirstButton showLastButton
-                     />
-                  )}
-               </Stack>
+               {((prodDocLength! > 0)) ? (
+                  <Stack spacing={2} >
+                     <ProductTable shopData={shop.data} products={(filteredProducts.length ? filteredProducts : prodDetails_new)} />
+                     <Stack direction='row' justifyContent="center" alignItems="center" >
+                        {(!(category && (filteredProducts.length > 0)) && (prodDetails_new.length > 0)) && (
+                           <Pagination
+                              count={pageLength}
+                              page={page ? (parseInt(page.toString())) : 1}
+                              onChange={(_, value: number) => {
+                                 router.push(`/${shopAppUrl}/product/table?page=${value}`);
+                                 dispatch(changeProdTableCollapse());
+                              }}
+                              showFirstButton showLastButton
+                           />
+                        )}
+                     </Stack>
+                  </Stack>
+               ) : (
+                  <Skeleton
+                     variant="rectangular"
+                     animation="wave"
+                     width="100%"
+                     height="4rem"
+                     sx={{ borderTopLeftRadius: 3, borderTopRightRadius: 3, }}
+                  />
+               )}
             </>
-            :
-            <>
-               {(fetchDelayOver)
-                  ? <Typography variant="h5" component="p" textAlign="center" >No Products</Typography>
-                  : (
-                     <Skeleton
-                        variant="rectangular"
-                        animation="wave"
-                        width="100%"
-                        height="50vh"
-                        sx={{ borderRadius: 1 }}
-                     />
-                  )
-               }
-            </>
-         }
+         ) : (
+            <Typography variant="h6" component="p" textAlign="center" >Data is empty</Typography>
+         )}
          {<Snackbars />}
       </>
    );

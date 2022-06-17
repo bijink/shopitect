@@ -13,7 +13,7 @@ import { selectShopDetails, setAppShopDetailsAsync } from '../../redux/slices/sh
 import { setAppPageId } from '../../redux/slices/pageId.slice';
 import { PageSkeleton_layout, Page_layout } from '../../layouts';
 import { useSecurePage } from '../../hooks';
-import { CircularProgress, Pagination, Stack, Typography } from '@mui/material';
+import { Box, Pagination, Skeleton, Stack, Typography } from '@mui/material';
 import NotFound from '../404';
 import { selectProdSearchInput, setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
 import { Public_navBar, ShopAdmin_navBar } from '../../components/navBar';
@@ -35,10 +35,9 @@ const Shop: NextPage = () => {
 
    const listLength = 10;
    const [prodDetails, setProdDetails] = useState<DocumentData>([]);
-   const [prodDetails_category, setProdDetails_category] = useState<DocumentData>([]);
-   const [fetchDelayOver, setFetchDelayOver] = useState(false);
+   const [prodDetails_new, setProdDetails_new] = useState<DocumentData>([]);
    const [shopNotExistOnServer, setShopNotExistOnServer] = useState(false);
-   const [prodDocLength, setProdDocLength] = useState(0);
+   const [prodDocLength, setProdDocLength] = useState<null | number>(null);
    const [pageLength, setPageLength] = useState(1);
 
 
@@ -53,24 +52,20 @@ const Shop: NextPage = () => {
    useEffect(() => {
       (shop?.data) && onSnapshot(query(collection(database, 'shops', shop.data?.urlName, 'products'), orderBy('createdAt', 'desc')), (snapshot) => {
          setProdDetails(snapshot.docs);
+         setProdDocLength(snapshot.docs.length);
+         setPageLength(Math.ceil(snapshot.docs.length / listLength));
       });
-      // }, [database, shop, searchInput_prod]);
    }, [database, shop]);
 
    useEffect(() => {
-      setProdDocLength(prodDetails.length);
-      setPageLength(Math.ceil(prodDetails.length / listLength));
-
       if (category) {
          dispatch(setProdSearchInput(''));
 
          if (category === 'all') {
-            setProdDetails_category(prodDetails);
-            setTimeout(() => setFetchDelayOver(true), 5000);
+            setProdDetails_new(prodDetails);
          } else {
             const categoryFilter: Array<DocumentData> = prodDetails.filter((item: DocumentData) => item.data().category === category);
-            setProdDetails_category(categoryFilter);
-            setTimeout(() => setFetchDelayOver(true), 5000);
+            setProdDetails_new(categoryFilter);
          }
       } else {
          if ((page && prodDocLength)) {
@@ -93,12 +88,10 @@ const Shop: NextPage = () => {
                pageInt = parseInt(page.toString());
             }
 
-            setProdDetails_category(prodDetails.slice(arr[pageInt - 1][0], arr[pageInt - 1][1]));
+            setProdDetails_new(prodDetails.slice(arr[pageInt - 1][0], arr[pageInt - 1][1]));
          } else {
-            setProdDetails_category(prodDetails.slice(0, listLength));
+            setProdDetails_new(prodDetails.slice(0, listLength));
          }
-
-         setTimeout(() => setFetchDelayOver(true), 5000);
       }
    }, [database, category, prodDetails, page, prodDocLength, pageLength, searchInput_prod]);
 
@@ -123,42 +116,57 @@ const Shop: NextPage = () => {
 
    const ProductCardWrap = () => (
       <Stack direction={'column'} >
-         {(prodDocLength > 0) ?
+         {((prodDocLength! > 0) || (prodDocLength === null)) ? (
             <>
-               <Stack direction={'row'} justifyContent="center" alignItems="center" flexWrap="wrap" >
-                  {(filteredProducts.length ? filteredProducts : prodDetails_category).map((prod: ProdDetailsTypes, index: number) => (
-                     <ProductCard key={index}
-                        shopUrlName={shop?.data?.urlName}
+               {((prodDocLength! > 0)) ? (
+                  <Stack spacing={2} >
+                     <Stack direction='row' justifyContent="center" alignItems="center" flexWrap="wrap" >
+                        {(filteredProducts.length ? filteredProducts : prodDetails_new).map((prod: ProdDetailsTypes, index: number) => (
+                           <ProductCard
+                              key={index}
 
-                        prodId={prod.id}
-                        prodName={prod.data().name}
-                        prodImg={prod.data().imageUrl}
-                        prodCategory={prod.data().category}
-                        sellPrice={prod.data().sellPrice}
-                     />
-                  ))}
-               </Stack>
-               <Stack direction='row' spacing={1} pt={2} justifyContent="center" alignItems="center" >
-                  {(!category && !(filteredProducts.length > 0)) && (
-                     <Pagination
-                        count={pageLength}
-                        page={page ? (parseInt(page.toString())) : 1}
-                        onChange={(_, value: number) => {
-                           router.push(`/${shopAppUrl}?page=${value}`);
-                        }}
-                        showFirstButton showLastButton
-                     />
-                  )}
-               </Stack>
+                              shopUrlName={shop?.data?.urlName}
+
+                              prodId={prod.id}
+                              prodName={prod.data().name}
+                              prodImg={prod.data().imageUrl}
+                              prodCategory={prod.data().category}
+                              sellPrice={prod.data().sellPrice}
+                           />
+                        ))}
+                     </Stack>
+                     <Stack justifyContent="center" alignItems="center" >
+                        {(!(category && (filteredProducts.length > 0)) && (prodDetails_new.length > 0)) && (
+                           <Pagination
+                              count={pageLength}
+                              page={page ? (parseInt(page.toString())) : 1}
+                              onChange={(_, value: number) => {
+                                 router.push(`/${shopAppUrl}?page=${value}`);
+                              }}
+                              showFirstButton showLastButton
+                           />
+                        )}
+                     </Stack>
+                  </Stack>
+               ) : (
+                  <Stack direction='row' justifyContent="center" alignItems="center" flexWrap="wrap" >
+                     {[...Array(2)].map((_, index) => (
+                        <Box key={index} p={1} >
+                           <Skeleton
+                              variant='rectangular'
+                              animation="wave"
+                              width="220px"
+                              height="200px"
+                              sx={{ borderRadius: 0.8 }}
+                           />
+                        </Box>
+                     ))}
+                  </Stack>
+               )}
             </>
-            :
-            <Stack justifyContent="center" alignItems="center" >
-               {(fetchDelayOver)
-                  ? <Typography variant="h5" component="p" >No Products</Typography>
-                  : <CircularProgress />
-               }
-            </Stack>
-         }
+         ) : (
+            <Typography variant="h6" component="p" textAlign="center" >Data is empty</Typography>
+         )}
       </Stack>
    );
 
@@ -173,7 +181,21 @@ const Shop: NextPage = () => {
 
          <>
             {((secure === 'loading') && (
-               <PageSkeleton_layout />
+               <PageSkeleton_layout >
+                  <Stack direction='row' justifyContent="center" alignItems="center" flexWrap="wrap" >
+                     {[...Array(2)].map((_, index) => (
+                        <Box key={index} p={1} >
+                           <Skeleton
+                              variant='rectangular'
+                              animation="wave"
+                              width="220px"
+                              height="200px"
+                              sx={{ borderRadius: 0.8 }}
+                           />
+                        </Box>
+                     ))}
+                  </Stack>
+               </PageSkeleton_layout>
             )) || ((secure === 200) && (
                <Page_layout navbar={<ShopAdmin_navBar />} sidebar={<ShopAdmin_sideBar />} >
                   <ProductCardWrap />

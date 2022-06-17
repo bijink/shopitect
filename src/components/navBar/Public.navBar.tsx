@@ -112,7 +112,7 @@ export default function Public_navBar() {
                               setSearchInput(e.target.value);
                            }}
                            onFocus={() => {
-                              router.push(`/${shopAppUrl}`);
+                              category && router.push(`/${shopAppUrl}`);
                               setSearchInput('');
                               dispatch(setProdSearchInput(''));
                            }}

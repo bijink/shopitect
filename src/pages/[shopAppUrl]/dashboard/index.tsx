@@ -32,7 +32,7 @@ const Dashboard: NextPage = () => {
    const secure = useSecurePage(shopAppUrl);
 
    // const [prodDetails, setProdDetails] = useState<DocumentData>([]);
-   // const [prodDocLength, setProdDocLength] = useState(0);
+   const [prodDocLength, setProdDocLength] = useState<null | number>(null);
    const [chartLabel, setChartLabel] = useState<string[]>([]);
    const [chartData, setChartData] = useState<string[]>([]);
    const [chartColor, setChartColor] = useState<string[]>([]);
@@ -82,6 +82,7 @@ const Dashboard: NextPage = () => {
    useEffect(() => {
       shopAppUrl && onSnapshot(query(collection(database, 'shops', shopAppUrl.toString(), 'products')), (snapshot) => {
          // setProdDetails(snapshot.docs);
+         setProdDocLength(snapshot.docs.length);
 
          let categList: Array<string> = [];
          snapshot.docs.forEach((obj: DocumentData) => {
@@ -108,29 +109,33 @@ const Dashboard: NextPage = () => {
             <NotFound />
          )) || ((secure === 200) && (
             <Page_layout navbar={<ShopAdmin_navBar />} sidebar={<ShopAdmin_sideBar />} >
-               <Stack direction='row' spacing="auto" pb={2} sx={{ alignItems: 'center' }}>
-                  <Typography variant="h5" component='div' gutterBottom >Dashboard</Typography>
+               <Stack direction='row' pb={2} >
+                  <Typography variant="h5" component='p' >Dashboard</Typography>
                </Stack>
-               <Box width="100%" display="flex" justifyContent="center" alignItems="center" >
-                  {(chartLength > 0) ? (
-                     <Stack width="25rem" spacing={3} alignItems="center" sx={{ cursor: 'pointer' }} >
-                        <Doughnut data={datas} />
+               {((prodDocLength! > 0) || (prodDocLength === null)) ? (
+                  <Box width="100%" display="flex" justifyContent="center" alignItems="center" >
+                     {(chartLength > 0) ? (
+                        <Stack width="25rem" spacing={3} alignItems="center" sx={{ cursor: 'pointer' }} >
+                           <Doughnut data={datas} />
+                           <Box>
+                              <IconButton
+                                 color="primary"
+                                 size="small"
+                                 onClick={() => setChartColor(getRgbColors(chartLength))}
+                              >
+                                 <RefreshOutlinedIcon />
+                              </IconButton>
+                           </Box>
+                        </Stack>
+                     ) : (
                         <Box>
-                           <IconButton
-                              color="primary"
-                              size="small"
-                              onClick={() => setChartColor(getRgbColors(chartLength))}
-                           >
-                              <RefreshOutlinedIcon />
-                           </IconButton>
+                           <CircularProgress />
                         </Box>
-                     </Stack>
-                  ) : (
-                     <Box>
-                        <CircularProgress />
-                     </Box>
-                  )}
-               </Box>
+                     )}
+                  </Box>
+               ) : (
+                  <Typography variant="h6" component="p" textAlign="center" >Data is empty</Typography>
+               )}
             </Page_layout>
          )) || (((secure === 401) || (secure === 403)) && (
             <Forbidden />

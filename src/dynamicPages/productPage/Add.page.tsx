@@ -3,11 +3,12 @@ import { Stack, Typography } from "@mui/material";
 import ProductInputForm from "../../components/productInputForm";
 import { useEffect } from 'react';
 import { useRouter } from "next/router";
-import { useAppSelector } from "../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { selectShopDetails } from "../../redux/slices/shopDetails.slice";
 import { useSecurePage } from "../../hooks";
 import { signIn as signInProvider } from "next-auth/react";
 import Snackbars from "../../components/snackbars";
+import { setAppPageId } from "../../redux/slices/pageId.slice";
 
 
 const ProductAdd_page = () => {
@@ -15,6 +16,8 @@ const ProductAdd_page = () => {
    const { shopAppUrl } = router.query;
 
    const shop = useAppSelector(selectShopDetails);
+
+   const dispatch = useAppDispatch();
 
    const secure = useSecurePage(shopAppUrl);
    // console.log(secure);
@@ -24,11 +27,15 @@ const ProductAdd_page = () => {
       (secure === 401) && signInProvider('google', { redirect: false, callbackUrl: `/auth/signup` });
    }, [secure]);
 
+   useEffect(() => {
+      dispatch(setAppPageId('productAdd_page'));
+   }, []);
+
 
    return (
       <>
-         <Stack direction='row' spacing="auto" pb={2} sx={{ alignItems: 'center' }}>
-            <Typography variant="h5" component='div' gutterBottom >Add Product Details</Typography>
+         <Stack direction='row' pb={2} >
+            <Typography variant="h5" component='p' >Add Product Details</Typography>
          </Stack>
          <ProductInputForm shopData={shop?.data && shop.data} />
          {<Snackbars />}

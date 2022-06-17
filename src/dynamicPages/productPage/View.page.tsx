@@ -48,7 +48,7 @@ const ProductView_page = () => {
             <Typography variant="h5" component="p" textAlign="center" >Product Not Found...</Typography>
          ) : (
             ((prodDetails && Object.keys(prodDetails).length < 1) ? (
-               <Stack justifyContent="center" alignItems="center" p={3} >
+               <Stack justifyContent="center" alignItems="center" >
                   <CircularProgress />
                </Stack>
             ) : (

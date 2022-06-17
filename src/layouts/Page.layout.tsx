@@ -20,10 +20,10 @@ const Page_layout = ({ children, navbar, sidebar, title }: PageLayoutProps) => {
          <Box component="main" minHeight="80vh" pl={sidebarWidth}  >
             <Toolbar />
             {(pageId === 'settings_page') && (
-               <Stack spacing={1} direction='row' alignItems="center" px={3} py={1.5} bgcolor="skyblue" >
-                  <Typography variant="h5" component='div' >Settings</Typography>
+               <Stack spacing={1} direction='row' alignItems="center" px={3} py={1} bgcolor="skyblue" >
+                  <Typography variant="h6" component='div' >Settings</Typography>
                   <ArrowForwardIosIcon sx={{ fontSize: '12px' }} />
-                  <Typography variant="h5" component='div' sx={{ color: '#757575' }} >{title}</Typography>
+                  <Typography variant="h6" component='div' sx={{ color: '#757575' }} >{title}</Typography>
                </Stack>
             )}
             <Box p={2}>{children}</Box>
