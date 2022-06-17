@@ -28,7 +28,7 @@ const ProductAdd_page = () => {
    return (
       <>
          <Stack direction='row' spacing="auto" pb={2} sx={{ alignItems: 'center' }}>
-            <Typography variant="h4" component='div' >Add Product Details</Typography>
+            <Typography variant="h5" component='div' gutterBottom >Add Product Details</Typography>
          </Stack>
          <ProductInputForm shopData={shop?.data && shop.data} />
          {<Snackbars />}

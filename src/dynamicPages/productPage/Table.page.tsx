@@ -107,11 +107,12 @@ const ProductTable_page = () => {
       <>
          <Stack direction='row' spacing="auto" pb={2} alignItems="center" >
             <Stack direction='row' spacing="auto" alignItems="end" >
-               <Typography variant="h4" component='p' >Product List</Typography>
+               <Typography variant="h5" component='p' gutterBottom >Product List</Typography>
                <Typography variant="subtitle2" component='p' pl={0.3} >{category && `[${capitalize(category.toString())}]`}</Typography>
             </Stack>
             <Button
                variant='contained'
+               size="small"
                onClick={() => router.push(`/${shopAppUrl}/product/add`)}
             >
                Add
