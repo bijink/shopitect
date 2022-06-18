@@ -1,17 +1,23 @@
-// *securePage hook
+// *shopData & shopSecurePage hook
 import type { User } from "firebase/auth";
+import type { ShopData } from "../types/global.types";
 
 import { useEffect, useState } from "react";
 import { auth } from "../config/firebase.config";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { selectShopDetails, setAppShopDetailsAsync } from "../redux/slices/shopDetails.slice";
+import { setAppShopDetailsAsync, selectShopDetails } from "../redux/slices/shopDetails.slice";
 
 
-const useSecurePage = (shopAppUrl: string | string[] | undefined) => {
+const useShop = (shopAppUrl: string | string[] | undefined) => {
    const dispatch = useAppDispatch();
    const shopDetails = useAppSelector(selectShopDetails);
 
    const [userData, setUserData] = useState<User | null | undefined>(undefined);
+
+   // #shopData
+   // const [data, setData] = useState<ShopData | undefined>(undefined);
+   const [data, setData] = useState<ShopData | null>(null);
+   // #shopSecurePage
    const [secure, setSecure] = useState<'loading' | 200 | 401 | 403 | 404>('loading');
    /**
     *# 200 - OK - (user authorized, have content access)
@@ -30,6 +36,11 @@ const useSecurePage = (shopAppUrl: string | string[] | undefined) => {
    }, [shopAppUrl]);
 
 
+   // *shopData
+   useEffect(() => {
+      shopDetails.length && setData(shopDetails.data!);
+   }, [shopDetails]);
+   // *shopSecure
    useEffect(() => {
       if (shopAppUrl && shopDetails) {
          if ((shopDetails.length === null) || (userData === undefined)) {
@@ -51,7 +62,7 @@ const useSecurePage = (shopAppUrl: string | string[] | undefined) => {
       }
    }, [shopDetails, userData]);
 
-   return secure;
+   return { data, secure };
 };
 
-export default useSecurePage;
+export default useShop;

@@ -22,8 +22,7 @@ const LoginConfirm = () => {
 
    const { data: session, status: sessionStatus } = useSession();
    // console.log(sessionStatus);
-
-   const { user, status: userStatus } = useUser();
+   const { data: user, status: userStatus } = useUser();
    // console.log(userStatus);
 
    const inputFocusRef = useRef<any>(null);
@@ -47,6 +46,7 @@ const LoginConfirm = () => {
             setInputChange(false);
             setIsPasswordConfirmed(true);
             setLoading(false);
+
             router.push(`/${shopUrlNameInput}`);
          }).catch((error) => {
             // const errorCode = error.code;
@@ -65,7 +65,9 @@ const LoginConfirm = () => {
          snapshot.forEach(obj => {
             // console.log(obj.data());
             if (userStatus === 'authenticated') {
-               router.push(`/${obj.data().urlName}`);
+               router.push(`/${obj.data().urlName}`).then(() => {
+                  router.reload();
+               });
             }
          });
       });

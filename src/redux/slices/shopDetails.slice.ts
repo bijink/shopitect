@@ -1,22 +1,15 @@
+import type { ShopData } from '../../types/global.types';
+
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import { collection, DocumentData, onSnapshot, query, Timestamp, where } from "firebase/firestore";
+import { collection, DocumentData, onSnapshot, query, where } from "firebase/firestore";
 import { database } from "../../config/firebase.config";
 
 
-interface shopDetailsState {
+interface ShopDetailsState {
    value: {
-      data: {
-         address: string,
-         providerID: string,
-         accountID: string,
-         category: string,
-         email: string,
-         name: string,
-         ownerName: string,
-         urlName: string,
-         createdAt: Timestamp;
-      } | DocumentData | null;
+      data: ShopData | null;
+      // data: ShopData | DocumentData | null;
       length: number | null;
    };
    status: 'idle' | 'loading' | 'failed';
@@ -45,7 +38,7 @@ function fetchShopDetails(shopAppUrl: string | string[] | undefined) {
 }
 
 
-const initialState: shopDetailsState = {
+const initialState: ShopDetailsState = {
    value: {
       data: null,
       length: null

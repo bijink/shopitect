@@ -3,12 +3,8 @@ import { useRouter } from "next/router";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { signIn as signInProvider } from "next-auth/react";
 
-interface PropsTypes {
-   title: string;
-}
 
-
-const UnAuthProvider = ({ title }: PropsTypes) => {
+const UnAuthProvider = ({ title }: { title: string; }) => {
    const router = useRouter();
 
    return (

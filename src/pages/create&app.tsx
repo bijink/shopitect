@@ -59,6 +59,7 @@ const Create_app: NextPage = () => {
                   ownerName: shopOwnerName,
                   address: shopAddress,
                   email: shopEmail,
+                  about: '',
                   // # providerID means 'Google auth user uid (integrated using firebase and nextAuth)'
                   providerID: session?.user.uid,
                   // # accountID means 'firebase auth user uid'
@@ -72,14 +73,19 @@ const Create_app: NextPage = () => {
                   setShopAddress('');
 
                   setLoading(false);
-                  router.push(`/${shopUrlName}`);
+                  router.push(`/${shopUrlName}`).then(() => {
+                     router.reload();
+                  });
                });
             });
          }).catch((error) => {
             const errorCode = error.code;
-            const errorMessage = error.message;
+            // const errorMessage = error.message;
             // ..
-            console.log(errorCode, ' : ', errorMessage);
+            console.error(`Signup Error (${errorCode})`);
+            alert(`Signup Error : ${errorCode}`);
+
+            setLoading(false);
          });
       } else {
          setLoading(false);
@@ -148,7 +154,7 @@ const Create_app: NextPage = () => {
          {(isAccountNotExist && (sessionStatus == 'authenticated')) ? (
             <Box py={3} >
                <Container >
-                  <Typography variant="h4" component={'div'} gutterBottom>Create App</Typography>
+                  <Typography variant="h5" component={'div'} gutterBottom>Create App</Typography>
                   <form onSubmit={handleFormSubmit}>
                      <Stack direction="column" spacing={3}>
                         <TextField

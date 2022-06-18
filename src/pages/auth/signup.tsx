@@ -17,8 +17,7 @@ const SignupConfirm = () => {
 
    const { data: session, status: sessionStatus } = useSession();
    // console.log(session?.user);
-
-   const { user, status: userStatus } = useUser();
+   const { data: user, status: userStatus } = useUser();
 
    const [shopUrlName, setShopUrlName] = useState('');
 
@@ -31,7 +30,9 @@ const SignupConfirm = () => {
          snapshot.forEach(obj => {
             // console.log(obj.data());
             if (sessionStatus === 'authenticated') {
-               router.push(`/${obj.data().urlName}`);
+               router.push(`/${obj.data().urlName}`).then(() => {
+                  router.reload();
+               });
             }
          });
       });

@@ -4,7 +4,7 @@ import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import ShopPagesHead from "../../../components/shopPagesHead";
-import { useSecurePage } from "../../../hooks";
+import { useShop } from "../../../hooks";
 import { PageSkeleton_layout, Page_layout } from "../../../layouts";
 import { useAppDispatch } from "../../../redux/hooks";
 import { setAppPageId } from "../../../redux/slices/pageId.slice";
@@ -19,16 +19,15 @@ import { Public_sideBar } from "../../../components/sideBar";
 const InfoPages: NextPage = () => {
    const router = useRouter();
    const { shopAppUrl, infoPages } = router.query;
-   // console.log(infoPages);
 
    const dispatch = useAppDispatch();
 
-   const secure = useSecurePage(shopAppUrl);
-   // console.log(secure);
+   const { data: shop, secure } = useShop(shopAppUrl);
 
    const [shopNotExistOnServer, setShopNotExistOnServer] = useState(false);
 
 
+   // #removing sessionStorage when shopAppUrl not exist on server data
    useEffect(() => {
       shopAppUrl && onSnapshot(query(collection(database, 'shops'), where('urlName', '==', shopAppUrl)), (snapshot) => {
          // console.log(snapshot.docs.length);
@@ -56,7 +55,7 @@ const InfoPages: NextPage = () => {
             )) || (((secure === 401) || (secure === 403)) && (
                <Page_layout navbar={<Public_navBar />} sidebar={<Public_sideBar />} >
                   {
-                     ((infoPages === 'about') && <About_page />)
+                     ((infoPages === 'about') && <About_page shopData={shop!} />)
                      ||
                      ((infoPages === 'admin') && <Admin_page />)
                   }

@@ -19,33 +19,19 @@ import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { database, storage } from "../../config/firebase.config";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { deleteUser, EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
-import { useUser } from '../../hooks';
-import { useAppSelector } from '../../redux/hooks';
-import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
+import { useShop, useUser } from '../../hooks';
 import { deleteObject, ref } from 'firebase/storage';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
-
-
-const style = {
-   position: 'absolute' as 'absolute',
-   top: '50%',
-   left: '50%',
-   transform: 'translate(-50%, -50%)',
-   width: '80%',
-   height: '75vh',
-   bgcolor: 'background.paper',
-   border: '2px solid #000',
-   boxShadow: 24,
-   overflowY: 'scroll',
-};
+import { useRouter } from 'next/router';
 
 
 export default function AccountDeleteDialog() {
-   const { data: session, status: sessionStatus } = useSession();
+   const router = useRouter();
+   const { shopAppUrl } = router.query;
 
-   const shop = useAppSelector(selectShopDetails);
-
-   const { user } = useUser();
+   const { data: session } = useSession();
+   const { data: user } = useUser();
+   const { data: shop } = useShop(shopAppUrl);
 
    const [shopUrlNameInput, setShopUrlNameInput] = useState('');
    const [password, setPassword] = useState('');
@@ -75,10 +61,10 @@ export default function AccountDeleteDialog() {
       return new Promise(resolve => {
          prodIds.forEach(id => {
             // console.log(id);
-            const imageRef = ref(storage, `/product-images/${shop?.data?.urlName}/PRODUCT_IMG:${id}`);
+            const imageRef = ref(storage, `/product-images/${shop?.urlName}/PRODUCT_IMG:${id}`);
             deleteObject(imageRef).then(() => {
-               deleteDoc(doc(database, "shops", shop?.data?.urlName, "products", id)).then(() => {
-                  // console.log('Deleted');
+               deleteDoc(doc(database, "shops", shop?.urlName!, "products", id)).then(() => {
+                  console.log('Deleted');
                   resolve(null);
                });
             });
@@ -87,12 +73,15 @@ export default function AccountDeleteDialog() {
    }
    function deleteAccount() {
       return new Promise(resolve => {
-         (shop?.data) && deleteDoc(doc(database, "shops", shop.data.urlName)).then(() => {
-            sessionStorage.removeItem('shop-details');
+         router.push('/').then(() => {
+            (shop) && deleteDoc(doc(database, "shops", shop.urlName)).then(() => {
+               sessionStorage.removeItem('shop-details');
 
-            signOutProvider({ callbackUrl: '/' }).then(() => {
                user && deleteUser(user).then(() => {
-                  resolve(null);
+                  // signOutProvider({ callbackUrl: '/' }).then(() => {
+                  signOutProvider({ redirect: false }).then(() => {
+                     resolve(null);
+                  });
                });
             });
          });
@@ -137,7 +126,7 @@ export default function AccountDeleteDialog() {
 
 
    useEffect(() => {
-      (shop?.data) && onSnapshot(collection(database, 'shops', shop.data.urlName, 'products'), (snapshot) => {
+      shop && onSnapshot(collection(database, 'shops', shop.urlName, 'products'), (snapshot) => {
          const arr: Array<string> = [];
          snapshot.forEach(obj => {
             arr.push(obj.id);

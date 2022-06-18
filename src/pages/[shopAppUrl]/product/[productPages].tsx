@@ -3,7 +3,7 @@ import type { NextPage } from "next";
 
 import { useRouter } from "next/router";
 import ShopPagesHead from "../../../components/shopPagesHead";
-import { useSecurePage } from "../../../hooks";
+import { useShop } from "../../../hooks";
 import { PageSkeleton_layout, Page_layout } from "../../../layouts";
 import Forbidden from "../../403";
 import NotFound from "../../404";
@@ -21,7 +21,7 @@ const ProductPages: NextPage = () => {
 
    const dispatch = useAppDispatch();
 
-   const secure = useSecurePage(shopAppUrl);
+   const { secure } = useShop(shopAppUrl);
 
 
    useEffect(() => {

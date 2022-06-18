@@ -18,7 +18,6 @@ import {
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { database } from '../../config/firebase.config';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { selectPageId } from '../../redux/slices/pageId.slice';
@@ -29,6 +28,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import HomeIcon from '@mui/icons-material/Home';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import { sidebarWidth } from '../../layouts/Page.layout';
+import { useShop } from '../../hooks';
 
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -45,16 +45,18 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 export default function ShopAdmin_sideBar() {
    const router = useRouter();
    const { shopAppUrl, category } = router.query;
+
    const dispatch = useAppDispatch();
-   const shop = useAppSelector(selectShopDetails);
    const pageId = useAppSelector(selectPageId);
+
+   const { data: shop } = useShop(shopAppUrl);
 
    const [categoryOpen, setCategoryOpen] = useState(false);
    const [categoryList, setCategoryList] = useState([] as Array<string>);
 
 
    useEffect(() => {
-      (shop?.data) && onSnapshot(query(collection(database, 'shops', shop.data?.urlName, 'products'), orderBy('category')), (snapshot) => {
+      shop && onSnapshot(query(collection(database, 'shops', shop.urlName, 'products'), orderBy('category')), (snapshot) => {
          let list: Array<string> = [];
 
          snapshot.forEach(obj => {

@@ -1,9 +1,5 @@
-import {
-   Box,
-   Typography,
-} from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import AccountDeleteDialog from "../../components/accountDeleteDialog";
-
 
 const Account_page = () => {
    return (

@@ -9,10 +9,9 @@ import { useEffect, useState } from 'react';
 import ProductCard from '../../components/productCard';
 import { database } from '../../config/firebase.config';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { selectShopDetails, setAppShopDetailsAsync } from '../../redux/slices/shopDetails.slice';
 import { setAppPageId } from '../../redux/slices/pageId.slice';
 import { PageSkeleton_layout, Page_layout } from '../../layouts';
-import { useSecurePage } from '../../hooks';
+import { useShop } from '../../hooks';
 import { Box, Pagination, Skeleton, Stack, Typography } from '@mui/material';
 import NotFound from '../404';
 import { selectProdSearchInput, setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
@@ -20,18 +19,14 @@ import { Public_navBar, ShopAdmin_navBar } from '../../components/navBar';
 import { Public_sideBar, ShopAdmin_sideBar } from '../../components/sideBar';
 
 
-const Shop: NextPage = () => {
+const ShopHome: NextPage = () => {
    const router = useRouter();
    const { shopAppUrl, category, page } = router.query;
-   // console.log(shopAppUrl);
 
    const dispatch = useAppDispatch();
-   const shop = useAppSelector(selectShopDetails);
    const searchInput_prod = useAppSelector(selectProdSearchInput);
-   // console.log(searchInput_prod);
 
-   const secure = useSecurePage(shopAppUrl);
-   // console.log(secure);
+   const { data: shop, secure } = useShop(shopAppUrl);
 
    const listLength = 10;
    const [prodDetails, setProdDetails] = useState<DocumentData>([]);
@@ -41,7 +36,7 @@ const Shop: NextPage = () => {
    const [pageLength, setPageLength] = useState(1);
 
 
-   //create a new array by filtering the original array
+   // #create a new array by filtering the original array
    const filteredProducts = prodDetails.filter((obj: DocumentData) => {
       if (searchInput_prod !== '') {
          return obj.data().name.toLowerCase().includes(searchInput_prod);
@@ -50,7 +45,7 @@ const Shop: NextPage = () => {
 
 
    useEffect(() => {
-      (shop?.data) && onSnapshot(query(collection(database, 'shops', shop.data?.urlName, 'products'), orderBy('createdAt', 'desc')), (snapshot) => {
+      shop && onSnapshot(query(collection(database, 'shops', shop.urlName, 'products'), orderBy('createdAt', 'desc')), (snapshot) => {
          setProdDetails(snapshot.docs);
          setProdDocLength(snapshot.docs.length);
          setPageLength(Math.ceil(snapshot.docs.length / listLength));
@@ -102,12 +97,23 @@ const Shop: NextPage = () => {
             setShopNotExistOnServer(true);
             sessionStorage.removeItem('shop-details');
          }
+
+         let docsLength = null;
+         let doc = null;
+
+         if (snapshot.docs.length === 0) docsLength = 0;
+         else if (snapshot.docs.length === 1) docsLength = 1;
+
+         snapshot.forEach(obj => (doc = obj.data()));
+
+         const shopDetails = {
+            data: doc,
+            length: docsLength,
+         };
+
+         sessionStorage.setItem('shop-details', JSON.stringify(shopDetails));
       });
    }, [database, shopAppUrl]);
-
-   useEffect(() => {
-      dispatch(setAppShopDetailsAsync(shopAppUrl));
-   }, [shopAppUrl]);
 
    useEffect(() => {
       dispatch(setAppPageId('shopHome_page'));
@@ -125,7 +131,7 @@ const Shop: NextPage = () => {
                            <ProductCard
                               key={index}
 
-                              shopUrlName={shop?.data?.urlName}
+                              shopUrlName={shop?.urlName!}
 
                               prodId={prod.id}
                               prodName={prod.data().name}
@@ -174,9 +180,9 @@ const Shop: NextPage = () => {
    return (
       <>
          <Head>
-            <title>{shop?.data ? shop.data.name : ((secure !== 404) ? 'Loading...' : '404')}</title>
+            <title>{shop ? shop.name : ((secure !== 404) ? 'Loading...' : '404')}</title>
             <meta name="description" content="" />
-            <meta property="og:title" content={shop?.data?.name} key="title" />
+            <meta property="og:title" content={shop?.name} key="title" />
          </Head>
 
          <>
@@ -212,4 +218,4 @@ const Shop: NextPage = () => {
    );
 };
 
-export default Shop;
+export default ShopHome;

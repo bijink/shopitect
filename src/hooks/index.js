@@ -1,4 +1,4 @@
 import useUser from "./useUser";
-import useSecurePage from "./useSecurePage";
+import useShop from "./useShop";
 
-export { useUser, useSecurePage };
+export { useUser, useShop };

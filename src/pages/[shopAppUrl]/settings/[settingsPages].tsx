@@ -5,7 +5,7 @@ import { capitalize } from "@mui/material";
 import { useRouter } from "next/router";
 import { Account_page, Profile_page } from "../../../dynamicPages/settingsPage";
 import ShopPagesHead from "../../../components/shopPagesHead";
-import { useSecurePage } from "../../../hooks";
+import { useShop } from "../../../hooks";
 import { PageSkeleton_layout, Page_layout } from "../../../layouts";
 import Forbidden from "../../403";
 import NotFound from "../../404";
@@ -22,8 +22,7 @@ const SettingsPages: NextPage = () => {
 
    const dispatch = useAppDispatch();
 
-   const secure = useSecurePage(shopAppUrl);
-   // console.log(secure);
+   const { secure } = useShop(shopAppUrl);
 
 
    useEffect(() => {

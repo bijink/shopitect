@@ -1,24 +1,18 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useSecurePage } from "../../hooks";
-import { useAppSelector } from "../../redux/hooks";
-import { selectShopDetails } from "../../redux/slices/shopDetails.slice";
+import { useShop } from "../../hooks";
 
 const ShopPagesHead = ({ title = '' }: { title: string; }) => {
    const router = useRouter();
    const { shopAppUrl } = router.query;
 
-   const shop = useAppSelector(selectShopDetails);
-
-   const secure = useSecurePage(shopAppUrl);
-   // console.log(secure);
-
+   const { data: shop, secure } = useShop(shopAppUrl);
 
    return (
       <Head>
-         <title>{shop?.data ? `${title} · ${shop.data.name}` : ((secure !== 404) ? 'Loading...' : '404')}</title>
+         <title>{shop ? `${title} · ${shop.name}` : ((secure !== 404) ? 'Loading...' : '404')}</title>
          {/* <meta name="description" content="" /> */}
-         <meta property="og:title" content={shop?.data?.name} key="title" />
+         <meta property="og:title" content={shop?.name} key="title" />
       </Head>
    );
 };

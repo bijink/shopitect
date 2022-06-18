@@ -11,16 +11,13 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import { selectPageId } from '../../redux/slices/pageId.slice';
-import MenuIcon from '@mui/icons-material/Menu';
 import InfoIcon from '@mui/icons-material/Info';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled, alpha } from '@mui/material/styles';
 import { setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
 import { ChangeEvent, FormEvent, useState } from 'react';
-
+import { useShop } from '../../hooks';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -69,8 +66,9 @@ export default function Public_navBar() {
    const { shopAppUrl, category } = router.query;
 
    const dispatch = useAppDispatch();
-   const shop = useAppSelector(selectShopDetails);
    const pageId = useAppSelector(selectPageId);
+
+   const { data: shop } = useShop(shopAppUrl);
 
    const [searchInput, setSearchInput] = useState('');
 
@@ -80,9 +78,9 @@ export default function Public_navBar() {
          <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }} >
             <Toolbar >
                <Stack direction="row" alignItems="center" spacing={1.5} pr={3} >
-                  <Tooltip title={shop?.data?.name} arrow >
-                     {/* <Avatar alt={shop?.data?.name} src={} /> */}
-                     <Avatar alt={shop?.data?.name} >{shop?.data?.name.slice(0, 1)}</Avatar>
+                  <Tooltip title={shop ? shop?.name : ''} arrow >
+                     {/* <Avatar alt={shop?.name} src={} /> */}
+                     <Avatar alt={shop?.name} >{shop?.name.slice(0, 1)}</Avatar>
                   </Tooltip>
                   <Typography
                      variant="h6"
@@ -91,7 +89,7 @@ export default function Public_navBar() {
                      sx={{ display: { xs: 'none', sm: 'block' }, cursor: 'pointer' }}
                      onClick={() => router.push(`/${shopAppUrl}`)}
                   >
-                     {shop?.data?.name}
+                     {shop?.name}
                   </Typography>
                </Stack>
                <Box sx={{ flexGrow: 10 }} />

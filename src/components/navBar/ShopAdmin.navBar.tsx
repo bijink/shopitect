@@ -5,7 +5,6 @@ import {
    Toolbar,
    Typography,
    InputBase,
-   Badge,
    MenuItem,
    Menu,
    Tooltip,
@@ -15,18 +14,15 @@ import {
 } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useRouter } from 'next/router';
 import { auth } from '../../config/firebase.config';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
 import { signOut as signOutProvider, useSession } from 'next-auth/react';
 import { signOut as signOutAccount } from 'firebase/auth';
-import { useSecurePage, useUser } from '../../hooks';
+import { useShop } from '../../hooks';
 import { selectPageId } from '../../redux/slices/pageId.slice';
 import { setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 
@@ -73,25 +69,17 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function ShopAdmin_navBar() {
-   const { data: session } = useSession();
-   // console.log(session?.user);
-
    const router = useRouter();
    const { shopAppUrl, category, productPages } = router.query;
 
    const dispatch = useAppDispatch();
-
-   const secure = useSecurePage(shopAppUrl);
-   const { user, status: userStatus } = useUser();
-   // console.log(user);
-
-   const shop = useAppSelector(selectShopDetails);
    const pageId = useAppSelector(selectPageId);
+
+   const { data: shop } = useShop(shopAppUrl);
 
    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
    const [searchInput, setSearchInput] = React.useState('');
 
-   const isMenuOpen = Boolean(anchorEl);
 
    const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
       setAnchorEl(event.currentTarget);
@@ -102,6 +90,7 @@ export default function ShopAdmin_navBar() {
    };
 
 
+   const isMenuOpen = Boolean(anchorEl);
    const menuId = 'primary-search-account-menu';
    const renderMenu = (
       <Menu
@@ -142,9 +131,9 @@ export default function ShopAdmin_navBar() {
          <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }} >
             <Toolbar >
                <Stack direction="row" alignItems="center" spacing={1.5} pr={3} >
-                  <Tooltip title={shop?.data?.name} arrow >
-                     {/* <Avatar alt={shop?.data?.name} src={} /> */}
-                     <Avatar alt={shop?.data?.name} >{shop?.data?.name.slice(0, 1)}</Avatar>
+                  <Tooltip title={shop ? shop.name : ''} arrow >
+                     {/* <Avatar alt={shop?.name} src={} /> */}
+                     <Avatar alt={shop?.name} >{shop?.name.slice(0, 1)}</Avatar>
                   </Tooltip>
                   <Typography
                      variant="h6"
@@ -153,7 +142,7 @@ export default function ShopAdmin_navBar() {
                      sx={{ display: { xs: 'none', sm: 'block' }, cursor: 'pointer' }}
                      onClick={() => router.push(`/${shopAppUrl}`)}
                   >
-                     {shop?.data?.name}
+                     {shop?.name}
                   </Typography>
                </Stack>
                <Box sx={{ flexGrow: 10 }} />

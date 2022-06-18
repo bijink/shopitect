@@ -5,10 +5,9 @@ import { useEffect, useState } from 'react';
 import ProductTable from '../../components/productTable';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { signIn as signInProvider } from "next-auth/react";
-import { selectShopDetails } from '../../redux/slices/shopDetails.slice';
 import { collection, DocumentData, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { database } from '../../config/firebase.config';
-import { useSecurePage } from '../../hooks';
+import { useShop } from '../../hooks';
 import { selectProdSearchInput, setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
 import { changeProdTableCollapse } from '../../redux/slices/prodTableCollapse.slice';
 import Snackbars from '../../components/snackbars';
@@ -20,10 +19,9 @@ const ProductTable_page = () => {
    const { shopAppUrl, category, page } = router.query;
 
    const dispatch = useAppDispatch();
-   const shop = useAppSelector(selectShopDetails);
    const searchInput_prod = useAppSelector(selectProdSearchInput);
 
-   const secure = useSecurePage(shopAppUrl);
+   const { data: shop, secure } = useShop(shopAppUrl);
 
    const listLength = 10;
    const [prodDetails, setProdDetails] = useState<DocumentData>([]);
@@ -32,7 +30,7 @@ const ProductTable_page = () => {
    const [pageLength, setPageLength] = useState(1);
 
 
-   //create a new array by filtering the original array
+   // #create a new array by filtering the original array
    const filteredProducts = prodDetails.filter((obj: DocumentData) => {
       if (searchInput_prod !== '') {
          return obj.data().name.toLowerCase().includes(searchInput_prod);
@@ -41,7 +39,7 @@ const ProductTable_page = () => {
 
 
    useEffect(() => {
-      (shop?.data) && onSnapshot(query(collection(database, 'shops', shop.data?.urlName, 'products'), orderBy('codeName')), (snapshot) => {
+      shop && onSnapshot(query(collection(database, 'shops', shop.urlName, 'products'), orderBy('codeName')), (snapshot) => {
          setProdDetails(snapshot.docs);
          setProdDocLength(snapshot.docs.length);
          setPageLength(Math.ceil(snapshot.docs.length / listLength));
@@ -114,7 +112,8 @@ const ProductTable_page = () => {
             <>
                {((prodDocLength! > 0)) ? (
                   <Stack spacing={2} >
-                     <ProductTable shopData={shop.data} products={(filteredProducts.length ? filteredProducts : prodDetails_new)} />
+                     <ProductTable shopData={shop!} products={(filteredProducts.length ? filteredProducts : prodDetails_new)} />
+
                      <Stack direction='row' justifyContent="center" alignItems="center" >
                         {(!(category && (filteredProducts.length > 0)) && (prodDetails_new.length > 0)) && (
                            <Pagination

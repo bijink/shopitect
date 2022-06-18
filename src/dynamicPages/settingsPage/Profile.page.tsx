@@ -1,13 +1,13 @@
 import { Box, Stack, TextareaAutosize, TextField, Typography } from "@mui/material";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { setAppPageId } from "../../redux/slices/pageId.slice";
 import { selectShopDetails, setAppShopDetailsAsync } from "../../redux/slices/shopDetails.slice";
 import { collection, doc, onSnapshot, query, updateDoc, where } from "firebase/firestore";
 import { database } from "../../config/firebase.config";
 import { LoadingButton } from "@mui/lab";
 import { useRouter } from "next/router";
 import UpdateIcon from '@mui/icons-material/Update';
+import { useShop } from "../../hooks";
 
 
 const Profile_page = () => {
@@ -16,13 +16,13 @@ const Profile_page = () => {
 
    const dispatch = useAppDispatch();
 
-   const shop = useAppSelector(selectShopDetails);
-   // console.log(shop);
+   const { data: shop } = useShop(shopAppUrl);
 
    const [shopName, setShopName] = useState('');
    const [shopCategory, setShopCategory] = useState('');
    const [shopOwnerName, setShopOwnerName] = useState('');
    const [shopAddress, setShopAddress] = useState('');
+   const [shopAbout, setShopAbout] = useState('');
 
    const [loading, setLoading] = useState(false);
 
@@ -31,14 +31,14 @@ const Profile_page = () => {
       e.preventDefault();
       setLoading(true);
 
-      await updateDoc(doc(database, "shops", shop?.data?.urlName), {
+      await updateDoc(doc(database, "shops", shop?.urlName!), {
          name: shopName,
          category: shopCategory,
          ownerName: shopOwnerName,
          address: shopAddress,
+         about: shopAbout,
       }).then(() => {
          setLoading(false);
-         // router.reload();
       });
    };
 
@@ -56,6 +56,7 @@ const Profile_page = () => {
             setShopOwnerName(obj.data().ownerName);
             setShopCategory(obj.data().category);
             setShopAddress(obj.data().address);
+            setShopAbout(obj.data().about);
 
             doc = obj.data();
          });
@@ -70,14 +71,6 @@ const Profile_page = () => {
          dispatch(setAppShopDetailsAsync(shopAppUrl));
       });
    }, [shopAppUrl, database]);
-
-   // useEffect(() => {
-   //    (secure === '401') && signInProvider('google', { redirect: false, callbackUrl: `/auth/signup` });
-   // }, [secure]);
-
-   // useEffect(() => {
-   //    dispatch(setAppPageId('profile_page'));
-   // }, []);
 
 
    return (
@@ -117,29 +110,49 @@ const Profile_page = () => {
                      onInput={(e: ChangeEvent<HTMLInputElement>) => setShopCategory(e.target.value)}
                   />
                </Box>
-               <Box width={'100%'} >
-                  <Typography variant="body1" sx={{ fontWeight: '500' }} gutterBottom >Address</Typography>
-                  <TextareaAutosize
-                     aria-label="shop address"
-                     placeholder="Shop Address*"
-                     minRows={5}
-                     maxRows={5}
-                     style={{
-                        minWidth: '50%',
-                        maxWidth: '50%',
-                        // minWidth: '80%',
-                        // maxWidth: '80%',
-                        fontSize: '15px',
-                        padding: '12px',
-                        borderRadius: '4px',
-                        borderColor: 'lightgray',
-                        outlineColor: '#1976d2',
-                     }}
-                     value={shopAddress}
-                     onInput={(e: ChangeEvent<HTMLTextAreaElement>) => setShopAddress(e.target.value)}
-                     required
-                  />
-               </Box>
+               <Stack direction="row" width={'100%'} >
+                  <Box width={'50%'} >
+                     <Typography variant="body1" sx={{ fontWeight: '500' }} gutterBottom >Address</Typography>
+                     <TextareaAutosize
+                        aria-label="shop address"
+                        placeholder="Shop Address*"
+                        minRows={5}
+                        maxRows={5}
+                        style={{
+                           minWidth: '99%',
+                           maxWidth: '99%',
+                           fontSize: '15px',
+                           padding: '12px',
+                           borderRadius: '4px',
+                           borderColor: 'lightgray',
+                           outlineColor: '#1976d2',
+                        }}
+                        value={shopAddress}
+                        onInput={(e: ChangeEvent<HTMLTextAreaElement>) => setShopAddress(e.target.value)}
+                        required
+                     />
+                  </Box>
+                  <Box width={'50%'} pl="1%" >
+                     <Typography variant="body1" sx={{ fontWeight: '500' }} gutterBottom >About</Typography>
+                     <TextareaAutosize
+                        aria-label="about shop"
+                        placeholder="About Shop"
+                        minRows={5}
+                        maxRows={5}
+                        style={{
+                           minWidth: '100%',
+                           maxWidth: '100%',
+                           fontSize: '15px',
+                           padding: '12px',
+                           borderRadius: '4px',
+                           borderColor: 'lightgray',
+                           outlineColor: '#1976d2',
+                        }}
+                        value={shopAbout}
+                        onInput={(e: ChangeEvent<HTMLTextAreaElement>) => setShopAbout(e.target.value)}
+                     />
+                  </Box>
+               </Stack>
                <Box>
                   <LoadingButton
                      variant="contained"

@@ -11,27 +11,27 @@ import { DocumentData } from "firebase/firestore";
 import { database } from "../../config/firebase.config";
 import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/router";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { selectShopDetails } from "../../redux/slices/shopDetails.slice";
+import { useAppDispatch } from "../../redux/hooks";
 import { ProductTypes } from "../../types/pages/productView.types";
 import { setAppPageId } from "../../redux/slices/pageId.slice";
+import { useShop } from "../../hooks";
 
 
 const ProductView_page = () => {
    const router = useRouter();
-   const { id: productId } = router.query;
+   const { id: productId, shopAppUrl } = router.query;
 
    const dispatch = useAppDispatch();
 
-   const shop = useAppSelector(selectShopDetails);
+   const { data: shop } = useShop(shopAppUrl);
 
    const [prodDetails, setProdDetails] = useState({} as ProductTypes | DocumentData);
    // console.log(prodDetails && Object.keys(prodDetails).length);
 
 
    useEffect(() => {
-      if (productId && shop.data) {
-         getDoc(doc(database, 'shops', shop.data.urlName, 'products', productId.toString())).then((snap) => {
+      if (productId && shop) {
+         getDoc(doc(database, 'shops', shop.urlName, 'products', productId.toString())).then((snap) => {
             setProdDetails(snap.data()!);
          });
       }

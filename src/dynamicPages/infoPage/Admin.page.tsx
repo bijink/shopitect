@@ -10,7 +10,7 @@ const Admin_page = () => {
    const router = useRouter();
    const { shopAppUrl } = router.query;
 
-   const { user, status: userStatus } = useUser();
+   const { data: user, status: userStatus } = useUser();
 
 
    return (

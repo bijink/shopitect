@@ -1,11 +1,30 @@
-import { Typography } from "@mui/material";
+import type { ShopData } from "../../types/global.types";
+
+import { Typography, colors, Stack, Box } from "@mui/material";
 
 
-const About_page = () => {
+const About_page = ({ shopData }: { shopData: ShopData; }) => {
    return (
       <>
-         <Typography variant="h4" gutterBottom >About Us</Typography>
-         <Typography variant="body1" >Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem nihil excepturi doloribus doloremque iure odio enim aliquam porro hic! Rem rerum, cupiditate nisi voluptas consequatur esse distinctio repudiandae est expedita ducimus beatae! Provident ad ipsum cumque? Officiis, quae omnis. Sint a laudantium neque itaque, aliquam quos reiciendis autem esse recusandae, in perferendis aut aperiam officiis? Dolor excepturi impedit corrupti debitis, cum vitae reiciendis culpa officiis. Deserunt, voluptatibus voluptates harum omnis iure maiores unde autem at facere impedit illum necessitatibus rem, molestias sapiente veritatis natus excepturi? Obcaecati vitae nostrum totam officia minus laboriosam, non illum sunt explicabo ullam quia porro reprehenderit.</Typography>
+         <Typography variant="h5" component="p" gutterBottom >About Us</Typography>
+         {(shopData) && (
+            <>
+               <Typography variant="h6" component="p" >{shopData.name} - {shopData.category}</Typography>
+               <Typography variant="subtitle2" component="p" pb={2} fontWeight="800" color={colors.grey[700]} >Owned by: {shopData.ownerName}</Typography>
+               {shopData.about && (
+                  <Stack direction="column" pb={2} >
+                     {shopData.about.split('\n').map((str: string, index: number) => (
+                        <Typography key={index} variant="body2" component="p" >{str}</Typography>
+                     ))}
+                  </Stack>
+               )}
+               <Box>
+                  {shopData.address && shopData.address.split('\n').map((str: string, index: number) => (
+                     <Typography key={index} variant="subtitle2" component="p" >{str}</Typography>
+                  ))}
+               </Box>
+            </>
+         )}
       </>
    );
 };
