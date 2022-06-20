@@ -74,7 +74,7 @@ const Row = ({ rowBgColor, shopUrlName, prodId, prodNo, prodCodeName, prodName, 
       setLoading_remove(true);
       dispatch(changeProdTableCollapse());
 
-      const imageRef = ref(storage, `/product-images/${shopUrlName}/PRODUCT_IMG:${prodId}`);
+      const imageRef = ref(storage, `/${shopUrlName}/product-images/PRODUCT_IMG:${prodId}`);
       await deleteObject(imageRef).then(() => {
          deleteDoc(doc(database, "shops", shopUrlName, "products", prodId)).then(() => {
             handleDialogClose();

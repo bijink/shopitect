@@ -11,4 +11,5 @@ export interface ShopData {
    about: string;
    urlName: string;
    createdAt: Timestamp;
+   logoUrl: string;
 }

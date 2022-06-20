@@ -1,13 +1,15 @@
-import { Box, Stack, TextareaAutosize, TextField, Typography } from "@mui/material";
+import { Box, Stack, TextField, Typography } from "@mui/material";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { selectShopDetails, setAppShopDetailsAsync } from "../../redux/slices/shopDetails.slice";
+import { useAppDispatch } from "../../redux/hooks";
+import { setAppShopDetailsAsync } from "../../redux/slices/shopDetails.slice";
 import { collection, doc, onSnapshot, query, updateDoc, where } from "firebase/firestore";
-import { database } from "../../config/firebase.config";
+import { database, storage } from "../../config/firebase.config";
 import { LoadingButton } from "@mui/lab";
 import { useRouter } from "next/router";
 import UpdateIcon from '@mui/icons-material/Update';
 import { useShop } from "../../hooks";
+import { ImageCropper } from "../../components/dialogs";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 
 const Profile_page = () => {
@@ -23,6 +25,7 @@ const Profile_page = () => {
    const [shopOwnerName, setShopOwnerName] = useState('');
    const [shopAddress, setShopAddress] = useState('');
    const [shopAbout, setShopAbout] = useState('');
+   const [shopLogo, setShopLogo] = useState<Blob | null>(null);
 
    const [loading, setLoading] = useState(false);
 
@@ -31,15 +34,41 @@ const Profile_page = () => {
       e.preventDefault();
       setLoading(true);
 
-      await updateDoc(doc(database, "shops", shop?.urlName!), {
-         name: shopName,
-         category: shopCategory,
-         ownerName: shopOwnerName,
-         address: shopAddress,
-         about: shopAbout,
-      }).then(() => {
-         setLoading(false);
-      });
+      const logoRef = ref(storage, `/${shop?.urlName!}/shop-logo`);
+
+      if (shopLogo) {
+         await updateDoc(doc(database, "shops", shop?.urlName!), {
+            name: shopName,
+            category: shopCategory,
+            ownerName: shopOwnerName,
+            address: shopAddress,
+            about: shopAbout,
+         }).then(() => {
+            uploadBytes(logoRef, shopLogo!).then(() => {
+               getDownloadURL(logoRef).then(url => {
+                  updateDoc(doc(database, 'shops', shop?.urlName!), {
+                     logoUrl: url,
+                  }).then(() => {
+                     setLoading(false);
+                  });
+               });
+            });
+         }).catch((err) => {
+            console.error(err.message);
+         });
+      } else {
+         await updateDoc(doc(database, "shops", shop?.urlName!), {
+            name: shopName,
+            category: shopCategory,
+            ownerName: shopOwnerName,
+            address: shopAddress,
+            about: shopAbout,
+         }).then(() => {
+            setLoading(false);
+         }).catch((err) => {
+            console.error(err.message);
+         });
+      }
    };
 
 
@@ -78,7 +107,7 @@ const Profile_page = () => {
          <form onSubmit={handleSubmit} >
             <Stack direction="column" spacing={2} >
                <Box>
-                  <Typography variant="body1" sx={{ fontWeight: '500' }} gutterBottom >Shop Name</Typography>
+                  <Typography variant="body1" fontWeight={500} gutterBottom >Shop Name</Typography>
                   <TextField
                      size="small"
                      id="outlined-required"
@@ -89,7 +118,7 @@ const Profile_page = () => {
                   />
                </Box>
                <Box>
-                  <Typography variant="body1" sx={{ fontWeight: '500' }} gutterBottom >Owner Name</Typography>
+                  <Typography variant="body1" fontWeight={500} gutterBottom >Owner Name</Typography>
                   <TextField
                      size="small"
                      id="outlined-required"
@@ -100,7 +129,7 @@ const Profile_page = () => {
                   />
                </Box>
                <Box>
-                  <Typography variant="body1" sx={{ fontWeight: '500' }} gutterBottom >Category</Typography>
+                  <Typography variant="body1" fontWeight={500} gutterBottom >Category</Typography>
                   <TextField
                      size="small"
                      id="outlined-required"
@@ -112,47 +141,40 @@ const Profile_page = () => {
                </Box>
                <Stack direction="row" width={'100%'} >
                   <Box width={'50%'} >
-                     <Typography variant="body1" sx={{ fontWeight: '500' }} gutterBottom >Address</Typography>
-                     <TextareaAutosize
-                        aria-label="shop address"
+                     <Typography variant="body1" fontWeight={500} gutterBottom >Address</Typography>
+                     <TextField
+                        size="small"
+                        id="outlined-required"
                         placeholder="Shop Address*"
-                        minRows={5}
+                        fullWidth
+                        multiline
+                        minRows={3}
                         maxRows={5}
-                        style={{
-                           minWidth: '99%',
-                           maxWidth: '99%',
-                           fontSize: '15px',
-                           padding: '12px',
-                           borderRadius: '4px',
-                           borderColor: 'lightgray',
-                           outlineColor: '#1976d2',
-                        }}
                         value={shopAddress}
-                        onInput={(e: ChangeEvent<HTMLTextAreaElement>) => setShopAddress(e.target.value)}
+                        onInput={(e: ChangeEvent<HTMLInputElement>) => setShopAddress(e.target.value)}
                         required
                      />
                   </Box>
                   <Box width={'50%'} pl="1%" >
-                     <Typography variant="body1" sx={{ fontWeight: '500' }} gutterBottom >About</Typography>
-                     <TextareaAutosize
-                        aria-label="about shop"
+                     <Typography variant="body1" fontWeight={500} gutterBottom >About</Typography>
+                     <TextField
+                        size="small"
+                        id="outlined-required"
                         placeholder="About Shop"
-                        minRows={5}
+                        fullWidth
+                        multiline
+                        minRows={3}
                         maxRows={5}
-                        style={{
-                           minWidth: '100%',
-                           maxWidth: '100%',
-                           fontSize: '15px',
-                           padding: '12px',
-                           borderRadius: '4px',
-                           borderColor: 'lightgray',
-                           outlineColor: '#1976d2',
-                        }}
                         value={shopAbout}
-                        onInput={(e: ChangeEvent<HTMLTextAreaElement>) => setShopAbout(e.target.value)}
+                        onInput={(e: ChangeEvent<HTMLInputElement>) => setShopAbout(e.target.value)}
                      />
                   </Box>
                </Stack>
+               <Box>
+                  <Typography variant="body1" fontWeight={500} gutterBottom >Shop Logo</Typography>
+                  <ImageCropper getBlob={setShopLogo} />
+               </Box>
+
                <Box>
                   <LoadingButton
                      variant="contained"

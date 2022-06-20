@@ -181,8 +181,9 @@ const ShopHome: NextPage = () => {
       <>
          <Head>
             <title>{shop ? shop.name : ((secure !== 404) ? 'Loading...' : '404')}</title>
-            <meta name="description" content="" />
+            <meta name="description" content={shop?.category} />
             <meta property="og:title" content={shop?.name} key="title" />
+            <link rel="icon" type="image/*" href={shop ? shop.logoUrl : '/img/loading-blank-logo.png'} />
          </Head>
 
          <>

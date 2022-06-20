@@ -92,7 +92,7 @@ const ProductInputForm = ({ shopData }: ProductInputProps) => {
             profitPercentage: parseFloat(profitPercentageInput),
             createdAt: serverTimestamp(),
          }).then((res) => {
-            const imageRef = ref(storage, `/product-images/${shopData?.urlName}/PRODUCT_IMG:${res.id}`);
+            const imageRef = ref(storage, `/${shopData?.urlName}/product-images/PRODUCT_IMG:${res.id}`);
             uploadBytes(imageRef, prodImage!).then(() => {
                getDownloadURL(imageRef).then(url => {
                   updateDoc(doc(database, 'shops', shopData?.urlName, 'products', res.id), {

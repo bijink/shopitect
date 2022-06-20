@@ -25,7 +25,7 @@ import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import { useRouter } from 'next/router';
 
 
-export default function AccountDeleteDialog() {
+export default function AccountDelete_dialog() {
    const router = useRouter();
    const { shopAppUrl } = router.query;
 
@@ -61,7 +61,7 @@ export default function AccountDeleteDialog() {
       return new Promise(resolve => {
          prodIds.forEach(id => {
             // console.log(id);
-            const imageRef = ref(storage, `/product-images/${shop?.urlName}/PRODUCT_IMG:${id}`);
+            const imageRef = ref(storage, `/${shop?.urlName}/product-images/PRODUCT_IMG:${id}`);
             deleteObject(imageRef).then(() => {
                deleteDoc(doc(database, "shops", shop?.urlName!, "products", id)).then(() => {
                   console.log('Deleted');
@@ -74,13 +74,16 @@ export default function AccountDeleteDialog() {
    function deleteAccount() {
       return new Promise(resolve => {
          router.push('/').then(() => {
-            (shop) && deleteDoc(doc(database, "shops", shop.urlName)).then(() => {
-               sessionStorage.removeItem('shop-details');
+            const imageRef = ref(storage, `/${shop?.urlName}/shop-logo`);
+            deleteObject(imageRef).then(() => {
+               (shop) && deleteDoc(doc(database, "shops", shop.urlName)).then(() => {
+                  sessionStorage.removeItem('shop-details');
 
-               user && deleteUser(user).then(() => {
-                  // signOutProvider({ callbackUrl: '/' }).then(() => {
-                  signOutProvider({ redirect: false }).then(() => {
-                     resolve(null);
+                  user && deleteUser(user).then(() => {
+                     // signOutProvider({ callbackUrl: '/' }).then(() => {
+                     signOutProvider({ redirect: false }).then(() => {
+                        resolve(null);
+                     });
                   });
                });
             });

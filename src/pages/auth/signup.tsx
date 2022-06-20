@@ -49,7 +49,7 @@ const SignupConfirm = () => {
             });
          } else {
             // #if there is no existing account 
-            router.push('/create&app');
+            router.push('/create');
          }
       });
    }, [session]);
@@ -59,6 +59,7 @@ const SignupConfirm = () => {
       <>
          <Head>
             <title>Signup · Shopitect</title>
+            <link rel="icon" type="image/png" href="/img/shopitect-logo.png" />
          </Head>
 
          {((sessionStatus === 'unauthenticated') && (

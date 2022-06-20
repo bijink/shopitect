@@ -9,7 +9,6 @@ import { database } from "../../config/firebase.config";
 interface ShopDetailsState {
    value: {
       data: ShopData | null;
-      // data: ShopData | DocumentData | null;
       length: number | null;
    };
    status: 'idle' | 'loading' | 'failed';

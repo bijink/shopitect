@@ -99,6 +99,7 @@ const LoginConfirm = () => {
       <>
          <Head>
             <title>Login · Shopitect</title>
+            <link rel="icon" type="image/png" href="/img/shopitect-logo.png" />
          </Head>
 
          {((sessionStatus === 'unauthenticated') && (

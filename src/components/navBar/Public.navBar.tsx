@@ -79,8 +79,8 @@ export default function Public_navBar() {
             <Toolbar >
                <Stack direction="row" alignItems="center" spacing={1.5} pr={3} >
                   <Tooltip title={shop ? shop?.name : ''} arrow >
-                     {/* <Avatar alt={shop?.name} src={} /> */}
-                     <Avatar alt={shop?.name} >{shop?.name.slice(0, 1)}</Avatar>
+                     <Avatar alt={shop?.name} src={shop?.logoUrl} />
+                     {/* <Avatar alt={shop?.name} >{shop?.name.slice(0, 1)}</Avatar> */}
                   </Tooltip>
                   <Typography
                      variant="h6"

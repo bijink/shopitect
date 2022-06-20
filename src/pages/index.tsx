@@ -42,8 +42,7 @@ const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
       <>
          <Head>
             <title>Shopitect</title>
-            <meta name="description" content="An architect of shop management application" />
-            <meta property="og:title" content="Shopitect" key="title" />
+            <link rel="icon" type="image/png" href="/img/shopitect-logo.png" />
          </Head>
 
          <Stack

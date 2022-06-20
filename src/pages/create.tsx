@@ -1,18 +1,20 @@
 import type { NextPage } from "next";
 
 import { LoadingButton } from "@mui/lab";
-import { Box, Button, CircularProgress, Container, IconButton, InputAdornment, Stack, TextareaAutosize, TextField, Typography } from "@mui/material";
-import { collection, doc, onSnapshot, query, serverTimestamp, setDoc, where } from "firebase/firestore";
-import { ChangeEvent, FormEvent, MutableRefObject, RefObject, useEffect, useRef, useState } from "react";
-import { database, auth } from "../config/firebase.config";
+import { Box, Button, CircularProgress, Container, IconButton, InputAdornment, Stack, TextField, Typography } from "@mui/material";
+import { collection, doc, onSnapshot, query, serverTimestamp, setDoc, updateDoc, where } from "firebase/firestore";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
+import { database, auth, storage } from "../config/firebase.config";
 import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
 import { useRouter } from "next/router";
-import { signOut as signOutProvider, signIn as signInProvider, useSession } from "next-auth/react";
+import { signIn as signInProvider, useSession } from "next-auth/react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import Head from "next/head";
 import { setAppPageId } from "../redux/slices/pageId.slice";
 import { useAppDispatch } from "../redux/hooks";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { ImageCropper } from "../components/dialogs";
 
 
 const Create_app: NextPage = () => {
@@ -21,7 +23,6 @@ const Create_app: NextPage = () => {
    const dispatch = useAppDispatch();
 
    const { data: session, status: sessionStatus } = useSession();
-   // console.log(session?.user);
 
    const inputFocusRef = useRef<any>(null);
 
@@ -32,6 +33,8 @@ const Create_app: NextPage = () => {
    const [shopAddress, setShopAddress] = useState('');
    const [shopUrlName, setShopUrlName] = useState('');
    const [password, setPassword] = useState('');
+   const [shopLogo, setShopLogo] = useState<Blob | null>(null);
+   // console.log('final-blob:', shopLogo);
 
    const [loading, setLoading] = useState(false);
    const [shopDocIds, setShopDocIds] = useState([] as Array<string>);
@@ -42,10 +45,10 @@ const Create_app: NextPage = () => {
 
    const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      setLoading(true);
 
       // #shopUrlName is used as documentID in firebase firestore as a unique id
-      if (session && isShopUrlNameUnique && (password.length >= 8)) {
+      if (session && isShopUrlNameUnique && (password.length >= 8) && shopLogo) {
+         setLoading(true);
          await createUserWithEmailAndPassword(auth, shopEmail, password).then((userCredential) => {
             // Signed in 
             // const user = userCredential.user;
@@ -59,22 +62,32 @@ const Create_app: NextPage = () => {
                   ownerName: shopOwnerName,
                   address: shopAddress,
                   email: shopEmail,
-                  about: '',
                   // # providerID means 'Google auth user uid (integrated using firebase and nextAuth)'
                   providerID: session?.user.uid,
                   // # accountID means 'firebase auth user uid'
                   accountID: auth.currentUser?.uid,
                   createdAt: serverTimestamp(),
+                  about: '',
                }).then(() => {
-                  setShopName('');
-                  setShopUrlName('');
-                  setShopCategory('');
-                  setShopOwnerName('');
-                  setShopAddress('');
+                  const logoRef = ref(storage, `/${shopUrlName}/shop-logo`);
+                  uploadBytes(logoRef, shopLogo!).then(() => {
+                     getDownloadURL(logoRef).then(url => {
+                        updateDoc(doc(database, 'shops', shopUrlName), {
+                           logoUrl: url,
+                        }).then(() => {
+                           setShopName('');
+                           setShopUrlName('');
+                           setShopCategory('');
+                           setShopOwnerName('');
+                           setShopAddress('');
+                           setShopLogo(null);
 
-                  setLoading(false);
-                  router.push(`/${shopUrlName}`).then(() => {
-                     router.reload();
+                           setLoading(false);
+                           router.push(`/${shopUrlName}`).then(() => {
+                              router.reload();
+                           });
+                        });
+                     });
                   });
                });
             });
@@ -87,9 +100,15 @@ const Create_app: NextPage = () => {
 
             setLoading(false);
          });
+      } else if (!isShopUrlNameUnique) {
+         alert('Shop Url Name must be unique');
+      } else if (!(password.length >= 8)) {
+         alert('Password must exceed 8 characters');
+      } else if (!shopLogo) {
+         alert('Please crop image');
       } else {
          setLoading(false);
-         alert('Please enter all fields correctly');
+         alert('Something went wrong. Please try again.');
       }
    };
 
@@ -147,8 +166,7 @@ const Create_app: NextPage = () => {
       <>
          <Head>
             <title>Create (app) · Shopitect</title>
-            <meta name="description" content="An architect of shop management application" />
-            <meta property="og:title" content="Shopitect" key="title" />
+            <link rel="icon" type="image/png" href="/img/shopitect-logo.png" />
          </Head>
 
          {(isAccountNotExist && (sessionStatus == 'authenticated')) ? (
@@ -195,22 +213,15 @@ const Create_app: NextPage = () => {
                            onInput={(e: ChangeEvent<HTMLInputElement>) => setShopOwnerName(e.target.value)}
                            required
                         />
-                        <TextareaAutosize
-                           aria-label="shop address"
-                           placeholder="Shop Address*"
-                           minRows={5}
+                        <TextField
+                           label="Shop Address"
+                           size="small"
+                           multiline
+                           minRows={3}
                            maxRows={5}
-                           style={{
-                              // minWidth: '49%',
-                              // maxWidth: '49%',
-                              fontSize: '15px',
-                              padding: '12px',
-                              borderRadius: '4px',
-                              borderColor: 'lightgray',
-                              outlineColor: '#1976d2',
-                           }}
+                           fullWidth
                            value={shopAddress}
-                           onInput={(e: ChangeEvent<HTMLTextAreaElement>) => setShopAddress(e.target.value)}
+                           onInput={(e: ChangeEvent<HTMLInputElement>) => setShopAddress(e.target.value)}
                            required
                         />
                         {session && (
@@ -242,11 +253,16 @@ const Create_app: NextPage = () => {
                                        </IconButton>
                                     </InputAdornment>
                                  }}
+                                 helperText="Password must exceed 8 characters"
                                  required
                               />
                            </>
                         )}
+                        <Box>
+                           <ImageCropper inputLabel="Shop Logo" getBlob={setShopLogo} />
+                        </Box>
                      </Stack>
+
                      <Stack direction={{ sm: 'column', md: 'row' }} spacing={{ sm: 1, md: 3 }} pt={4}>
                         <Button
                            variant="contained"

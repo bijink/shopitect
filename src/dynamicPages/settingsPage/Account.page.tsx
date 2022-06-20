@@ -1,12 +1,12 @@
 import { Box, Typography } from "@mui/material";
-import AccountDeleteDialog from "../../components/accountDeleteDialog";
+import { AccountDelete_dialog } from "../../components/dialogs";
 
 const Account_page = () => {
    return (
       <>
          <Box>
             <Typography variant="h5" component="p" gutterBottom color={'error'} >Delete account</Typography>
-            <AccountDeleteDialog />
+            <AccountDelete_dialog />
          </Box>
       </>
    );
