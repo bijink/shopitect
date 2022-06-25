@@ -13,6 +13,7 @@ import { setAppPageId } from "../../../redux/slices/pageId.slice";
 import { ProductAdd_page, ProductTable_page, ProductView_page } from "../../../dynamicPages/productPage";
 import { Public_navBar, ShopAdmin_navBar } from "../../../components/navBar";
 import { Public_sideBar, ShopAdmin_sideBar } from "../../../components/sideBar";
+import { Public_btmNavbar, ShopAdmin_btmNavbar } from "../../../components/bottomNavBar";
 
 
 const ProductPages: NextPage = () => {
@@ -26,7 +27,7 @@ const ProductPages: NextPage = () => {
 
    useEffect(() => {
       dispatch(setAppPageId('product_page'));
-   }, []);
+   }, [dispatch]);
 
 
    return (
@@ -39,7 +40,7 @@ const ProductPages: NextPage = () => {
             || !((productPages === 'table') || (productPages === 'add') || (productPages === 'view'))) && (
                <NotFound />
             )) || ((secure === 200) && (
-               <Page_layout navbar={<ShopAdmin_navBar />} sidebar={<ShopAdmin_sideBar />} >
+               <Page_layout navbar={<ShopAdmin_navBar />} sidebar={<ShopAdmin_sideBar />} btmNavbar={<ShopAdmin_btmNavbar />} >
                   {
                      ((productPages === 'table') && <ProductTable_page />)
                      ||
@@ -50,7 +51,7 @@ const ProductPages: NextPage = () => {
                </Page_layout>
             )) || (((secure === 401) || (secure === 403)) && (
                ((productPages === 'view') ? (
-                  <Page_layout navbar={<Public_navBar />} sidebar={<Public_sideBar />} >
+                  <Page_layout navbar={<Public_navBar />} sidebar={<Public_sideBar />} btmNavbar={<Public_btmNavbar />}  >
                      <ProductView_page />
                   </Page_layout>
                ) : (

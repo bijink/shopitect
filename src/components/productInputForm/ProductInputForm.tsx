@@ -13,6 +13,7 @@ import {
    FormControlLabel,
    FormControl,
    FormLabel,
+   styled,
 } from "@mui/material";
 import { database, storage } from "../../config/firebase.config";
 import { addDoc, collection, doc, serverTimestamp, updateDoc } from "firebase/firestore";
@@ -23,6 +24,15 @@ import amountCalculate from "../../utility/amountCalculate";
 import Snackbars from "../snackbars";
 import { useAppDispatch } from "../../redux/hooks";
 import { setSnackbarState } from "../../redux/slices/snackbarState.slice";
+
+
+const StyledTypography = styled(Typography)(({ theme }) => ({
+   padding: '3.2px 8px',
+   border: `1px solid ${theme.palette.primary.light}`,
+   color: theme.palette.primary.main,
+   borderRadius: '4px ',
+   cursor: 'pointer'
+}));
 
 
 const ProductInputForm = ({ shopData }: ProductInputProps) => {
@@ -155,7 +165,7 @@ const ProductInputForm = ({ shopData }: ProductInputProps) => {
       <>
          <form onSubmit={handleFormSubmit}>
             <Stack direction="column" spacing={3}>
-               <Stack direction="row" spacing={3} >
+               <Stack direction={{ xs: "column", sm: "row" }} spacing={3} >
                   <TextField
                      label="Product Name"
                      size="small"
@@ -173,7 +183,7 @@ const ProductInputForm = ({ shopData }: ProductInputProps) => {
                      required
                   />
                </Stack>
-               <Stack direction="row" spacing={3}>
+               <Stack direction={{ xs: "column", sm: "row" }} spacing={3}>
                   <TextField
                      label="Brand"
                      size="small"
@@ -190,14 +200,11 @@ const ProductInputForm = ({ shopData }: ProductInputProps) => {
                      onInput={(e: ChangeEvent<HTMLInputElement>) => setProdCategory(e.target.value)}
                      required
                   />
-               </Stack>
-               <Stack direction="row" spacing={3}>
                   <TextField
                      label="Quantity"
                      size="small"
                      type="number"
-                     // sx={{ width: '12.5%', paddingRight: '12px' }}
-                     sx={{ width: '15%' }}
+                     fullWidth
                      value={quantity}
                      onInput={(e: ChangeEvent<HTMLInputElement>) => setQuantity(e.target.value)}
                      required
@@ -209,17 +216,11 @@ const ProductInputForm = ({ shopData }: ProductInputProps) => {
                         {prodImage ? (
                            <img width={150} height={150} style={{ cursor: 'pointer' }} src={prodImage ? URL.createObjectURL(prodImage) : ''} alt="product" />
                         ) : (
-                           <Typography
-                              px={1} py={0.4}
-                              sx={{
-                                 border: '1px solid #1769aa',
-                                 color: '#1769aa',
-                                 borderRadius: '4px ',
-                                 cursor: 'pointer'
-                              }}
-                           >
-                              Add Product Image
-                           </Typography>
+                           <>
+                              <StyledTypography>
+                                 Add Product Image
+                              </StyledTypography>
+                           </>
                         )}
                      </label>
                      <TextField
@@ -232,7 +233,7 @@ const ProductInputForm = ({ shopData }: ProductInputProps) => {
                   {prodImage && <Button onClick={() => setProdImage(null)}>clear</Button>}
                </Stack>
                <Box>
-                  <Stack direction="row" spacing="auto" pb={1} sx={{ alignItems: 'center' }}>
+                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing="auto" pb={3} alignItems='start' >
                      <FormControl>
                         <FormLabel id="row-radio-buttons-group-label">Amount Calculation</FormLabel>
                         <RadioGroup
@@ -247,35 +248,59 @@ const ProductInputForm = ({ shopData }: ProductInputProps) => {
                            <FormControlLabel value="method-3" control={<Radio />} label="Method 3" />
                         </RadioGroup>
                      </FormControl>
-                     <Stack direction="row" spacing={2} >
-                        <Button variant="contained" size="small" color="error" onClick={calculateReset}>Reset</Button>
-                        <Button variant="contained" size="small" onClick={calculate}>Calculate</Button>
+                     <Stack width={{ xs: "100%", sm: 'inherit' }} direction={{ xs: 'row', sm: 'column-reverse', md: 'row' }} spacing={2} >
+                        <Button variant="outlined" size="small" color="error" onClick={calculateReset}>Reset</Button>
+                        <Button variant="contained" size="small" sx={{ bgcolor: 'primary.light' }} onClick={calculate}>Calculate</Button>
                      </Stack>
                   </Stack>
-                  <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ alignItems: 'center' }} spacing={1} >
-                     {(calcMethod == 'method-1') &&
-                        <>
-                           <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
-                              <TextField label="Get Price" size="small" fullWidth type="number"
-                                 helperText="*helper text"
-                                 InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment> }}
-                                 value={getPriceInput}
-                                 onInput={(e: ChangeEvent<HTMLInputElement>) => setGetPriceInput(e.target.value)}
-                                 disabled={calcuInputDisabled}
-                                 required
-                              />
-                              <TextField label="Sell Price" size="small" fullWidth type="number"
-                                 helperText="*helper text"
-                                 InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment> }}
-                                 value={sellPriceInput}
-                                 onInput={(e: ChangeEvent<HTMLInputElement>) => setSellPriceInput(e.target.value)}
-                                 disabled={calcuInputDisabled}
-                                 required
-                              />
-                           </Stack>
-                           <Typography height={60} variant="h6" component="div" className="btn" >»</Typography>
-                           {/* <Typography variant="h6" sx={{ transform: 'rotate(90deg)' }} component="Box" className="btn">»</Typography> */}
-                           <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
+                  <Stack direction={{ xs: 'column', sm: "row" }} alignItems="center" spacing={1} >
+                     <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
+                        <TextField label="Get Price" size="small" fullWidth type="number"
+                           helperText="*helper text"
+                           InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment> }}
+                           value={getPriceInput}
+                           onInput={(e: ChangeEvent<HTMLInputElement>) => setGetPriceInput(e.target.value)}
+                           disabled={calcuInputDisabled}
+                           required
+                        />
+                        {(calcMethod == 'method-1') && (
+                           <TextField label="Sell Price" size="small" fullWidth type="number"
+                              helperText="*helper text"
+                              InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment> }}
+                              value={sellPriceInput}
+                              onInput={(e: ChangeEvent<HTMLInputElement>) => setSellPriceInput(e.target.value)}
+                              disabled={calcuInputDisabled}
+                              required
+                           />
+                        )}
+                        {(calcMethod == 'method-2') && (
+                           <TextField label="Profit Percentage" size="small" fullWidth type="number"
+                              helperText="*helper text"
+                              InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
+                              value={profitPercentageInput}
+                              onInput={(e: ChangeEvent<HTMLInputElement>) => setProfitPercentageInput(e.target.value)}
+                              disabled={calcuInputDisabled}
+                              required
+                           />
+                        )}
+                        {(calcMethod == 'method-3') && (
+                           <TextField label="Profit Amount" size="small" fullWidth type="number"
+                              helperText="*helper text"
+                              InputProps={{
+                                 startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
+                                 endAdornment: <InputAdornment position="end">+</InputAdornment>,
+                              }}
+                              value={profitAmountInput}
+                              onInput={(e: ChangeEvent<HTMLInputElement>) => setProfitAmountInput(e.target.value)}
+                              disabled={calcuInputDisabled}
+                              required
+                           />
+                        )}
+                     </Stack>
+                     <Typography fontSize="1.5rem" pb={3} sx={{ transform: { xs: 'rotate(90deg)', sm: 'rotate(0deg)' } }} >»</Typography>
+                     <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
+                        {(calcMethod == 'method-1') && (
+                           <>
                               <TextField label="Profit Percentage" size="small" fullWidth type="number"
                                  helperText="*helper text"
                                  InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
@@ -295,30 +320,10 @@ const ProductInputForm = ({ shopData }: ProductInputProps) => {
                                  disabled={calcuInputDisabled}
                                  required
                               />
-                           </Stack>
-                        </>}
-                     {(calcMethod == 'method-2') &&
-                        <>
-                           <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
-                              <TextField label="Get Price" size="small" fullWidth type="number"
-                                 helperText="*helper text"
-                                 InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment> }}
-                                 value={getPriceInput}
-                                 onInput={(e: ChangeEvent<HTMLInputElement>) => setGetPriceInput(e.target.value)}
-                                 disabled={calcuInputDisabled}
-                                 required
-                              />
-                              <TextField label="Profit Percentage" size="small" fullWidth type="number"
-                                 helperText="*helper text"
-                                 InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
-                                 value={profitPercentageInput}
-                                 onInput={(e: ChangeEvent<HTMLInputElement>) => setProfitPercentageInput(e.target.value)}
-                                 disabled={calcuInputDisabled}
-                                 required
-                              />
-                           </Stack>
-                           <Typography height={60} variant="h6" component="div">»</Typography>
-                           <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
+                           </>
+                        )}
+                        {(calcMethod == 'method-2') && (
+                           <>
                               <TextField label="Sell Price" size="small" fullWidth type="number"
                                  helperText="*helper text"
                                  InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment> }}
@@ -338,66 +343,46 @@ const ProductInputForm = ({ shopData }: ProductInputProps) => {
                                  disabled={calcuInputDisabled}
                                  required
                               />
-                           </Stack>
-                        </>}
-                     {(calcMethod == 'method-3') &&
-                        <>
-                           <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
-                              <TextField label="Get Price" size="small" fullWidth type="number"
-                                 helperText="*helper text"
-                                 InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment> }}
-                                 value={getPriceInput}
-                                 onInput={(e: ChangeEvent<HTMLInputElement>) => setGetPriceInput(e.target.value)}
-                                 disabled={calcuInputDisabled}
-                                 required
-                              />
-                              <TextField label="Profit Amount" size="small" fullWidth type="number"
-                                 helperText="*helper text"
-                                 InputProps={{
-                                    startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
-                                    endAdornment: <InputAdornment position="end">+</InputAdornment>,
-                                 }}
-                                 value={profitAmountInput}
-                                 onInput={(e: ChangeEvent<HTMLInputElement>) => setProfitAmountInput(e.target.value)}
-                                 disabled={calcuInputDisabled}
-                                 required
-                              />
-                           </Stack>
-                           <Typography height={60} variant="h6" component="div">»</Typography>
-                           <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
-                              <TextField label="Sell Price" size="small" fullWidth type="number"
-                                 helperText="*helper text"
-                                 InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment> }}
-                                 value={sellPriceInput}
-                                 color="warning"
-                                 disabled={calcuInputDisabled}
-                                 required
-                              />
-                              <TextField label="Profit Percentage" size="small" fullWidth type="number"
-                                 helperText="*helper text"
-                                 InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
-                                 value={profitPercentageInput}
-                                 color="warning"
-                                 disabled={calcuInputDisabled}
-                                 required
-                              />
-                           </Stack>
-                        </>}
+                           </>
+                        )}
+                        {(calcMethod == 'method-3') && (
+                           <>
+                              <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
+                                 <TextField label="Sell Price" size="small" fullWidth type="number"
+                                    helperText="*helper text"
+                                    InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment> }}
+                                    value={sellPriceInput}
+                                    color="warning"
+                                    disabled={calcuInputDisabled}
+                                    required
+                                 />
+                                 <TextField label="Profit Percentage" size="small" fullWidth type="number"
+                                    helperText="*helper text"
+                                    InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
+                                    value={profitPercentageInput}
+                                    color="warning"
+                                    disabled={calcuInputDisabled}
+                                    required
+                                 />
+                              </Stack>
+                           </>
+                        )}
+                     </Stack>
                   </Stack>
                </Box>
             </Stack>
-            <Stack direction={{ sm: 'column', md: 'row' }} spacing={{ sm: 1, md: 3 }} pt={4}>
+            <Stack direction={{ xs: 'column-reverse', sm: 'row' }} spacing={2} pt={4}>
                <Button
                   variant="contained"
                   onClick={handleFormReset}
-                  size='large'
+                  size='medium'
                   fullWidth
                   color="error"
                >Reset</Button>
                <LoadingButton
                   variant="contained"
                   type="submit"
-                  size='large'
+                  size='medium'
                   fullWidth
                   loading={loading}
                   loadingPosition="start"

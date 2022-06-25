@@ -7,17 +7,18 @@ import { useShop } from "../../../hooks";
 import { PageSkeleton_layout, Page_layout } from "../../../layouts";
 import Forbidden from "../../403";
 import NotFound from "../../404";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAppDispatch } from "../../../redux/hooks";
 import { setAppPageId } from "../../../redux/slices/pageId.slice";
 import { ShopAdmin_navBar } from "../../../components/navBar";
 import { ShopAdmin_sideBar } from "../../../components/sideBar";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
-import { Box, capitalize, CircularProgress, IconButton, Stack, Typography } from "@mui/material";
+import { Box, capitalize, CircularProgress, colors, Divider, IconButton, Stack, Typography } from "@mui/material";
 import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined';
 import { collection, DocumentData, onSnapshot, query } from "firebase/firestore";
 import { database } from "../../../config/firebase.config";
+import { ShopAdmin_btmNavbar } from "../../../components/bottomNavBar";
 
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -48,7 +49,7 @@ const Dashboard: NextPage = () => {
       return colors;
    };
 
-   const getChartDatas = (arrList: Array<string>) => {
+   const getChartDatas = useCallback((arrList: Array<string>) => {
       let categData: any = {};
       for (let i = 0; i < arrList.length; i++) {
          if (categData[arrList[i]]) {
@@ -62,7 +63,7 @@ const Dashboard: NextPage = () => {
       setChartData(Object.values(categData));
       setChartLength(Object.keys(categData).length);
       setChartColor(getRgbColors(Object.keys(categData).length));
-   };
+   }, []);
 
 
    const datas = {
@@ -92,11 +93,11 @@ const Dashboard: NextPage = () => {
 
          getChartDatas(sortCategList);
       });
-   }, [database, shopAppUrl]);
+   }, [shopAppUrl, getChartDatas]);
 
    useEffect(() => {
       dispatch(setAppPageId('dashboard_page'));
-   }, []);
+   }, [dispatch]);
 
 
    return (
@@ -108,23 +109,52 @@ const Dashboard: NextPage = () => {
          )) || ((secure === 404) && (
             <NotFound />
          )) || ((secure === 200) && (
-            <Page_layout navbar={<ShopAdmin_navBar />} sidebar={<ShopAdmin_sideBar />} >
+            <Page_layout navbar={<ShopAdmin_navBar />} sidebar={<ShopAdmin_sideBar />} btmNavbar={<ShopAdmin_btmNavbar />} >
                <Stack direction='row' pb={2} >
                   <Typography variant="h5" component='p' >Dashboard</Typography>
                </Stack>
+
                {((prodDocLength! > 0) || (prodDocLength === null)) ? (
-                  <Box width="100%" display="flex" justifyContent="center" alignItems="center" >
+                  <Stack alignItems="center" >
                      {(chartLength > 0) ? (
-                        <Stack width="25rem" spacing={3} alignItems="center" sx={{ cursor: 'pointer' }} >
-                           <Doughnut data={datas} />
-                           <Box>
-                              <IconButton
-                                 color="primary"
-                                 size="small"
-                                 onClick={() => setChartColor(getRgbColors(chartLength))}
-                              >
-                                 <RefreshOutlinedIcon />
-                              </IconButton>
+                        <Stack width="100%" spacing={2}>
+                           <Stack
+                              direction="row"
+                              divider={<Divider orientation="vertical" flexItem />}
+                              justifyContent="space-evenly"
+                              alignItems="center"
+                              width='85%'
+                              height='5rem'
+                              bgcolor={colors.grey[300]}
+                              mx="auto"
+                              borderRadius={1.5}
+                           >
+                              <Typography component="p" fontSize={{ xs: '1rem', sm: '1.5rem' }}  >
+                                 Product:
+                                 <Typography component="span" fontSize={{ xs: '1.5rem', sm: '2rem' }} pl={1} fontWeight={600} >
+                                    {prodDocLength}
+                                 </Typography>
+                              </Typography>
+                              <Typography component="p" fontSize={{ xs: '1rem', sm: '1.5rem' }} >
+                                 Category:
+                                 <Typography component="span" fontSize={{ xs: '1.5rem', sm: '2rem' }} pl={1} fontWeight={600} >
+                                    {chartLength}
+                                 </Typography>
+                              </Typography>
+                           </Stack>
+                           <Box display="flex" justifyContent="center"  >
+                              <Stack width="25rem" spacing={3} alignItems="center" sx={{ cursor: 'pointer' }} >
+                                 <Doughnut data={datas} />
+                                 <Box>
+                                    <IconButton
+                                       color="primary"
+                                       size="small"
+                                       onClick={() => setChartColor(getRgbColors(chartLength))}
+                                    >
+                                       <RefreshOutlinedIcon />
+                                    </IconButton>
+                                 </Box>
+                              </Stack>
                            </Box>
                         </Stack>
                      ) : (
@@ -132,7 +162,7 @@ const Dashboard: NextPage = () => {
                            <CircularProgress />
                         </Box>
                      )}
-                  </Box>
+                  </Stack>
                ) : (
                   <Typography variant="h6" component="p" textAlign="center" >Data is empty</Typography>
                )}

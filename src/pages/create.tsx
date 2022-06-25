@@ -142,7 +142,7 @@ const Create_app: NextPage = () => {
       if (isAccountNotExist && (sessionStatus == 'authenticated')) {
          inputFocusRef.current.focus();
       }
-   }, [session, sessionStatus]);
+   }, [session, sessionStatus, isAccountNotExist, router]);
 
    useEffect(() => {
       onSnapshot(query(collection(database, 'shops')), (snapshot) => {
@@ -155,23 +155,31 @@ const Create_app: NextPage = () => {
 
       // console.log(!(shopDocIds.some(arr => arr == shopUrlName)));
       setIsShopUrlNameUnique(!(shopDocIds.some(arr => arr == shopUrlName)));
-   }, [shopUrlName]);
+   }, [shopUrlName, shopDocIds]);
 
    useEffect(() => {
       dispatch(setAppPageId('createApp_page'));
-   }, []);
+   }, [dispatch]);
 
 
    return (
       <>
          <Head>
-            <title>Create (app) · Shopitect</title>
+            <title>Create · Shopitect</title>
             <link rel="icon" type="image/png" href="/img/shopitect-logo.png" />
          </Head>
 
          {(isAccountNotExist && (sessionStatus == 'authenticated')) ? (
             <Box py={3} >
                <Container >
+                  <Typography
+                     fontSize={{ xs: '2rem', sm: '2.5rem' }}
+                     component="h1"
+                     textAlign="center"
+                     sx={{ color: 'primary.dark' }}
+                  >
+                     Shopitect
+                  </Typography>
                   <Typography variant="h5" component={'div'} gutterBottom>Create App</Typography>
                   <form onSubmit={handleFormSubmit}>
                      <Stack direction="column" spacing={3}>
@@ -263,27 +271,29 @@ const Create_app: NextPage = () => {
                         </Box>
                      </Stack>
 
-                     <Stack direction={{ sm: 'column', md: 'row' }} spacing={{ sm: 1, md: 3 }} pt={4}>
-                        <Button
-                           variant="contained"
-                           onClick={() => {
-                              router.push('/');
-                           }}
-                           size='large'
-                           fullWidth
-                           color="error"
-                        >cancel</Button>
-                        <Button
-                           variant="contained"
-                           onClick={handleFormReset}
-                           size='large'
-                           fullWidth
-                           color="warning"
-                        >reset</Button>
+                     <Stack direction={{ xs: 'column-reverse', sm: 'row' }} spacing={{ xs: 2 }} pt={4}>
+                        <Stack direction={{ xs: 'row' }} width="100%" spacing={{ xs: 2 }} >
+                           <Button
+                              variant="contained"
+                              onClick={() => {
+                                 router.push('/');
+                              }}
+                              size='medium'
+                              fullWidth
+                              color="error"
+                           >cancel</Button>
+                           <Button
+                              variant="contained"
+                              onClick={handleFormReset}
+                              size='medium'
+                              fullWidth
+                              color="warning"
+                           >reset</Button>
+                        </Stack>
                         <LoadingButton
                            variant="contained"
                            type="submit"
-                           size='large'
+                           size='medium'
                            fullWidth
                            loading={loading}
                            loadingPosition="start"

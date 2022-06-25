@@ -2,8 +2,8 @@
 import type { GetServerSideProps, NextPage } from 'next';
 import type { GoogleProviderTypes } from "../types/pages/googleProvider.types";
 
-import { Box, Stack, Typography } from '@mui/material';
-import { getProviders, signIn as signInProvider, useSession } from "next-auth/react";
+import { Box, colors, Stack, Typography } from '@mui/material';
+import { getProviders, signIn as signInProvider } from "next-auth/react";
 import { auth } from '../config/firebase.config';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -18,13 +18,10 @@ import Head from 'next/head';
 const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
    const router = useRouter();
 
-   // const { data: session } = useSession();
-   // console.log(session);
-
    const dispatch = useAppDispatch();
 
    const { status: userStatus } = useUser();
-   // console.log(userStatus);
+
 
    const [loading_signup, setLoading_signup] = useState(false);
    const [loading_login, setLoading_login] = useState(false);
@@ -35,7 +32,7 @@ const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
 
    useEffect(() => {
       dispatch(setAppPageId('appHome_page'));
-   }, []);
+   }, [dispatch]);
 
 
    return (
@@ -51,10 +48,10 @@ const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
             height={'100vh'}
          >
             <Stack direction="column" alignItems="center">
-               <Typography variant='h3' component="h1" >
+               <Typography fontSize={{ xs: '1.5rem', sm: '3rem' }} component="h1" textAlign="center"  >
                   Welcome to <b>Shopitect</b>
                </Typography>
-               <Typography variant='body1'>
+               <Typography variant='body1' textAlign="center" >
                   An architect of shop management application
                </Typography>
             </Stack>
@@ -62,11 +59,12 @@ const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
             <Box>
                {Object.values(providers).map((provider) => (
                   <Box key={provider.id}>
-                     <Typography variant='h5' component="p" pb={1} >Signup/Login with {provider.name}</Typography>
+                     <Typography variant='h5' component="p" textAlign="center" pb={1} >Signup/Login with {provider.name}</Typography>
                      <Stack direction="row" spacing={2} justifyContent="center" >
                         <LoadingButton
                            variant='contained'
                            color="primary"
+                           size='small'
                            onClick={() => {
                               !loading_login && setLoading_signup(true);
                               !loading_login && signOutAccount(auth).then(() => {
@@ -79,7 +77,11 @@ const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
                         >signup</LoadingButton>
                         <LoadingButton
                            variant='contained'
-                           color={(userStatus === 'authenticated') ? 'success' : 'info'}
+                           size='small'
+                           sx={{
+                              bgcolor: (userStatus === 'authenticated') ? colors.green[700] : colors.teal[500],
+                              '&:hover': { bgcolor: (userStatus === 'authenticated') ? colors.green[800] : colors.teal[600], }
+                           }}
                            onClick={() => {
                               !loading_signup && setLoading_login(true);
                               !loading_signup && ((userStatus === 'authenticated') ?

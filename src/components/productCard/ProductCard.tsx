@@ -3,7 +3,7 @@ import type { ProdCardProps } from "./productCard.types";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { capitalize, CardActionArea } from '@mui/material';
+import { capitalize, CardActionArea, colors } from '@mui/material';
 import { Box } from "@mui/material";
 import { useRouter } from 'next/router';
 import Image from "next/image";
@@ -13,11 +13,12 @@ const ProductCard = ({ shopUrlName, prodId, prodName, prodCategory, prodImg, sel
    const router = useRouter();
 
    const cardWidth = 220;
+   const cardWidth_xs = 120;
 
 
    return (
       <Box p={1} >
-         <Card sx={{ width: cardWidth, bgcolor: 'whitesmoke' }} onClick={() => {
+         <Card sx={{ width: { xs: cardWidth_xs, sm: cardWidth }, bgcolor: 'whitesmoke' }} onClick={() => {
             router.push({
                pathname: `/${shopUrlName}/product/view`,
                query: { id: prodId },

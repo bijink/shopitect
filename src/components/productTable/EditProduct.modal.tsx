@@ -145,7 +145,7 @@ export default function EditProduct_modal({ shopUrlName, prodId, prodName, prodC
             }
          }
       }
-   }, [getPriceInput, sellPriceInput, profitAmountInput, profitPercentageInput]);
+   }, [calcMethod, getPrice, sellPrice, profitPercentage, profitAmount, getPriceInput, sellPriceInput, profitAmountInput, profitPercentageInput]);
 
 
    return (
@@ -190,8 +190,8 @@ export default function EditProduct_modal({ shopUrlName, prodId, prodName, prodC
                               fullWidth
                               disabled
                            />
-                           <Stack flexGrow={1} justifyContent="center" alignItems="center" width="100%" >
-                              <Typography component="p" sx={{ fontWeight: '500' }} >Product Code</Typography>
+                           <Stack flexGrow={1} justifyContent="center" width="100%" >
+                              <Typography component="p" textAlign="center" sx={{ fontWeight: '500' }} >Product Code</Typography>
                            </Stack>
                            <TextField
                               size="small"
@@ -210,8 +210,8 @@ export default function EditProduct_modal({ shopUrlName, prodId, prodName, prodC
                               fullWidth
                               disabled
                            />
-                           <Stack flexGrow={1} justifyContent="center" alignItems="center" width="100%" >
-                              <Typography component="p" sx={{ fontWeight: '500' }} >Product Name</Typography>
+                           <Stack flexGrow={1} justifyContent="center" width="100%" >
+                              <Typography component="p" textAlign="center" sx={{ fontWeight: '500' }} >Product Name</Typography>
                            </Stack>
                            <TextField
                               size="small"
@@ -230,8 +230,8 @@ export default function EditProduct_modal({ shopUrlName, prodId, prodName, prodC
                               fullWidth
                               disabled
                            />
-                           <Stack flexGrow={1} justifyContent="center" alignItems="center" width="100%" >
-                              <Typography component="p" sx={{ fontWeight: '500' }} >Category</Typography>
+                           <Stack flexGrow={1} justifyContent="center" width="100%" >
+                              <Typography component="p" textAlign="center" sx={{ fontWeight: '500' }} >Category</Typography>
                            </Stack>
                            <TextField
                               size="small"
@@ -250,8 +250,8 @@ export default function EditProduct_modal({ shopUrlName, prodId, prodName, prodC
                               fullWidth
                               disabled
                            />
-                           <Stack flexGrow={1} justifyContent="center" alignItems="center" width="100%" >
-                              <Typography component="p" sx={{ fontWeight: '500' }} >Brand Name</Typography>
+                           <Stack flexGrow={1} justifyContent="center" width="100%" >
+                              <Typography component="p" textAlign="center" sx={{ fontWeight: '500' }} >Brand Name</Typography>
                            </Stack>
                            <TextField
                               size="small"
@@ -270,8 +270,8 @@ export default function EditProduct_modal({ shopUrlName, prodId, prodName, prodC
                               fullWidth
                               disabled
                            />
-                           <Stack flexGrow={1} justifyContent="center" alignItems="center" width="100%" >
-                              <Typography component="p" sx={{ fontWeight: '500' }} >Quantiy</Typography>
+                           <Stack flexGrow={1} justifyContent="center" width="100%" >
+                              <Typography component="p" textAlign="center" sx={{ fontWeight: '500' }} >Quantiy</Typography>
                            </Stack>
                            <TextField
                               size="small"
@@ -284,7 +284,7 @@ export default function EditProduct_modal({ shopUrlName, prodId, prodName, prodC
                            />
                         </Stack>
                         <Box>
-                           <Stack direction="row" spacing="auto" pb={1} sx={{ alignItems: 'center' }}>
+                           <Stack direction={{ xs: 'column', sm: 'row' }} spacing="auto" pb={3} alignItems='start' >
                               <FormControl>
                                  <FormLabel id="row-radio-buttons-group-label">Amount Calculation</FormLabel>
                                  <RadioGroup
@@ -299,33 +299,55 @@ export default function EditProduct_modal({ shopUrlName, prodId, prodName, prodC
                                     <FormControlLabel value="method-3" control={<Radio />} label="Method 3" />
                                  </RadioGroup>
                               </FormControl>
-                              <Stack direction="row" spacing={2} >
-                                 <Button variant="contained" size="small" color="error" onClick={calculateReset}>Reset</Button>
+                              <Stack width={{ xs: "100%", sm: 'inherit' }} direction={{ xs: 'row', sm: 'column-reverse', md: 'row' }} spacing={2} >
+                                 <Button variant="outlined" size="small" color="error" onClick={calculateReset}>Reset</Button>
                                  <Button variant="contained" size="small" onClick={calculate}>Calculate</Button>
                               </Stack>
                            </Stack>
-                           <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ alignItems: 'center' }} spacing={1} >
-                              {(calcMethod == 'method-1') &&
-                                 <>
-                                    <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
-                                       <TextField label="Get Price" size="small" fullWidth type="number"
-                                          helperText="*helper text"
-                                          InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment> }}
-                                          value={getPriceInput}
-                                          onInput={(e: ChangeEvent<HTMLInputElement>) => setGetPriceInput(e.target.value)}
-                                          required
-                                       />
-                                       <TextField label="Sell Price" size="small" fullWidth type="number"
-                                          helperText="*helper text"
-                                          InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment> }}
-                                          value={sellPriceInput}
-                                          onInput={(e: ChangeEvent<HTMLInputElement>) => setSellPriceInput(e.target.value)}
-                                          required
-                                       />
-                                    </Stack>
-                                    <Typography height={60} variant="h6" component="div" className="btn" >»</Typography>
-                                    {/* <Typography variant="h6" sx={{ transform: 'rotate(90deg)' }} component="Box" className="btn">»</Typography> */}
-                                    <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
+                           <Stack direction={{ xs: 'column', sm: "row" }} alignItems="center" spacing={1} >
+                              <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
+                                 <TextField label="Get Price" size="small" fullWidth type="number"
+                                    helperText="*helper text"
+                                    InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment> }}
+                                    value={getPriceInput}
+                                    onInput={(e: ChangeEvent<HTMLInputElement>) => setGetPriceInput(e.target.value)}
+                                    required
+                                 />
+                                 {(calcMethod == 'method-1') && (
+                                    <TextField label="Sell Price" size="small" fullWidth type="number"
+                                       helperText="*helper text"
+                                       InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment> }}
+                                       value={sellPriceInput}
+                                       onInput={(e: ChangeEvent<HTMLInputElement>) => setSellPriceInput(e.target.value)}
+                                       required
+                                    />
+                                 )}
+                                 {(calcMethod == 'method-2') && (
+                                    <TextField label="Profit Percentage" size="small" fullWidth type="number"
+                                       helperText="*helper text"
+                                       InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
+                                       value={profitPercentageInput}
+                                       onInput={(e: ChangeEvent<HTMLInputElement>) => setProfitPercentageInput(e.target.value)}
+                                       required
+                                    />
+                                 )}
+                                 {(calcMethod == 'method-3') && (
+                                    <TextField label="Profit Amount" size="small" fullWidth type="number"
+                                       helperText="*helper text"
+                                       InputProps={{
+                                          startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
+                                          endAdornment: <InputAdornment position="end">+</InputAdornment>,
+                                       }}
+                                       value={profitAmountInput}
+                                       onInput={(e: ChangeEvent<HTMLInputElement>) => setProfitAmountInput(e.target.value)}
+                                       required
+                                    />
+                                 )}
+                              </Stack>
+                              <Typography fontSize="1.5rem" pb={3} sx={{ transform: { xs: 'rotate(90deg)', sm: 'rotate(0deg)' } }} >»</Typography>
+                              <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
+                                 {(calcMethod == 'method-1') && (
+                                    <>
                                        <TextField label="Profit Percentage" size="small" fullWidth type="number"
                                           helperText="*helper text"
                                           InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
@@ -343,28 +365,10 @@ export default function EditProduct_modal({ shopUrlName, prodId, prodName, prodC
                                           color="warning"
                                           required
                                        />
-                                    </Stack>
-                                 </>}
-                              {(calcMethod == 'method-2') &&
-                                 <>
-                                    <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
-                                       <TextField label="Get Price" size="small" fullWidth type="number"
-                                          helperText="*helper text"
-                                          InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment> }}
-                                          value={getPriceInput}
-                                          onInput={(e: ChangeEvent<HTMLInputElement>) => setGetPriceInput(e.target.value)}
-                                          required
-                                       />
-                                       <TextField label="Profit Percentage" size="small" fullWidth type="number"
-                                          helperText="*helper text"
-                                          InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
-                                          value={profitPercentageInput}
-                                          onInput={(e: ChangeEvent<HTMLInputElement>) => setProfitPercentageInput(e.target.value)}
-                                          required
-                                       />
-                                    </Stack>
-                                    <Typography height={60} variant="h6" component="div">»</Typography>
-                                    <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
+                                    </>
+                                 )}
+                                 {(calcMethod == 'method-2') && (
+                                    <>
                                        <TextField label="Sell Price" size="small" fullWidth type="number"
                                           helperText="*helper text"
                                           InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment> }}
@@ -382,54 +386,36 @@ export default function EditProduct_modal({ shopUrlName, prodId, prodName, prodC
                                           color="warning"
                                           required
                                        />
-                                    </Stack>
-                                 </>}
-                              {(calcMethod == 'method-3') &&
-                                 <>
-                                    <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
-                                       <TextField label="Get Price" size="small" fullWidth type="number"
-                                          helperText="*helper text"
-                                          InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment> }}
-                                          value={getPriceInput}
-                                          onInput={(e: ChangeEvent<HTMLInputElement>) => setGetPriceInput(e.target.value)}
-                                          required
-                                       />
-                                       <TextField label="Profit Amount" size="small" fullWidth type="number"
-                                          helperText="*helper text"
-                                          InputProps={{
-                                             startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
-                                             endAdornment: <InputAdornment position="end">+</InputAdornment>,
-                                          }}
-                                          value={profitAmountInput}
-                                          onInput={(e: ChangeEvent<HTMLInputElement>) => setProfitAmountInput(e.target.value)}
-                                          required
-                                       />
-                                    </Stack>
-                                    <Typography height={60} variant="h6" component="div">»</Typography>
-                                    <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
-                                       <TextField label="Sell Price" size="small" fullWidth type="number"
-                                          helperText="*helper text"
-                                          InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment> }}
-                                          value={sellPriceInput}
-                                          color="warning"
-                                          required
-                                       />
-                                       <TextField label="Profit Percentage" size="small" fullWidth type="number"
-                                          helperText="*helper text"
-                                          InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
-                                          value={profitPercentageInput}
-                                          color="warning"
-                                          required
-                                       />
-                                    </Stack>
-                                 </>}
+                                    </>
+                                 )}
+                                 {(calcMethod == 'method-3') && (
+                                    <>
+                                       <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
+                                          <TextField label="Sell Price" size="small" fullWidth type="number"
+                                             helperText="*helper text"
+                                             InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment> }}
+                                             value={sellPriceInput}
+                                             color="warning"
+                                             required
+                                          />
+                                          <TextField label="Profit Percentage" size="small" fullWidth type="number"
+                                             helperText="*helper text"
+                                             InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
+                                             value={profitPercentageInput}
+                                             color="warning"
+                                             required
+                                          />
+                                       </Stack>
+                                    </>
+                                 )}
+                              </Stack>
                            </Stack>
                         </Box>
                      </Stack>
-                     <Stack direction={{ sm: 'column', md: 'row' }} spacing={{ sm: 1, md: 3 }} py={4}>
+                     <Stack direction={{ xs: 'column-reverse', sm: 'row' }} spacing={{ xs: 1, sm: 2 }} py={4}>
                         <Button
                            variant="contained"
-                           size='large'
+                           size='medium'
                            color="error"
                            fullWidth
                            onClick={() => setOpen(false)}
@@ -437,7 +423,7 @@ export default function EditProduct_modal({ shopUrlName, prodId, prodName, prodC
                         <LoadingButton
                            variant="contained"
                            type="submit"
-                           size='large'
+                           size='medium'
                            fullWidth
                            loading={loading}
                            loadingPosition="start"

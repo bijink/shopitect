@@ -139,8 +139,8 @@ const Profile_page = () => {
                      onInput={(e: ChangeEvent<HTMLInputElement>) => setShopCategory(e.target.value)}
                   />
                </Box>
-               <Stack direction="row" width={'100%'} >
-                  <Box width={'50%'} >
+               <Stack direction={{ xs: "column", sm: "row" }} spacing={{ xs: 2, sm: 0 }} >
+                  <Box width={'100%'} >
                      <Typography variant="body1" fontWeight={500} gutterBottom >Address</Typography>
                      <TextField
                         size="small"
@@ -155,7 +155,7 @@ const Profile_page = () => {
                         required
                      />
                   </Box>
-                  <Box width={'50%'} pl="1%" >
+                  <Box width={'100%'} pl="1%" >
                      <Typography variant="body1" fontWeight={500} gutterBottom >About</Typography>
                      <TextField
                         size="small"
@@ -175,12 +175,12 @@ const Profile_page = () => {
                   <ImageCropper getBlob={setShopLogo} />
                </Box>
 
-               <Box>
+               <Box pt={2} >
                   <LoadingButton
                      variant="contained"
                      type="submit"
                      color={'success'}
-                     size="small"
+                     size="medium"
                      sx={{ textTransform: 'none' }}
                      loading={loading}
                      loadingPosition="start"

@@ -1,34 +1,36 @@
 import {
+   Paper,
+   BottomNavigation,
+   BottomNavigationAction,
    Box,
-   Drawer,
    Toolbar,
    List,
-   Divider,
    ListItem,
    ListItemText,
    SwipeableDrawer,
    ListItemButton,
-   ListItemIcon,
    capitalize,
    IconButton,
    Stack,
    styled,
-   Typography
+   Typography,
+   colors,
 } from '@mui/material';
+import CategoryIcon from '@mui/icons-material/Category';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import HomeIcon from '@mui/icons-material/Home';
+import DashboardIcon from '@mui/icons-material/Dashboard';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { database } from '../../config/firebase.config';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { selectPageId } from '../../redux/slices/pageId.slice';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { changeProdTableCollapse } from '../../redux/slices/prodTableCollapse.slice';
-import CategoryIcon from '@mui/icons-material/Category';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import HomeIcon from '@mui/icons-material/Home';
-import DashboardIcon from '@mui/icons-material/Dashboard';
 import { sidebarWidth } from '../../layouts/Page.layout';
 import { useShop } from '../../hooks';
+import FilterListIcon from '@mui/icons-material/FilterList';
 
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -41,18 +43,23 @@ const DrawerHeader = styled('div')(({ theme }) => ({
    paddingTop: '.5rem',
 }));
 
-
-export default function ShopAdmin_sideBar() {
+export default function Public_btmNavbar() {
    const router = useRouter();
    const { shopAppUrl, category } = router.query;
 
    const dispatch = useAppDispatch();
    const pageId = useAppSelector(selectPageId);
+   // const btmNavbarTab = useAppSelector(selectBtmNavbarTab);
 
    const { data: shop } = useShop(shopAppUrl);
 
    const [categoryOpen, setCategoryOpen] = useState(false);
    const [categoryList, setCategoryList] = useState([] as Array<string>);
+
+   // const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+   //    // setValue(newValue);
+   //    dispatch(setBtmNavbarTab(newValue));
+   // };
 
 
    useEffect(() => {
@@ -60,11 +67,9 @@ export default function ShopAdmin_sideBar() {
          let list: Array<string> = [];
 
          snapshot.forEach(obj => {
-            // console.log(obj.data().category);
             list.push(obj.data().category.toLowerCase());
          });
 
-         // let uniqueList = [...new Set(list)];
          let uniqueList = Array.from(new Set(list));
          let sortList = uniqueList.sort();
          sortList.unshift('all');
@@ -76,18 +81,18 @@ export default function ShopAdmin_sideBar() {
 
    const SwipeableTemporaryDrawer = (
       <SwipeableDrawer
-         anchor={'left'}
+         anchor={'right'}
          open={categoryOpen}
          onClose={() => setCategoryOpen(false)}
          onOpen={() => setCategoryOpen(true)}
       >
          <Toolbar />
-         <DrawerHeader>
-            <Stack direction="row" width="100%" justifyContent="space-between" alignItems="center" >
-               <Typography variant='h6' component="p" >Categories</Typography>
+         <DrawerHeader sx={{ paddingLeft: 0 }} >
+            <Stack direction="row" spacing={1} width="100%" alignItems="center" >
                <IconButton onClick={() => setCategoryOpen(false)} >
-                  <ArrowBackIosNewIcon />
+                  <ArrowForwardIosIcon />
                </IconButton>
+               <Typography variant='h6' component="p" >Categories</Typography>
             </Stack>
          </DrawerHeader>
          <Box
@@ -124,53 +129,45 @@ export default function ShopAdmin_sideBar() {
    );
 
 
+
    return (
       <>
-         <Drawer
-            variant="permanent"
-            // variant="temporary"
-            sx={{
-               width: sidebarWidth,
-               flexShrink: 0,
-               [`& .MuiDrawer-paper`]: { width: sidebarWidth, boxSizing: 'border-box' },
-            }}
-         >
-            <Toolbar />
-            <Box sx={{ overflow: 'auto' }}>
-               <List sx={{ padding: 0 }} >
-                  <ListItem button onClick={() => router.push(`/${shopAppUrl}`)} >
-                     <ListItemIcon>
-                        <HomeIcon />
-                     </ListItemIcon>
-                     <ListItemText primary={'Home'} />
-                  </ListItem>
-                  <Divider />
-                  <ListItem button onClick={() => router.push(`/${shopAppUrl}/dashboard`)} >
-                     <ListItemIcon>
-                        <DashboardIcon />
-                     </ListItemIcon>
-                     <ListItemText primary={'Dashboard'} />
-                  </ListItem>
-                  <ListItem button onClick={() => router.push(`/${shopAppUrl}/product/table`)} >
-                     <ListItemIcon>
-                        <ShoppingCartIcon />
-                     </ListItemIcon>
-                     <ListItemText primary={'Product'} />
-                  </ListItem>
-                  {(((pageId === 'shopHome_page') || (pageId === 'productTable_page')) && (categoryList.length > 1)) && (
-                     <>
-                        <Divider />
-                        <ListItem button onClick={() => setCategoryOpen(true)} >
-                           <ListItemIcon>
-                              <CategoryIcon />
-                           </ListItemIcon>
-                           <ListItemText primary={'Category'} />
-                        </ListItem>
-                     </>
-                  )}
-               </List>
-            </Box>
-         </Drawer>
+         <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1 }} elevation={5} >
+            <BottomNavigation
+               value={
+                  ((pageId === 'shopHome_page') && 'home') ||
+                  ((pageId === 'dashboard_page') && 'dashboard') ||
+                  (((pageId === 'productTable_page') || pageId === 'productAdd_page') && 'product')
+               }
+            // onChange={handleChange}
+            >
+               <BottomNavigationAction
+                  label="Home"
+                  value="home"
+                  icon={<HomeIcon />}
+                  onClick={() => router.push(`/${shopAppUrl}`)}
+               />
+            </BottomNavigation>
+         </Paper>
+
+         {(((pageId === 'shopHome_page') || (pageId === 'productTable_page')) && (categoryList.length > 1)) && (
+            <IconButton
+               size="small"
+               onClick={() => setCategoryOpen(true)}
+               sx={{
+                  position: 'fixed',
+                  bottom: '4rem',
+                  right: '1.2rem',
+                  color: 'white',
+                  zIndex: 1,
+                  bgcolor: colors.grey[600],
+                  '&:hover': { bgcolor: colors.grey[800], }
+               }}
+            >
+               <FilterListIcon />
+            </IconButton>
+         )}
+
          {SwipeableTemporaryDrawer}
       </>
    );

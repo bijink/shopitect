@@ -17,6 +17,7 @@ import NotFound from '../404';
 import { selectProdSearchInput, setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
 import { Public_navBar, ShopAdmin_navBar } from '../../components/navBar';
 import { Public_sideBar, ShopAdmin_sideBar } from '../../components/sideBar';
+import { Public_btmNavbar, ShopAdmin_btmNavbar } from '../../components/bottomNavBar';
 
 
 const ShopHome: NextPage = () => {
@@ -50,7 +51,7 @@ const ShopHome: NextPage = () => {
          setProdDocLength(snapshot.docs.length);
          setPageLength(Math.ceil(snapshot.docs.length / listLength));
       });
-   }, [database, shop]);
+   }, [shop]);
 
    useEffect(() => {
       if (category) {
@@ -88,7 +89,7 @@ const ShopHome: NextPage = () => {
             setProdDetails_new(prodDetails.slice(0, listLength));
          }
       }
-   }, [database, category, prodDetails, page, prodDocLength, pageLength, searchInput_prod]);
+   }, [dispatch, router, shopAppUrl, category, prodDetails, page, prodDocLength, pageLength, searchInput_prod]);
 
    useEffect(() => {
       shopAppUrl && onSnapshot(query(collection(database, 'shops'), where('urlName', '==', shopAppUrl)), (snapshot) => {
@@ -113,11 +114,11 @@ const ShopHome: NextPage = () => {
 
          sessionStorage.setItem('shop-details', JSON.stringify(shopDetails));
       });
-   }, [database, shopAppUrl]);
+   }, [shopAppUrl]);
 
    useEffect(() => {
       dispatch(setAppPageId('shopHome_page'));
-   }, []);
+   }, [dispatch]);
 
 
    const ProductCardWrap = () => (
@@ -161,9 +162,11 @@ const ShopHome: NextPage = () => {
                            <Skeleton
                               variant='rectangular'
                               animation="wave"
-                              width="220px"
-                              height="200px"
-                              sx={{ borderRadius: 0.8 }}
+                              sx={{
+                                 borderRadius: 0.8,
+                                 width: { xs: "120px", sm: "220px" },
+                                 height: { xs: "140px", sm: "200px" }
+                              }}
                            />
                         </Box>
                      ))}
@@ -195,22 +198,24 @@ const ShopHome: NextPage = () => {
                            <Skeleton
                               variant='rectangular'
                               animation="wave"
-                              width="220px"
-                              height="200px"
-                              sx={{ borderRadius: 0.8 }}
+                              sx={{
+                                 borderRadius: 0.8,
+                                 width: { xs: "120px", sm: "220px" },
+                                 height: { xs: "140px", sm: "200px" }
+                              }}
                            />
                         </Box>
                      ))}
                   </Stack>
                </PageSkeleton_layout>
             )) || ((secure === 200) && (
-               <Page_layout navbar={<ShopAdmin_navBar />} sidebar={<ShopAdmin_sideBar />} >
+               <Page_layout navbar={<ShopAdmin_navBar />} sidebar={<ShopAdmin_sideBar />} btmNavbar={<ShopAdmin_btmNavbar />} >
                   <ProductCardWrap />
                </Page_layout>
             )) || (((secure === 404) || shopNotExistOnServer) && (
                <NotFound />
             )) || (((secure === 401) || (secure === 403)) && (
-               <Page_layout navbar={<Public_navBar />} sidebar={<Public_sideBar />} >
+               <Page_layout navbar={<Public_navBar />} sidebar={<Public_sideBar />} btmNavbar={<Public_btmNavbar />} >
                   <ProductCardWrap />
                </Page_layout>
             ))}

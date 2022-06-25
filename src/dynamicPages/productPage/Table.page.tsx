@@ -1,5 +1,5 @@
 // *Product-table page
-import { Button, capitalize, Pagination, Skeleton, Stack, Typography } from '@mui/material';
+import { Button, capitalize, colors, Pagination, Skeleton, Stack, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import ProductTable from '../../components/productTable';
@@ -103,6 +103,7 @@ const ProductTable_page = () => {
             <Button
                variant='contained'
                size="small"
+               sx={{ bgcolor: 'primary.light' }}
                onClick={() => router.push(`/${shopAppUrl}/product/add`)}
             >
                Add

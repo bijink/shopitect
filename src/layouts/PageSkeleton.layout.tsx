@@ -8,6 +8,8 @@ import {
    Drawer,
    List,
    ListItem,
+   colors,
+   Stack,
 } from '@mui/material';
 import { ReactNode } from 'react';
 import { sidebarWidth } from './Page.layout';
@@ -23,16 +25,20 @@ const PageSkeleton_layout = ({ children }: { children?: ReactNode; }) => {
                <Box sx={{ flexGrow: 1 }}>
                   <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }} >
                      <Toolbar >
-                        <Skeleton variant='circular' width={40} height={40} sx={{ marginRight: 1.5 }} />
-                        <Skeleton width={200} height={45} />
+                        <Stack direction="row" alignItems="center" spacing={1.5} >
+                           <Skeleton variant='circular' width={30} height={30} />
+                           <Skeleton variant='circular' width={40} height={40} />
+                           <Skeleton width={200} height={45} />
+                        </Stack>
                         <Box sx={{ flexGrow: 1 }} />
-                        <Skeleton variant='circular' width={40} height={40} />
+                        {/* <Skeleton variant='circular' width={40} height={40} /> */}
+                        <Skeleton variant='circular' width={30} height={30} />
                      </Toolbar>
                   </AppBar>
                </Box>
             </Box>
             {/* Sidenav */}
-            <Box component='aside' >
+            <Box component='aside' display={{ xs: 'none', sm: 'block' }} >
                <Drawer
                   variant="permanent"
                   sx={{
@@ -68,6 +74,21 @@ const PageSkeleton_layout = ({ children }: { children?: ReactNode; }) => {
                   </Box>
                </Box>
             )}
+            {/* Bottom Navbar */}
+            {/* <Stack
+               direction="row"
+               justifyContent="space-around"
+               alignItems="center"
+               width="100%"
+               height="3.5rem"
+               bgcolor={colors.grey[200]}
+               display={{ xs: 'flex', sm: 'none' }}
+               sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }}
+            >
+               <Skeleton variant='circular' width={30} height={30} />
+               <Skeleton variant='circular' width={30} height={30} />
+               <Skeleton variant='circular' width={30} height={30} />
+            </Stack> */}
          </Box>
       </Box>
    );

@@ -25,6 +25,7 @@ import { setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -106,7 +107,7 @@ export default function ShopAdmin_navBar() {
          {!(pageId === 'settings_page') && (
             <MenuItem onClick={() => {
                handleMenuClose();
-               router.push(`/${shopAppUrl}/settings/profile`);
+               router.push(`/${shopAppUrl}/settings`);
             }}>
                <SettingsOutlinedIcon />
                <Typography pl={1} >Settings</Typography>
@@ -132,16 +133,24 @@ export default function ShopAdmin_navBar() {
          <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }} >
             <Toolbar >
                <Stack direction="row" alignItems="center" spacing={1.5} pr={3} >
+                  <Tooltip title="Back" arrow >
+                     <IconButton
+                        size="small"
+                        color="inherit"
+                        onClick={() => router.back()}
+                     >
+                        <ArrowBackIosNewIcon />
+                     </IconButton>
+                  </Tooltip>
                   <Tooltip title={shop ? shop.name : ''} arrow >
-                     <Avatar alt={shop?.name} src={shop?.logoUrl} />
-                     {/* <Avatar alt={shop?.name} >{shop?.name.slice(0, 1)}</Avatar> */}
+                     <Avatar alt={shop?.name} src={shop ? shop.logoUrl : ''} />
                   </Tooltip>
                   <Typography
                      variant="h6"
                      noWrap
                      component="h1"
                      sx={{ display: { xs: 'none', sm: 'block' }, cursor: 'pointer' }}
-                     onClick={() => router.push(`/${shopAppUrl}`)}
+                     onClick={() => (pageId !== 'shopHome_page') && router.push(`/${shopAppUrl}`)}
                   >
                      {shop?.name}
                   </Typography>
@@ -157,7 +166,7 @@ export default function ShopAdmin_navBar() {
                         dispatch(setProdSearchInput(searchInput));
                      }} >
                         <StyledInputBase
-                           placeholder="Search…"
+                           placeholder="Search by product name..."
                            inputProps={{ 'aria-label': 'search' }}
                            value={category ? '' : searchInput}
                            onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -178,7 +187,7 @@ export default function ShopAdmin_navBar() {
                >
                   <Tooltip title="More" arrow >
                      <IconButton
-                        size="medium"
+                        size="small"
                         aria-label="show more"
                         aria-controls={menuId}
                         aria-haspopup="true"

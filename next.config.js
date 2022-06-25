@@ -17,11 +17,6 @@ module.exports = {
             destination: '/:shopAppUrl/product/table',
             permanent: true,
          },
-         {
-            source: '/:shopAppUrl/settings',
-            destination: '/:shopAppUrl/settings/profile',
-            permanent: true,
-         },
       ];
    },
 };

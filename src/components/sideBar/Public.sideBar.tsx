@@ -68,7 +68,7 @@ export default function Public_sideBar() {
 
          setCategoryList(sortList);
       });
-   }, [database, shop]);
+   }, [shop]);
 
 
    const SwipeableTemporaryDrawer = (
@@ -116,42 +116,42 @@ export default function Public_sideBar() {
 
    return (
       <>
-         {((pageId === 'shopHome_page') || (pageId === 'productView_page')) ? (
-            <>
-               <Drawer
-                  variant="permanent"
-                  sx={{
-                     width: sidebarWidth,
-                     flexShrink: 0,
-                     [`& .MuiDrawer-paper`]: { width: sidebarWidth, boxSizing: 'border-box' },
-                  }}
-               >
-                  <Toolbar />
-                  <Box sx={{ overflow: 'auto' }}>
-                     <List sx={{ padding: 0 }} >
-                        <ListItem button onClick={() => {
-                           router.push(`/${shopAppUrl}`);
-                        }} >
-                           <ListItemIcon><HomeIcon /></ListItemIcon>
-                           <ListItemText primary='Home' />
-                        </ListItem>
-                        {((pageId !== 'productView_page') && (categoryList.length > 1)) && (
-                           <>
-                              <Divider />
-                              <ListItem button onClick={() => {
-                                 setCategoryOpen(true);
-                              }} >
-                                 <ListItemIcon><FilterListRoundedIcon /></ListItemIcon>
-                                 <ListItemText primary='Category' />
-                              </ListItem>
-                           </>
-                        )}
-                     </List>
-                  </Box>
-               </Drawer>
-               {SwipeableTemporaryDrawer}
-            </>
-         ) : (
+         {/* {((pageId === 'shopHome_page') || (pageId === 'productView_page')) ? ( */}
+         <>
+            <Drawer
+               variant="permanent"
+               sx={{
+                  width: sidebarWidth,
+                  flexShrink: 0,
+                  [`& .MuiDrawer-paper`]: { width: sidebarWidth, boxSizing: 'border-box' },
+               }}
+            >
+               <Toolbar />
+               <Box sx={{ overflow: 'auto' }}>
+                  <List sx={{ padding: 0 }} >
+                     <ListItem button onClick={() => {
+                        router.push(`/${shopAppUrl}`);
+                     }} >
+                        <ListItemIcon><HomeIcon /></ListItemIcon>
+                        <ListItemText primary='Home' />
+                     </ListItem>
+                     {((pageId === 'shopHome_page') && (categoryList.length > 1)) && (
+                        <>
+                           <Divider />
+                           <ListItem button onClick={() => {
+                              setCategoryOpen(true);
+                           }} >
+                              <ListItemIcon><FilterListRoundedIcon /></ListItemIcon>
+                              <ListItemText primary='Category' />
+                           </ListItem>
+                        </>
+                     )}
+                  </List>
+               </Box>
+            </Drawer>
+            {SwipeableTemporaryDrawer}
+         </>
+         {/* ) : (
             <Drawer
                variant="permanent"
                sx={{
@@ -185,7 +185,7 @@ export default function Public_sideBar() {
                   </List>
                </Box>
             </Drawer>
-         )}
+         )} */}
       </>
    );
 }

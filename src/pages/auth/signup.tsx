@@ -36,7 +36,7 @@ const SignupConfirm = () => {
             }
          });
       });
-   }, [user, sessionStatus]);
+   }, [user, sessionStatus, router]);
 
    useEffect(() => {
       session && onSnapshot(query(collection(database, 'shops'), where('providerID', '==', session.user.uid)), (snapshot) => {
@@ -52,7 +52,7 @@ const SignupConfirm = () => {
             router.push('/create');
          }
       });
-   }, [session]);
+   }, [session, router]);
 
 
    return (
@@ -84,7 +84,7 @@ const SignupConfirm = () => {
                            </Typography>
                            <Stack direction={'row'} alignItems="center" justifyContent={'center'}>
                               <Typography variant="body1" component="p">
-                                 With the 'Shop Url Name' :
+                                 With the &apos;Shop Url Name&apos; :
                               </Typography>
                               <Typography component={'span'} sx={{ fontWeight: 'bold' }} pl={1}>
                                  {shopUrlName}

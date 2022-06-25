@@ -10,6 +10,7 @@ import {
    DialogActions,
    DialogContent,
    DialogTitle,
+   colors,
 } from '@mui/material';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { LoadingButton } from '@mui/lab';
@@ -64,7 +65,7 @@ export default function AccountDelete_dialog() {
             const imageRef = ref(storage, `/${shop?.urlName}/product-images/PRODUCT_IMG:${id}`);
             deleteObject(imageRef).then(() => {
                deleteDoc(doc(database, "shops", shop?.urlName!, "products", id)).then(() => {
-                  console.log('Deleted');
+                  // console.log('Deleted');
                   resolve(null);
                });
             });
@@ -137,7 +138,7 @@ export default function AccountDelete_dialog() {
          // console.log(arr);
          setProdIds(arr);
       });
-   }, [database, shop]);
+   }, [shop]);
 
    useEffect(() => {
       session && onSnapshot(query(collection(database, 'shops'), where("email", "==", session?.user.email)), (snapshot) => {
@@ -150,7 +151,7 @@ export default function AccountDelete_dialog() {
             }
          });
       });
-   }, [shopUrlNameInput]);
+   }, [session, shopUrlNameInput]);
 
    useEffect(() => {
       setInputChange(true);
@@ -235,7 +236,7 @@ export default function AccountDelete_dialog() {
                   />
                </DialogContent>
                <DialogActions>
-                  <Button onClick={handleDialogClose}>Cancel</Button>
+                  <Button sx={{ color: colors.grey[600] }} onClick={handleDialogClose}>Cancel</Button>
                   <LoadingButton
                      type="submit"
                      loading={loading_delete}

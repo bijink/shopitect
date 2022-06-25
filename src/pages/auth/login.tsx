@@ -71,7 +71,7 @@ const LoginConfirm = () => {
             }
          });
       });
-   }, [user, userStatus]);
+   }, [router, user, userStatus]);
 
    useEffect(() => {
       session && onSnapshot(query(collection(database, 'shops'), where("email", "==", session?.user.email)), (snapshot) => {
@@ -84,7 +84,7 @@ const LoginConfirm = () => {
             }
          });
       });
-   }, [shopUrlNameInput]);
+   }, [shopUrlNameInput, session]);
 
    useEffect(() => {
       setInputChange(true);

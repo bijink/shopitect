@@ -55,21 +55,21 @@ export default function InputSlider({ setScale_prop, setRotate_prop }: InputSlid
 
    useEffect(() => {
       setScale_prop(Number(value_scale));
-   }, [value_scale]);
+   }, [value_scale, setScale_prop]);
 
    useEffect(() => {
       setRotate_prop(Number(value_rotate));
-   }, [value_rotate]);
+   }, [value_rotate, setRotate_prop]);
 
 
    return (
       <Stack
          spacing={1.5}
-         direction="row"
+         direction={{ xs: "column", sm: "row" }}
          width="100%"
          divider={<Divider orientation="vertical" flexItem />}
       >
-         <Box sx={{ width: '50%' }}  >
+         <Box sx={{ width: '100%' }} >
             {/* Scale Slider */}
             <Stack direction="row" spacing={"auto"} alignItems="center" >
                <Typography variant="body2" id="input-slider" gutterBottom>
@@ -111,7 +111,7 @@ export default function InputSlider({ setScale_prop, setRotate_prop }: InputSlid
          </Box>
 
          {/* Rotate Slider */}
-         <Box sx={{ width: '50%' }}  >
+         <Box sx={{ width: '100%' }} >
             <Stack direction="row" spacing={"auto"} alignItems="center" >
                <Typography variant="body2" id="input-slider" gutterBottom>
                   Rotate&deg; :
