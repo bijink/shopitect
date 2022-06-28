@@ -79,8 +79,8 @@ const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
                            variant='contained'
                            size='small'
                            sx={{
-                              bgcolor: (userStatus === 'authenticated') ? colors.green[700] : colors.teal[500],
-                              '&:hover': { bgcolor: (userStatus === 'authenticated') ? colors.green[800] : colors.teal[600], }
+                              bgcolor: (userStatus === 'authenticated') ? colors.green[700] : colors.teal[600],
+                              '&:hover': { bgcolor: (userStatus === 'authenticated') ? colors.green[800] : colors.teal[700], }
                            }}
                            onClick={() => {
                               !loading_signup && setLoading_login(true);

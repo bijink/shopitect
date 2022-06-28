@@ -15,7 +15,7 @@ import { selectPageId } from '../../redux/slices/pageId.slice';
 import InfoIcon from '@mui/icons-material/Info';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled, alpha } from '@mui/material/styles';
-import { setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
+import { selectProdSearchInput, setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { useShop } from '../../hooks';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
@@ -68,10 +68,11 @@ export default function Public_navBar() {
 
    const dispatch = useAppDispatch();
    const pageId = useAppSelector(selectPageId);
+   const searchInput = useAppSelector(selectProdSearchInput);
 
    const { data: shop } = useShop(shopAppUrl);
 
-   const [searchInput, setSearchInput] = useState('');
+   // const [searchInput, setSearchInput] = useState('');
 
 
    return (
@@ -89,7 +90,12 @@ export default function Public_navBar() {
                      </IconButton>
                   </Tooltip>
                   <Tooltip title={shop ? shop.name : ''} arrow >
-                     <Avatar alt={shop?.name} src={shop ? shop.logoUrl : ''} />
+                     <Box sx={{
+                        borderRadius: '50%',
+                        border: '1px solid grey',
+                     }} >
+                        <Avatar alt={shop?.name} src={shop ? shop.logoUrl : ''} />
+                     </Box>
                   </Tooltip>
                   <Typography
                      variant="h6"
@@ -109,29 +115,30 @@ export default function Public_navBar() {
                      </SearchIconWrapper>
                      <form onSubmit={(e: FormEvent<HTMLFormElement>) => {
                         e.preventDefault();
-                        dispatch(setProdSearchInput(searchInput));
+                        // dispatch(setProdSearchInput(searchInput));
                      }} >
                         <StyledInputBase
                            placeholder="Search by product name..."
                            inputProps={{ 'aria-label': 'search' }}
                            value={category ? '' : searchInput}
                            onInput={(e: ChangeEvent<HTMLInputElement>) => {
-                              setSearchInput(e.target.value);
+                              // setSearchInput(e.target.value);
+                              dispatch(setProdSearchInput(e.target.value));
                            }}
                            onFocus={() => {
                               category && router.push(`/${shopAppUrl}`);
-                              setSearchInput('');
-                              dispatch(setProdSearchInput(''));
+                              // setSearchInput('');
+                              // dispatch(setProdSearchInput(''));
                            }}
                         />
                      </form>
                   </Search>
                )}
                {(pageId !== `about_page`) && (
-                  <Tooltip title="App Information" arrow >
+                  <Tooltip title="About" arrow >
                      <IconButton
                         size="small"
-                        aria-label="information about the shop"
+                        aria-label="about the shop"
                         color="inherit"
                         onClick={() => {
                            router.push(`/${shopAppUrl}/about`);

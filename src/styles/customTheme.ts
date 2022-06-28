@@ -6,10 +6,13 @@ const customTheme: ThemeOptions = {
       mode: 'light',
       // mode: 'dark',
       primary: {
-         main: colors.teal[800]
+         main: colors.teal[800],
+      },
+      secondary: {
+         main: colors.teal[600],
       },
       error: {
-         main: '#ef5350'
+         main: colors.red[400],
       },
    },
 };

@@ -371,7 +371,7 @@ const ProductInputForm = ({ shopData }: ProductInputProps) => {
                   </Stack>
                </Box>
             </Stack>
-            <Stack direction={{ xs: 'column-reverse', sm: 'row' }} spacing={2} pt={4}>
+            <Stack direction={{ xs: 'column-reverse', sm: 'row' }} spacing={{ xs: 1, sm: 2 }} pt={4}>
                <Button
                   variant="contained"
                   onClick={handleFormReset}

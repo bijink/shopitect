@@ -21,7 +21,7 @@ import { signOut as signOutProvider, useSession } from 'next-auth/react';
 import { signOut as signOutAccount } from 'firebase/auth';
 import { useShop } from '../../hooks';
 import { selectPageId } from '../../redux/slices/pageId.slice';
-import { setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
+import { selectProdSearchInput, setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
@@ -75,12 +75,13 @@ export default function ShopAdmin_navBar() {
 
    const dispatch = useAppDispatch();
    const pageId = useAppSelector(selectPageId);
+   const searchInput = useAppSelector(selectProdSearchInput);
 
    const { data: shop } = useShop(shopAppUrl);
    // console.log(shop.logoUrl);
 
    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-   const [searchInput, setSearchInput] = React.useState('');
+   // const [searchInput, setSearchInput] = React.useState('');
 
 
    const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -143,7 +144,12 @@ export default function ShopAdmin_navBar() {
                      </IconButton>
                   </Tooltip>
                   <Tooltip title={shop ? shop.name : ''} arrow >
-                     <Avatar alt={shop?.name} src={shop ? shop.logoUrl : ''} />
+                     <Box sx={{
+                        borderRadius: '50%',
+                        border: '1px solid grey',
+                     }} >
+                        <Avatar alt={shop?.name} src={shop ? shop.logoUrl : ''} />
+                     </Box>
                   </Tooltip>
                   <Typography
                      variant="h6"
@@ -163,19 +169,22 @@ export default function ShopAdmin_navBar() {
                      </SearchIconWrapper>
                      <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
                         e.preventDefault();
-                        dispatch(setProdSearchInput(searchInput));
+                        // dispatch(setProdSearchInput(searchInput));
                      }} >
                         <StyledInputBase
                            placeholder="Search by product name..."
                            inputProps={{ 'aria-label': 'search' }}
                            value={category ? '' : searchInput}
                            onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setSearchInput(e.target.value);
+                              // setSearchInput(e.target.value);
+                              dispatch(setProdSearchInput(e.target.value));
+                              // dispatch(setProdSearchInput(searchInput));
                            }}
                            onFocus={() => {
                               category && router.push(`/${shopAppUrl}${(productPages === 'table') ? '/product/table' : ''}`);
-                              setSearchInput('');
-                              dispatch(setProdSearchInput(''));
+                              // dispatch(setProdSearchInput(searchInput));
+                              // setSearchInput('');
+                              // dispatch(setProdSearchInput(''));
                            }}
                         />
                      </form>

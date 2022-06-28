@@ -1,17 +1,18 @@
 // *Product-table page
-import { Button, capitalize, colors, Pagination, Skeleton, Stack, Typography } from '@mui/material';
+import { Box, Button, colors, Skeleton, Stack, TablePagination, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
 import ProductTable from '../../components/productTable';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { signIn as signInProvider } from "next-auth/react";
-import { collection, DocumentData, onSnapshot, orderBy, query } from 'firebase/firestore';
-import { database } from '../../config/firebase.config';
 import { useShop } from '../../hooks';
-import { selectProdSearchInput, setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
 import { changeProdTableCollapse } from '../../redux/slices/prodTableCollapse.slice';
 import Snackbars from '../../components/snackbars';
 import { setAppPageId } from '../../redux/slices/pageId.slice';
+import { collection, DocumentData, onSnapshot, orderBy, query } from 'firebase/firestore';
+import { database } from '../../config/firebase.config';
+import { selectPageId } from '../../redux/slices/pageId.slice';
+import { selectProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
 
 
 const ProductTable_page = () => {
@@ -19,70 +20,112 @@ const ProductTable_page = () => {
    const { shopAppUrl, category, page } = router.query;
 
    const dispatch = useAppDispatch();
-   const searchInput_prod = useAppSelector(selectProdSearchInput);
+   const searchInput = useAppSelector(selectProdSearchInput);
 
    const { data: shop, secure } = useShop(shopAppUrl);
 
-   const listLength = 10;
-   const [prodDetails, setProdDetails] = useState<DocumentData>([]);
-   const [prodDetails_new, setProdDetails_new] = useState<DocumentData>([]);
-   const [prodDocLength, setProdDocLength] = useState<null | number>(null);
-   const [pageLength, setPageLength] = useState(1);
 
-
-   // #create a new array by filtering the original array
-   const filteredProducts = prodDetails.filter((obj: DocumentData) => {
-      if (searchInput_prod !== '') {
-         return obj.data().name.toLowerCase().includes(searchInput_prod);
-      }
+   const [prodDocLg, setProdDocLg] = useState<{
+      all: number,
+      search: number | null,
+      category: number | null,
+   }>({
+      all: 0,
+      search: null,
+      category: null,
    });
+   const [pageLg, setPageLg] = useState<number | null>(null);
+   const [prodData, setProdData] = useState<DocumentData>([]);
+   const [prodData_filtered, setProdData_filtered] = useState<DocumentData>([]);
+   const [prodData_slice, setProdData_slice] = useState<DocumentData | null>(null);
+   const [sliceLg, setSliceLg] = useState(10);
+   const [tablePage, setTablePage] = useState(0);
 
 
+   const handleChangeTablePage = (
+      event: MouseEvent<HTMLButtonElement> | null,
+      newPage: number,
+   ) => {
+      setTablePage(newPage);
+      dispatch(changeProdTableCollapse());
+   };
+
+   const handleChangeRowsPerPage = (
+      event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+   ) => {
+      setSliceLg(parseInt(event.target.value, 10));
+      setTablePage(0);
+   };
+
+   // #create a 2D array for prodData_slice's start&end points
+   const getSlicePoints = (pageLength: number) => {
+      let arr = [];
+      for (let i = 1; i <= pageLength; i++) {
+         arr.push([((i * sliceLg) - sliceLg), (i * sliceLg)]);
+      }
+      return arr;
+   };
+
+
+   // #all prodData
    useEffect(() => {
-      shop && onSnapshot(query(collection(database, 'shops', shop.urlName, 'products'), orderBy('codeName')), (snapshot) => {
-         setProdDetails(snapshot.docs);
-         setProdDocLength(snapshot.docs.length);
-         setPageLength(Math.ceil(snapshot.docs.length / listLength));
+      shop && onSnapshot(query(collection(database, 'shops', shop.urlName, 'products'), orderBy('createdAt', 'desc')), (snapshot) => {
+         setProdData(snapshot.docs);
+         setProdDocLg({ ...prodDocLg, all: snapshot.docs.length });
       });
-   }, [database, shop]);
-
+   }, [shop]);
+   // #search & category prodData
    useEffect(() => {
-      if (category) {
-         dispatch(setProdSearchInput(''));
-
-         if (category === 'all') {
-            setProdDetails_new(prodDetails);
-         } else {
-            const categoryFilter: Array<DocumentData> = prodDetails.filter((item: DocumentData) => item.data().category === category);
-            setProdDetails_new(categoryFilter);
-         }
+      if (Boolean(searchInput)) {
+         setTablePage(0);
+         const searchFilter: Array<DocumentData> = prodData.filter((obj: DocumentData) => obj.data().name.toLowerCase().includes(searchInput.toLowerCase()));
+         setProdDocLg({ ...prodDocLg, search: searchFilter.length });
+         setProdData_filtered(searchFilter);
+      } else if (Boolean(category)) {
+         setTablePage(0);
+         const categoryFilter: Array<DocumentData> = prodData.filter((obj: DocumentData) => obj.data().category === category);
+         setProdDocLg({ ...prodDocLg, category: categoryFilter.length });
+         setProdData_filtered(categoryFilter);
       } else {
-         if ((page && prodDocLength)) {
-            let arr = [];
-            let pageInt;
+         setProdDocLg({ ...prodDocLg, search: null, category: null });
+      }
+   }, [prodData, searchInput, category]);
 
-            // #creating 2D array to store prodDetails slice start&end points
-            for (let i = 1; i <= pageLength; i++) {
-               arr.push([((i * listLength) - listLength), (i * listLength)]);
+   // #pageLg
+   useEffect(() => {
+      if ((prodDocLg.search === null) && (prodDocLg.category === null)) {
+         setPageLg(Math.ceil(prodDocLg.all / sliceLg));
+      } else if (prodDocLg.search !== null) {
+         setPageLg(Math.ceil(prodDocLg.search / sliceLg));
+      } else if (prodDocLg.category !== null) {
+         setPageLg(Math.ceil(prodDocLg.category / sliceLg));
+      }
+   }, [prodDocLg, sliceLg]);
+
+   // #prodData_slice
+   useEffect(() => {
+      let pageInt: number = tablePage;
+
+      const slicePoints: number[][] = getSlicePoints(pageLg!);
+
+      // #to get prodData_slice according to tablePagination
+      if (pageLg) {
+         if ((prodDocLg.search === null) && (prodDocLg.category === null) && (prodData.length > 0)) {
+            try {
+               setProdData_slice(prodData.slice(slicePoints[pageInt][0], slicePoints[pageInt][1]));
+            } catch (error: any) {
+               console.error('TableError:', error.message);
             }
-
-            // #to catch and solve page breaking due to unmatchable page number
-            if ((parseInt(page.toString()) > arr.length)) {
-               router.push(`/${shopAppUrl}/product/table?page=${pageLength}`);
-               pageInt = pageLength;
-            } else if ((parseInt(page.toString()) < 1) || (isNaN(parseInt(page.toString())))) {
-               router.push(`/${shopAppUrl}/product/table?page=${'1'}`);
-               pageInt = 1;
-            } else {
-               pageInt = parseInt(page.toString());
+         } else if (((prodDocLg.category !== null) || (prodDocLg.search !== null)) && (prodData_filtered.length > 0)) {
+            try {
+               setProdData_slice(prodData_filtered.slice(slicePoints[pageInt][0], slicePoints[pageInt][1]));
+            } catch (error: any) {
+               console.error('TableError:', error.message);
             }
-
-            setProdDetails_new(prodDetails.slice(arr[pageInt - 1][0], arr[pageInt - 1][1]));
-         } else {
-            setProdDetails_new(prodDetails.slice(0, listLength));
          }
       }
-   }, [database, category, prodDetails, page, prodDocLength, pageLength, searchInput_prod]);
+   }, [tablePage, pageLg, prodDocLg, prodData, prodData_filtered]);
+
 
    useEffect(() => {
       (secure === 401) && signInProvider('google', { redirect: false, callbackUrl: `/auth/signup` });
@@ -96,52 +139,96 @@ const ProductTable_page = () => {
    return (
       <>
          <Stack direction='row' spacing="auto" pb={2} >
-            <Stack direction='row' alignItems="end" >
-               <Typography variant="h5" component='p' >Product List</Typography>
-               <Typography variant="subtitle2" component='p' pl={0.3} >{category && `[${capitalize(category.toString())}]`}</Typography>
-            </Stack>
+            <Typography variant="h5" component='p' >Product List</Typography>
             <Button
                variant='contained'
                size="small"
-               sx={{ bgcolor: 'primary.light' }}
+               color="secondary"
                onClick={() => router.push(`/${shopAppUrl}/product/add`)}
             >
                Add
             </Button>
          </Stack>
-         {((prodDocLength! > 0) || (prodDocLength === null)) ? (
+         {((prodData_slice?.length > 0) || (prodData_slice === null)) ? (
             <>
-               {((prodDocLength! > 0)) ? (
+               {((prodData_slice?.length > 0)) ? (
                   <Stack spacing={2} >
-                     <ProductTable shopData={shop!} products={(filteredProducts.length ? filteredProducts : prodDetails_new)} />
+                     {((prodDocLg.search !== null) && searchInput) && (
+                        <Stack direction="row" alignItems="start" spacing={0.7} >
+                           <Typography>Search for</Typography>
+                           <Typography
+                              px={1.2}
+                              sx={{ bgcolor: colors.grey[300], borderRadius: 8, }}
+                           >
+                              {searchInput}
+                           </Typography>
+                        </Stack>
+                     )}
+                     {((prodDocLg.category !== null) && category) && (
+                        <Stack direction="row" alignItems="start" spacing={0.7} >
+                           <Typography>Category for</Typography>
+                           <Typography
+                              px={1.2}
+                              sx={{ bgcolor: colors.grey[300], borderRadius: 8, }}
+                           >
+                              {category}
+                           </Typography>
+                        </Stack>
+                     )}
+                     {(prodDocLg?.search === 0) ? (
+                        <Typography variant="h6" component="p" fontWeight={300} textAlign="center" >No result found !</Typography>
+                     ) : (
+                        <Box>
+                           <ProductTable shopData={shop!} products={prodData_slice!} />
 
-                     <Stack direction='row' justifyContent="center" alignItems="center" >
-                        {(!(category && (filteredProducts.length > 0)) && (prodDetails_new.length > 0)) && (
-                           <Pagination
-                              count={pageLength}
-                              page={page ? (parseInt(page.toString())) : 1}
-                              onChange={(_, value: number) => {
-                                 router.push(`/${shopAppUrl}/product/table?page=${value}`);
-                                 dispatch(changeProdTableCollapse());
-                              }}
-                              showFirstButton showLastButton
-                           />
-                        )}
-                     </Stack>
+                           <Stack direction='row' justifyContent="end" alignItems="center" >
+                              <TablePagination
+                                 component="div"
+                                 count={
+                                    ((prodDocLg.search === null) && (prodDocLg.category === null))
+                                       ? prodData.length
+                                       : prodData_filtered.length
+                                 }
+                                 page={tablePage}
+                                 onPageChange={handleChangeTablePage}
+                                 rowsPerPage={sliceLg}
+                                 onRowsPerPageChange={handleChangeRowsPerPage}
+                              />
+                           </Stack>
+                        </Box>
+                     )}
                   </Stack>
                ) : (
-                  <Skeleton
-                     variant="rectangular"
-                     animation="wave"
-                     width="100%"
-                     height="4rem"
-                     sx={{ borderTopLeftRadius: 3, borderTopRightRadius: 3, }}
-                  />
+                  <>
+                     {(category) ? (
+                        <Stack spacing={2} >
+                           <Stack direction="row" alignItems="start" spacing={0.7} >
+                              <Typography>Category for</Typography>
+                              <Typography
+                                 px={1.2}
+                                 sx={{ bgcolor: colors.grey[300], borderRadius: 8, }}
+                              >
+                                 {category}
+                              </Typography>
+                           </Stack>
+                        </Stack>
+                     ) : (
+                        <Skeleton
+                           variant="rectangular"
+                           animation="wave"
+                           width="100%"
+                           height="4rem"
+                           sx={{ borderTopLeftRadius: 3, borderTopRightRadius: 3, }}
+                        />
+
+                     )}
+                  </>
                )}
             </>
          ) : (
             <Typography variant="h6" component="p" textAlign="center" >Data is empty</Typography>
          )}
+
          {<Snackbars />}
       </>
    );

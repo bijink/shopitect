@@ -29,6 +29,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import { sidebarWidth } from '../../layouts/Page.layout';
 import { useShop } from '../../hooks';
+import { setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
 
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -99,6 +100,7 @@ export default function ShopAdmin_sideBar() {
                   <ListItem key={index} button disablePadding sx={{ backgroundColor: ((text === 'all') && ((category === 'all') || (!category))) ? '#bdbdbd' : ((category === text) ? '#bdbdbd' : 'transparent') }}
                      onClick={() => {
                         dispatch(changeProdTableCollapse());
+                        dispatch(setProdSearchInput(''));
 
                         if (text === 'all') {
                            router.push(((pageId === 'shopHome_page'))

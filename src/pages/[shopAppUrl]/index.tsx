@@ -3,7 +3,7 @@ import type { NextPage } from 'next';
 import type { ProdDetailsTypes } from '../../types/pages/shopHomePage.types';
 
 import Head from 'next/head';
-import { collection, DocumentData, onSnapshot, orderBy, query, where } from 'firebase/firestore';
+import { collection, onSnapshot, query, where, DocumentData, orderBy } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import ProductCard from '../../components/productCard';
@@ -12,12 +12,13 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { setAppPageId } from '../../redux/slices/pageId.slice';
 import { PageSkeleton_layout, Page_layout } from '../../layouts';
 import { useShop } from '../../hooks';
-import { Box, Pagination, Skeleton, Stack, Typography } from '@mui/material';
+import { Box, colors, Pagination, Skeleton, Stack, Typography } from '@mui/material';
 import NotFound from '../404';
-import { selectProdSearchInput, setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
+import { selectProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
 import { Public_navBar, ShopAdmin_navBar } from '../../components/navBar';
 import { Public_sideBar, ShopAdmin_sideBar } from '../../components/sideBar';
 import { Public_btmNavbar, ShopAdmin_btmNavbar } from '../../components/bottomNavBar';
+
 
 
 const ShopHome: NextPage = () => {
@@ -25,58 +26,82 @@ const ShopHome: NextPage = () => {
    const { shopAppUrl, category, page } = router.query;
 
    const dispatch = useAppDispatch();
-   const searchInput_prod = useAppSelector(selectProdSearchInput);
+   const searchInput = useAppSelector(selectProdSearchInput);
 
    const { data: shop, secure } = useShop(shopAppUrl);
 
-   const listLength = 10;
-   const [prodDetails, setProdDetails] = useState<DocumentData>([]);
-   const [prodDetails_new, setProdDetails_new] = useState<DocumentData>([]);
-   const [shopNotExistOnServer, setShopNotExistOnServer] = useState(false);
-   const [prodDocLength, setProdDocLength] = useState<null | number>(null);
-   const [pageLength, setPageLength] = useState(1);
-
-
-   // #create a new array by filtering the original array
-   const filteredProducts = prodDetails.filter((obj: DocumentData) => {
-      if (searchInput_prod !== '') {
-         return obj.data().name.toLowerCase().includes(searchInput_prod);
-      }
+   const sliceLg = 10;
+   const [prodDocLg, setProdDocLg] = useState<{
+      all: number,
+      search: number | null,
+      category: number | null,
+   }>({
+      all: 0,
+      search: null,
+      category: null,
    });
+   const [pageLg, setPageLg] = useState<number | null>(null);
+   const [prodData, setProdData] = useState<DocumentData>([]);
+   const [prodData_filtered, setProdData_filtered] = useState<DocumentData>([]);
+   const [prodData_slice, setProdData_slice] = useState<DocumentData | null>(null);
+   const [shopNotExistOnServer, setShopNotExistOnServer] = useState(false);
 
 
+   // #create a 2D array for prodData_slice's start&end points
+   const getSlicePoints = (pageLength: number) => {
+      let arr = [];
+      for (let i = 1; i <= pageLength; i++) {
+         arr.push([((i * sliceLg) - sliceLg), (i * sliceLg)]);
+      }
+      return arr;
+   };
+
+
+   // #all prodData
    useEffect(() => {
       shop && onSnapshot(query(collection(database, 'shops', shop.urlName, 'products'), orderBy('createdAt', 'desc')), (snapshot) => {
-         setProdDetails(snapshot.docs);
-         setProdDocLength(snapshot.docs.length);
-         setPageLength(Math.ceil(snapshot.docs.length / listLength));
+         setProdData(snapshot.docs);
+         setProdDocLg({ ...prodDocLg, all: snapshot.docs.length });
       });
    }, [shop]);
-
+   // #search & category prodData
    useEffect(() => {
-      if (category) {
-         dispatch(setProdSearchInput(''));
-
-         if (category === 'all') {
-            setProdDetails_new(prodDetails);
-         } else {
-            const categoryFilter: Array<DocumentData> = prodDetails.filter((item: DocumentData) => item.data().category === category);
-            setProdDetails_new(categoryFilter);
-         }
+      if (Boolean(searchInput)) {
+         const searchFilter: Array<DocumentData> = prodData.filter((obj: DocumentData) => obj.data().name.toLowerCase().includes(searchInput.toLowerCase()));
+         setProdDocLg({ ...prodDocLg, search: searchFilter.length });
+         setProdData_filtered(searchFilter);
+      } else if (Boolean(category)) {
+         const categoryFilter: Array<DocumentData> = prodData.filter((obj: DocumentData) => obj.data().category === category);
+         setProdDocLg({ ...prodDocLg, category: categoryFilter.length });
+         setProdData_filtered(categoryFilter);
       } else {
-         if ((page && prodDocLength)) {
-            let arr = [];
-            let pageInt;
+         setProdDocLg({ ...prodDocLg, search: null, category: null });
+      }
+   }, [prodData, searchInput, category]);
 
-            // #creating 2D array to store prodDetails slice start&end points
-            for (let i = 1; i <= pageLength; i++) {
-               arr.push([((i * listLength) - listLength), (i * listLength)]);
-            }
+   // #pageLg
+   useEffect(() => {
+      if ((prodDocLg.search === null) && (prodDocLg.category === null)) {
+         setPageLg(Math.ceil(prodDocLg.all / sliceLg));
+      } else if (prodDocLg.search !== null) {
+         setPageLg(Math.ceil(prodDocLg.search / sliceLg));
+      } else if (prodDocLg.category !== null) {
+         setPageLg(Math.ceil(prodDocLg.category / sliceLg));
+      }
+   }, [prodDocLg, sliceLg]);
 
-            // #to catch and solve page breaking due to unmatchable page number
-            if ((parseInt(page.toString()) > arr.length)) {
-               router.push(`/${shopAppUrl}?page=${pageLength}`);
-               pageInt = pageLength;
+   // #prodData_slice
+   useEffect(() => {
+      let pageInt: number;
+      const slicePoints = getSlicePoints(pageLg!);
+
+      if ((prodDocLg.search === null) && (prodDocLg.category === null) && (prodData.length > 0)) {
+         // console.log('all');
+         if (page && pageLg) {
+            // #to catch and solve app breaking if an unmatchable page number exist on url
+            if ((parseInt(page.toString()) > slicePoints.length)) {
+               router.push(`/${shopAppUrl}?page=${pageLg}`);
+               pageInt = pageLg;
             } else if ((parseInt(page.toString()) < 1) || (isNaN(parseInt(page.toString())))) {
                router.push(`/${shopAppUrl}?page=${'1'}`);
                pageInt = 1;
@@ -84,16 +109,46 @@ const ShopHome: NextPage = () => {
                pageInt = parseInt(page.toString());
             }
 
-            setProdDetails_new(prodDetails.slice(arr[pageInt - 1][0], arr[pageInt - 1][1]));
+            // #to get prodData_slice according to page number
+            setProdData_slice(prodData.slice(slicePoints[pageInt - 1][0], slicePoints[pageInt - 1][1]));
+         }
+         else {
+            // #to get prodData_slice for initial render or if no page exist on url
+            setProdData_slice(prodData.slice(0, sliceLg));
+         }
+      } else if ((prodDocLg.category !== null) && (prodData_filtered.length > 0)) {
+         // console.log('category');
+         if (page && pageLg) {
+            if ((parseInt(page.toString()) > slicePoints.length)) {
+               router.push(`/${shopAppUrl}?category=${category}&page=${pageLg}`);
+               pageInt = pageLg;
+            } else if ((parseInt(page.toString()) < 1) || (isNaN(parseInt(page.toString())))) {
+               router.push(`/${shopAppUrl}?category=${category}&page=${'1'}`);
+               pageInt = 1;
+            } else {
+               pageInt = parseInt(page.toString());
+            }
+
+            setProdData_slice(prodData_filtered.slice(slicePoints[pageInt - 1][0], slicePoints[pageInt - 1][1]));
          } else {
-            setProdDetails_new(prodDetails.slice(0, listLength));
+            setProdData_slice(prodData_filtered.slice(0, sliceLg));
+         }
+      } else if ((prodDocLg.search !== null) && (prodData_filtered.length > 0)) {
+         // console.log('search');
+         if (page && pageLg) {
+            pageInt = parseInt(page.toString());
+
+            setProdData_slice(prodData_filtered.slice(slicePoints[pageInt - 1][0], slicePoints[pageInt - 1][1]));
+         }
+         else {
+            setProdData_slice(prodData_filtered.slice(0, sliceLg));
          }
       }
-   }, [dispatch, router, shopAppUrl, category, prodDetails, page, prodDocLength, pageLength, searchInput_prod]);
+   }, [router, shopAppUrl, prodData, prodData_filtered, page, pageLg, prodDocLg, category]);
+
 
    useEffect(() => {
       shopAppUrl && onSnapshot(query(collection(database, 'shops'), where('urlName', '==', shopAppUrl)), (snapshot) => {
-         // console.log(snapshot.docs.length);
          if (snapshot.docs.length == 0) {
             setShopNotExistOnServer(true);
             sessionStorage.removeItem('shop-details');
@@ -122,61 +177,108 @@ const ShopHome: NextPage = () => {
 
 
    const ProductCardWrap = () => (
-      <Stack direction={'column'} >
-         {((prodDocLength! > 0) || (prodDocLength === null)) ? (
+      <Stack direction='column' >
+         {((prodData_slice?.length > 0) || (prodData_slice === null)) ? (
             <>
-               {((prodDocLength! > 0)) ? (
+               {((prodData_slice?.length > 0)) ? (
                   <Stack spacing={2} >
-                     <Stack direction='row' justifyContent="center" alignItems="center" flexWrap="wrap" >
-                        {(filteredProducts.length ? filteredProducts : prodDetails_new).map((prod: ProdDetailsTypes, index: number) => (
-                           <ProductCard
-                              key={index}
+                     {((prodDocLg.search !== null) && searchInput) && (
+                        <Stack direction="row" alignItems="start" spacing={0.7} >
+                           <Typography>Search for</Typography>
+                           <Typography
+                              px={1.2}
+                              sx={{ bgcolor: colors.grey[300], borderRadius: 8, }}
+                           >
+                              {searchInput}
+                           </Typography>
+                        </Stack>
+                     )}
+                     {((prodDocLg.category !== null) && category) && (
+                        <Stack direction="row" alignItems="start" spacing={0.7} >
+                           <Typography>Category for</Typography>
+                           <Typography
+                              px={1.2}
+                              sx={{ bgcolor: colors.grey[300], borderRadius: 8, }}
+                           >
+                              {category}
+                           </Typography>
+                        </Stack>
+                     )}
+                     {(prodDocLg?.search === 0) ? (
+                        <Typography variant="h6" component="p" fontWeight={300} textAlign="center" >No result found !</Typography>
+                     ) : (
+                        <>
+                           <Stack direction='row' justifyContent="center" alignItems="center" flexWrap="wrap" >
+                              {prodData_slice?.map((prod: ProdDetailsTypes, index: number) => (
+                                 <ProductCard
+                                    key={index}
 
-                              shopUrlName={shop?.urlName!}
+                                    shopUrlName={shop?.urlName!}
 
-                              prodId={prod.id}
-                              prodName={prod.data().name}
-                              prodImg={prod.data().imageUrl}
-                              prodCategory={prod.data().category}
-                              sellPrice={prod.data().sellPrice}
-                           />
-                        ))}
-                     </Stack>
-                     <Stack justifyContent="center" alignItems="center" >
-                        {(!(category && (filteredProducts.length > 0)) && (prodDetails_new.length > 0)) && (
-                           <Pagination
-                              count={pageLength}
-                              page={page ? (parseInt(page.toString())) : 1}
-                              onChange={(_, value: number) => {
-                                 router.push(`/${shopAppUrl}?page=${value}`);
-                              }}
-                              showFirstButton showLastButton
-                           />
-                        )}
-                     </Stack>
+                                    prodId={prod.id}
+                                    prodName={prod.data().name}
+                                    prodImg={prod.data().imageUrl}
+                                    prodCategory={prod.data().category}
+                                    sellPrice={prod.data().sellPrice}
+                                 />
+                              ))}
+                           </Stack>
+                           <Stack justifyContent="center" alignItems="center" >
+                              <Pagination
+                                 size="small"
+                                 boundaryCount={1}
+                                 // showFirstButton={page ? (page?.toString() !== '1') : false}
+                                 // showLastButton={page?.toString() !== pageLg?.toString()}
+                                 count={pageLg!}
+                                 page={page ? (parseInt(page.toString())) : 1}
+                                 onChange={(_, value: number) => {
+                                    category
+                                       ? router.push(`/${shopAppUrl}?category=${category}&page=${value}`)
+                                       : router.push(`/${shopAppUrl}?page=${value}`);
+                                 }}
+                              />
+                           </Stack>
+                        </>
+                     )}
                   </Stack>
                ) : (
-                  <Stack direction='row' justifyContent="center" alignItems="center" flexWrap="wrap" >
-                     {[...Array(2)].map((_, index) => (
-                        <Box key={index} p={1} >
-                           <Skeleton
-                              variant='rectangular'
-                              animation="wave"
-                              sx={{
-                                 borderRadius: 0.8,
-                                 width: { xs: "120px", sm: "220px" },
-                                 height: { xs: "140px", sm: "200px" }
-                              }}
-                           />
-                        </Box>
-                     ))}
-                  </Stack>
+                  <>
+                     {(category) ? (
+                        <Stack spacing={2} >
+                           <Stack direction="row" alignItems="start" spacing={0.7} >
+                              <Typography>Category for</Typography>
+                              <Typography
+                                 px={1.2}
+                                 sx={{ bgcolor: colors.grey[300], borderRadius: 8, }}
+                              >
+                                 {category}
+                              </Typography>
+                           </Stack>
+                        </Stack>
+                     ) : (
+                        <Stack direction='row' justifyContent="center" alignItems="center" flexWrap="wrap" >
+                           {[...Array(2)].map((_, index) => (
+                              <Box key={index} p={1} >
+                                 <Skeleton
+                                    variant='rectangular'
+                                    animation="wave"
+                                    sx={{
+                                       borderRadius: 0.8,
+                                       width: { xs: "120px", sm: "220px" },
+                                       height: { xs: "140px", sm: "200px" }
+                                    }}
+                                 />
+                              </Box>
+                           ))}
+                        </Stack>
+                     )}
+                  </>
                )}
             </>
          ) : (
             <Typography variant="h6" component="p" textAlign="center" >Data is empty</Typography>
          )}
-      </Stack>
+      </Stack >
    );
 
 

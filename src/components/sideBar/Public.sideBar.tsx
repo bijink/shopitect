@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { database } from '../../config/firebase.config';
-import { useAppSelector } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { selectPageId } from '../../redux/slices/pageId.slice';
@@ -28,6 +28,7 @@ import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded';
 import HomeIcon from '@mui/icons-material/Home';
 import { sidebarWidth } from '../../layouts/Page.layout';
 import { useShop } from '../../hooks';
+import { setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
 
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -44,6 +45,8 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 export default function Public_sideBar() {
    const router = useRouter();
    const { shopAppUrl, category } = router.query;
+
+   const dispatch = useAppDispatch();
    const pageId = useAppSelector(selectPageId);
 
    const { data: shop } = useShop(shopAppUrl);
@@ -93,16 +96,19 @@ export default function Public_sideBar() {
          >
             <List>
                {categoryList && categoryList.map((text, index) => (
-                  <ListItem key={index} button disablePadding sx={{ backgroundColor: ((text === 'all') && ((category === 'all') || (!category))) ? '#bdbdbd' : ((category === text) ? '#bdbdbd' : 'transparent') }} onClick={() => {
-                     if (text === 'all') {
-                        router.push(((pageId === 'shopHome_page') || (pageId === 'productView_page')) ? `/${shopAppUrl}` : `/${shopAppUrl}/dashboard`);
-                     } else {
-                        router.push({
-                           pathname: ((pageId === 'shopHome_page') || (pageId === 'productView_page')) ? `/${shopAppUrl}` : `/${shopAppUrl}/dashboard`,
-                           query: { category: text },
-                        });
-                     }
-                  }}>
+                  <ListItem key={index} button disablePadding sx={{ backgroundColor: ((text === 'all') && ((category === 'all') || (!category))) ? '#bdbdbd' : ((category === text) ? '#bdbdbd' : 'transparent') }}
+                     onClick={() => {
+                        dispatch(setProdSearchInput(''));
+
+                        if (text === 'all') {
+                           router.push(`/${shopAppUrl}`);
+                        } else {
+                           router.push({
+                              pathname: `/${shopAppUrl}`,
+                              query: { category: text },
+                           });
+                        }
+                     }}>
                      <ListItemButton sx={{ paddingTop: 0, paddingBottom: 0 }} >
                         <ListItemText primary={capitalize(text)} />
                      </ListItemButton>
