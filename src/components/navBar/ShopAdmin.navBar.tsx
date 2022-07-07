@@ -15,17 +15,14 @@ import {
 import { styled, alpha } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import { useRouter } from 'next/router';
-import { auth } from '../../config/firebase.config';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { signOut as signOutProvider, useSession } from 'next-auth/react';
-import { signOut as signOutAccount } from 'firebase/auth';
 import { useShop } from '../../hooks';
 import { selectPageId } from '../../redux/slices/pageId.slice';
 import { selectProdSearchInput, setProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import { LogoutConfirm_dialog } from '../dialogs';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -78,16 +75,13 @@ export default function ShopAdmin_navBar() {
    const searchInput = useAppSelector(selectProdSearchInput);
 
    const { data: shop } = useShop(shopAppUrl);
-   // console.log(shop.logoUrl);
 
    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-   // const [searchInput, setSearchInput] = React.useState('');
 
 
-   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
       setAnchorEl(event.currentTarget);
    };
-
    const handleMenuClose = () => {
       setAnchorEl(null);
    };
@@ -114,17 +108,7 @@ export default function ShopAdmin_navBar() {
                <Typography pl={1} >Settings</Typography>
             </MenuItem>
          )}
-         <MenuItem onClick={() => {
-            router.push(`/${shopAppUrl}`).then(() => {
-               signOutProvider({ redirect: false }).then(() => {
-                  signOutAccount(auth);
-               });
-            });
-            handleMenuClose();
-         }}>
-            <LogoutOutlinedIcon />
-            <Typography pl={1} >Log out</Typography>
-         </MenuItem>
+         <LogoutConfirm_dialog handleMenuClose={handleMenuClose} />
       </Menu>
    );
 
@@ -200,7 +184,7 @@ export default function ShopAdmin_navBar() {
                         aria-label="show more"
                         aria-controls={menuId}
                         aria-haspopup="true"
-                        onClick={handleProfileMenuOpen}
+                        onClick={handleMenuOpen}
                         color="inherit"
                      >
                         <MoreVertIcon />

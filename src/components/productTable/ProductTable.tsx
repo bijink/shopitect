@@ -20,12 +20,11 @@ import {
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useEffect, useState } from 'react';
-import EditProduct_modal from './EditProduct.modal';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { changeProdTableCollapse, selectProdTableCloseCollapse } from '../../redux/slices/prodTableCollapse.slice';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import Image from 'next/image';
-import { ProductDelete_dialog } from '../dialogs';
+import { ProductDelete_dialog, ProductEdit_dialog } from '../dialogs';
 
 
 const Row = ({ rowBgColor, shopUrlName, prodId, prodNo, prodCodeName, prodName, prodCategory, prodBrand, prodImg, quantity, getPrice, sellPrice, profitAmount, profitPercentage, createdAt }: ProductTableRowProps) => {
@@ -118,7 +117,7 @@ const Row = ({ rowBgColor, shopUrlName, prodId, prodNo, prodCodeName, prodName, 
                         <TableBody  >
                            <TableRow  >
                               <TableCell component="th" scope="row" align="center"  >
-                                 <EditProduct_modal
+                                 <ProductEdit_dialog
                                     shopUrlName={shopUrlName}
                                     prodId={prodId}
                                     prodCodeName={prodCodeName}

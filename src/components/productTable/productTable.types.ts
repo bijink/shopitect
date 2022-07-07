@@ -53,18 +53,3 @@ export type ProdDetailsTypes = {
       imageUrl: string;
    };
 };
-
-export interface EditProductModalProps {
-   shopUrlName: string;
-
-   prodId: string;
-   prodName: string;
-   prodCodeName: string;
-   prodBrand: string;
-   prodCategory: string;
-   quantity: number;
-   getPrice: number;
-   sellPrice: number;
-   profitAmount: number;
-   profitPercentage: number;
-};

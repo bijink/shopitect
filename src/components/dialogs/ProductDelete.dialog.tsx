@@ -1,3 +1,5 @@
+import type { ProductDeleteProps } from './dialogs.types';
+
 import {
    Box,
    IconButton,
@@ -21,13 +23,7 @@ import { LoadingButton } from "@mui/lab";
 import { setSnackbarState } from '../../redux/slices/snackbarState.slice';
 
 
-interface DialogProps {
-   shopUrlName: string,
-   prodId: string,
-}
-
-
-export default function ProductDelete_dialog({ shopUrlName, prodId }: DialogProps) {
+export default function ProductDelete_dialog({ shopUrlName, prodId }: ProductDeleteProps) {
    const [dialogOpen, setDialogOpen] = useState(false);
    const [loading_remove, setLoading_remove] = useState(false);
 

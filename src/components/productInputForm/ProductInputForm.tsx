@@ -254,7 +254,7 @@ const ProductInputForm = ({ shopData }: ProductInputProps) => {
                      </Stack>
                   </Stack>
                   <Stack direction={{ xs: 'column', sm: "row" }} alignItems="center" spacing={1} >
-                     <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
+                     <Stack direction={{ xs: 'column', md: 'row' }} width="100%" spacing={1}>
                         <TextField label="Get Price" size="small" fullWidth type="number"
                            helperText="*helper text"
                            InputProps={{ startAdornment: <InputAdornment position="start">Rs.</InputAdornment> }}
@@ -298,7 +298,7 @@ const ProductInputForm = ({ shopData }: ProductInputProps) => {
                         )}
                      </Stack>
                      <Typography fontSize="1.5rem" pb={3} sx={{ transform: { xs: 'rotate(90deg)', sm: 'rotate(0deg)' } }} >»</Typography>
-                     <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
+                     <Stack direction={{ xs: 'column', md: 'row' }} width="100%" spacing={1}>
                         {(calcMethod == 'method-1') && (
                            <>
                               <TextField label="Profit Percentage" size="small" fullWidth type="number"
