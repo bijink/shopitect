@@ -11,13 +11,12 @@ import Snackbars from '../../components/snackbars';
 import { setAppPageId } from '../../redux/slices/pageId.slice';
 import { collection, DocumentData, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { database } from '../../config/firebase.config';
-import { selectPageId } from '../../redux/slices/pageId.slice';
 import { selectProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
 
 
 const ProductTable_page = () => {
    const router = useRouter();
-   const { shopAppUrl, category, page } = router.query;
+   const { shopAppUrl, category } = router.query;
 
    const dispatch = useAppDispatch();
    const searchInput = useAppSelector(selectProdSearchInput);
@@ -37,7 +36,10 @@ const ProductTable_page = () => {
    const [pageLg, setPageLg] = useState<number | null>(null);
    const [prodData, setProdData] = useState<DocumentData>([]);
    const [prodData_filtered, setProdData_filtered] = useState<DocumentData>([]);
-   const [prodData_slice, setProdData_slice] = useState<DocumentData | null>(null);
+   // const [prodData_slice, setProdData_slice] = useState<DocumentData | null>(null);
+   const [prodData_slice, setProdData_slice] = useState<DocumentData>([]);
+   const [prodDataStatus, setProdDataStatus] = useState<boolean | 'loading'>('loading');
+
    const [sliceLg, setSliceLg] = useState(10);
    const [tablePage, setTablePage] = useState(0);
 
@@ -70,8 +72,10 @@ const ProductTable_page = () => {
    // #all prodData
    useEffect(() => {
       shop && onSnapshot(query(collection(database, 'shops', shop.urlName, 'products'), orderBy('createdAt', 'desc')), (snapshot) => {
+         setProdDataStatus(snapshot.docs.length ? true : false);
          setProdData(snapshot.docs);
          setProdDocLg({ ...prodDocLg, all: snapshot.docs.length });
+
       });
    }, [shop]);
    // #search & category prodData
@@ -149,7 +153,9 @@ const ProductTable_page = () => {
                Add
             </Button>
          </Stack>
-         {((prodData_slice?.length > 0) || (prodData_slice === null)) ? (
+
+         {/* #if prodDataStatus == true | 'loading' */}
+         {(prodDataStatus) ? (
             <>
                {((prodData_slice?.length > 0)) ? (
                   <Stack spacing={2} >

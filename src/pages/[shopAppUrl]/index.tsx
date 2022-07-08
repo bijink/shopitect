@@ -20,7 +20,6 @@ import { Public_sideBar, ShopAdmin_sideBar } from '../../components/sideBar';
 import { Public_btmNavbar, ShopAdmin_btmNavbar } from '../../components/bottomNavBar';
 
 
-
 const ShopHome: NextPage = () => {
    const router = useRouter();
    const { shopAppUrl, category, page } = router.query;
@@ -43,7 +42,10 @@ const ShopHome: NextPage = () => {
    const [pageLg, setPageLg] = useState<number | null>(null);
    const [prodData, setProdData] = useState<DocumentData>([]);
    const [prodData_filtered, setProdData_filtered] = useState<DocumentData>([]);
-   const [prodData_slice, setProdData_slice] = useState<DocumentData | null>(null);
+   // const [prodData_slice, setProdData_slice] = useState<DocumentData | null>(null);
+   const [prodData_slice, setProdData_slice] = useState<DocumentData>([]);
+   const [prodDataStatus, setProdDataStatus] = useState<boolean | 'loading'>('loading');
+
    const [shopNotExistOnServer, setShopNotExistOnServer] = useState(false);
 
 
@@ -62,6 +64,8 @@ const ShopHome: NextPage = () => {
       shop && onSnapshot(query(collection(database, 'shops', shop.urlName, 'products'), orderBy('createdAt', 'desc')), (snapshot) => {
          setProdData(snapshot.docs);
          setProdDocLg({ ...prodDocLg, all: snapshot.docs.length });
+
+         setProdDataStatus(snapshot.docs.length ? true : false);
       });
    }, [shop]);
    // #search & category prodData
@@ -178,7 +182,8 @@ const ShopHome: NextPage = () => {
 
    const ProductCardWrap = () => (
       <Stack direction='column' >
-         {((prodData_slice?.length > 0) || (prodData_slice === null)) ? (
+         {/* #if prodDataStatus == true | 'loading' */}
+         {(prodDataStatus) ? (
             <>
                {((prodData_slice?.length > 0)) ? (
                   <Stack spacing={2} >
