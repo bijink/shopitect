@@ -1,5 +1,5 @@
 // *userData, userStatus hook
-import type { User } from "firebase/auth";
+import { User } from "firebase/auth";
 
 import { useEffect, useState } from "react";
 import { auth } from "../config/firebase.config";
