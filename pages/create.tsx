@@ -34,13 +34,15 @@ const Create_app: NextPage = () => {
    const [shopUrlName, setShopUrlName] = useState('');
    const [password, setPassword] = useState('');
    const [shopLogo, setShopLogo] = useState<Blob | null>(null);
-   // console.log('final-blob:', shopLogo);
 
    const [loading, setLoading] = useState(false);
-   const [shopDocIds, setShopDocIds] = useState([] as Array<string>);
    const [isShopUrlNameUnique, setIsShopUrlNameUnique] = useState(false);
    const [showPassword, setShowPassword] = useState(false);
    const [isAccountNotExist, setIsAccountNotExist] = useState(false);
+
+   // #isFormSubmit: for fixing state change of 'shopUrlNameUnique' after shopData uploaded into db
+   // #causing ui change in form
+   const [isFormSubmit, setIsFormSubmit] = useState(false);
 
 
    const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -49,6 +51,8 @@ const Create_app: NextPage = () => {
       // #shopUrlName is used as documentID in firebase firestore as a unique id
       if (session && isShopUrlNameUnique && (password.length >= 8) && shopLogo) {
          setLoading(true);
+         setIsFormSubmit(true);
+
          await createUserWithEmailAndPassword(auth, shopEmail, password).then((userCredential) => {
             // Signed in 
             // const user = userCredential.user;
@@ -150,12 +154,10 @@ const Create_app: NextPage = () => {
          snapshot.forEach(obj => {
             arr.push(obj.id);
          });
-         setShopDocIds(arr);
+         // console.log(!(shopDocIds.some(arr => arr == shopUrlName)));
+         setIsShopUrlNameUnique(!(arr.some(arr => arr == shopUrlName)));
       });
-
-      // console.log(!(shopDocIds.some(arr => arr == shopUrlName)));
-      setIsShopUrlNameUnique(!(shopDocIds.some(arr => arr == shopUrlName)));
-   }, [shopUrlName, shopDocIds]);
+   }, [shopUrlName]);
 
    useEffect(() => {
       dispatch(setAppPageId('createApp_page'));
@@ -196,14 +198,14 @@ const Create_app: NextPage = () => {
                            label="Shop Url Name"
                            size="small"
                            fullWidth
-                           helperText={!(shopUrlName !== '') ?
-                              '* This name is used in url for identifing your app. Make sure to enter a unique name'
-                              : (isShopUrlNameUnique ? 'Url is unique' : 'Url is not unique')
+                           helperText={(Boolean(shopUrlName) && !isFormSubmit) ?
+                              (isShopUrlNameUnique ? 'Url is unique' : 'Url is not unique')
+                              : '* This name is used in url for identifing your app. Make sure to enter a unique name'
                            }
                            value={shopUrlName}
                            onInput={(e: ChangeEvent<HTMLInputElement>) => setShopUrlName(e.target.value.split(" ").join("").toLowerCase())}
                            required
-                           error={!isShopUrlNameUnique}
+                           error={!isFormSubmit && !isShopUrlNameUnique}
                         />
                         <TextField
                            label="Shop Category"
