@@ -93,7 +93,7 @@ const ProductInputForm = ({ shopData }: ProductInputProps) => {
          addDoc(collection(database, 'shops', shopData?.urlName, 'products'), {
             name: prodName,
             codeName: prodCodeName,
-            category: prodCategory,
+            category: prodCategory.toLowerCase(),
             brand: prodBrand,
             quantity: parseFloat(quantity),
             getPrice: parseFloat(getPriceInput),

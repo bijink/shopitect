@@ -47,12 +47,11 @@ const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
 
          <Stack
             direction="column" justifyContent="space-evenly" alignItems="center"
-            // spacing={5}
             height={'100vh'}
          >
             <Stack justifyContent="center" spacing={3} >
                <Stack direction="column" alignItems="center">
-                  <Box width={{ xs: '25vw', sm: '20vw', md: '15vw' }} pb={1} >
+                  {/* <Box width={{ xs: '25vw', sm: '20vw', md: '15vw' }} pb={1} >
                      <Image
                         alt="Shopitect"
                         src="/img/shopitect-logo.png"
@@ -60,7 +59,7 @@ const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
                         height={200}
                         layout="responsive"
                      />
-                  </Box>
+                  </Box> */}
                   <Typography fontSize={{ xs: '1.5rem', sm: '3rem' }} component="h1" textAlign="center"  >
                      Welcome to <b>Shopitect</b>
                   </Typography>

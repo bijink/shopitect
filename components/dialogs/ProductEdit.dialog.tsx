@@ -106,7 +106,7 @@ export default function ProductEdit_dialog({ shopUrlName, prodId, prodName, prod
       await updateDoc(doc(database, "shops", shopUrlName, "products", prodId), {
          name: prodNameInput,
          codeName: prodCodeNameInput,
-         category: prodCategoryInput,
+         category: prodCategoryInput.toLowerCase(),
          brand: prodBrandInput,
          quantity: parseFloat(quantityInput),
          getPrice: parseFloat(getPriceInput),
