@@ -1,9 +1,8 @@
 // *Welcome page
-import type { GetServerSideProps, NextPage } from 'next';
-import type { GoogleProviderTypes } from "../types/pages/googleProvider.types";
+import type { NextPage } from 'next';
 
 import { Box, colors, Container, Stack, Typography } from '@mui/material';
-import { getProviders, signIn as signInProvider } from "next-auth/react";
+import { signIn as signInProvider } from "next-auth/react";
 import { auth } from '../config/firebase.config';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -18,7 +17,7 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import { App_about, App_help } from '../components/dialogs';
 
 
-const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
+const Home: NextPage = () => {
    const router = useRouter();
 
    const dispatch = useAppDispatch();
@@ -51,7 +50,7 @@ const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
          >
             <Stack justifyContent="center" spacing={3} >
                <Stack direction="column" alignItems="center">
-                  {/* <Box width={{ xs: '25vw', sm: '20vw', md: '15vw' }} pb={1} >
+                  <Box width={{ xs: '25vw', sm: '20vw', md: '15vw' }} pb={1} >
                      <Image
                         alt="Shopitect"
                         src="/img/shopitect-logo.png"
@@ -59,7 +58,7 @@ const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
                         height={200}
                         layout="responsive"
                      />
-                  </Box> */}
+                  </Box>
                   <Typography fontSize={{ xs: '1.5rem', sm: '3rem' }} component="h1" textAlign="center"  >
                      Welcome to <b>Shopitect</b>
                   </Typography>
@@ -69,45 +68,41 @@ const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
                </Stack>
 
                <Box>
-                  {Object.values(providers).map((provider) => (
-                     <Box key={provider.id}>
-                        <Typography fontSize={{ xs: '1.1rem', sm: '1.5rem' }} component="p" textAlign="center" pb={1} >Signup/Login with {provider.name}</Typography>
-                        <Stack direction="row" spacing={2} justifyContent="center" >
-                           <LoadingButton
-                              variant='contained'
-                              color="primary"
-                              size='small'
-                              onClick={() => {
-                                 !loading_login && setLoading_signup(true);
-                                 !loading_login && signOutAccount(auth).then(() => {
-                                    signInProvider(provider.id, { redirect: false, callbackUrl: `/auth/signup` });
-                                 });
-                              }}
-                              loadingPosition="center"
-                              loading={loading_signup}
-                              disabled={(userStatus === 'loading')}
-                           >signup</LoadingButton>
-                           <LoadingButton
-                              variant='contained'
-                              size='small'
-                              sx={{
-                                 bgcolor: (userStatus === 'authenticated') ? colors.green[700] : colors.teal[600],
-                                 '&:hover': { bgcolor: (userStatus === 'authenticated') ? colors.green[800] : colors.teal[700], }
-                              }}
-                              onClick={() => {
-                                 !loading_signup && setLoading_login(true);
-                                 !loading_signup && ((userStatus === 'authenticated') ?
-                                    router.push(`/auth/login`) :
-                                    signInProvider(provider.id, { redirect: false, callbackUrl: `/auth/login` })
-                                 );
-                              }}
-                              loadingPosition="center"
-                              loading={loading_login}
-                              disabled={(userStatus === 'loading')}
-                           >login</LoadingButton>
-                        </Stack>
-                     </Box>
-                  ))}
+                  <Typography fontSize={{ xs: '1.1rem', sm: '1.5rem' }} component="p" textAlign="center" pb={1} >Signup/Login with Google</Typography>
+                  <Stack direction="row" spacing={2} justifyContent="center" >
+                     <LoadingButton
+                        variant='contained'
+                        color="primary"
+                        size='small'
+                        onClick={() => {
+                           !loading_login && setLoading_signup(true);
+                           !loading_login && signOutAccount(auth).then(() => {
+                              signInProvider('google', { redirect: false, callbackUrl: `/auth/signup` });
+                           });
+                        }}
+                        loadingPosition="center"
+                        loading={loading_signup}
+                        disabled={(userStatus === 'loading')}
+                     >signup</LoadingButton>
+                     <LoadingButton
+                        variant='contained'
+                        size='small'
+                        sx={{
+                           bgcolor: (userStatus === 'authenticated') ? colors.green[700] : colors.teal[600],
+                           '&:hover': { bgcolor: (userStatus === 'authenticated') ? colors.green[800] : colors.teal[700], }
+                        }}
+                        onClick={() => {
+                           !loading_signup && setLoading_login(true);
+                           !loading_signup && ((userStatus === 'authenticated') ?
+                              router.push(`/auth/login`) :
+                              signInProvider('google', { redirect: false, callbackUrl: `/auth/login` })
+                           );
+                        }}
+                        loadingPosition="center"
+                        loading={loading_login}
+                        disabled={(userStatus === 'loading')}
+                     >login</LoadingButton>
+                  </Stack>
                </Box>
             </Stack>
 
@@ -132,12 +127,6 @@ const Home: NextPage<GoogleProviderTypes> = ({ providers }) => {
          </Stack>
       </>
    );
-};
-
-export const getServerSideProps: GetServerSideProps = async () => {
-   const providers = await getProviders();
-
-   return { props: { providers } };
 };
 
 export default Home;
