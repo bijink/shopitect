@@ -11,7 +11,7 @@ import { database } from '../../config/firebase.config';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { setAppPageId } from '../../redux/slices/pageId.slice';
 import { PageSkeleton_layout, Page_layout } from '../../layouts';
-import { useShop } from '../../hooks';
+import { useShop, useUser } from '../../hooks';
 import { Box, colors, Pagination, Skeleton, Stack, Typography } from '@mui/material';
 import NotFound from '../404';
 import { selectProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
@@ -27,6 +27,7 @@ const ShopHome: NextPage = () => {
    const dispatch = useAppDispatch();
    const searchInput = useAppSelector(selectProdSearchInput);
 
+   const { status } = useUser();
    const { data: shop, secure } = useShop(shopAppUrl);
 
    const sliceLg = 10;
@@ -42,7 +43,6 @@ const ShopHome: NextPage = () => {
    const [pageLg, setPageLg] = useState<number | null>(null);
    const [prodData, setProdData] = useState<DocumentData>([]);
    const [prodData_filtered, setProdData_filtered] = useState<DocumentData>([]);
-   // const [prodData_slice, setProdData_slice] = useState<DocumentData | null>(null);
    const [prodData_slice, setProdData_slice] = useState<DocumentData>([]);
    const [prodDataStatus, setProdDataStatus] = useState<boolean | 'loading'>('loading');
 
@@ -58,6 +58,23 @@ const ShopHome: NextPage = () => {
       return arr;
    };
 
+
+   useEffect(() => {
+      let secretAccessCode = sessionStorage.getItem('secret-access-code');
+
+      if (!secretAccessCode && (status === 'unauthenticated') && (shopAppUrl === 'my-shop')) {
+         let hasSecretAccessCode = confirm('Click OK if you have the "Secret Access Code"');
+
+         if (hasSecretAccessCode) {
+            let promptValue = prompt('Enter the "Secret Access Code" to get the admin control without login : ');
+            if (promptValue === process.env.secretAccessCode_myShop) {
+               sessionStorage.setItem('secret-access-code', JSON.stringify(promptValue));
+            } else if ((promptValue !== null) && (promptValue !== process.env.secretAccessCode_myShop)) {
+               alert('Wrong Access Code');
+            }
+         }
+      }
+   }, [status]);
 
    // #all prodData
    useEffect(() => {

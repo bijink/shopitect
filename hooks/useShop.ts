@@ -45,19 +45,24 @@ const useShop = (shopAppUrl: string | string[] | undefined) => {
       if (shopAppUrl && shopDetails) {
          if ((shopDetails.length === null) || (userData === undefined)) {
             setSecure('loading');
-         }
-         else if (userData && (shopDetails.length === 1)) {
+         } else if ((shopDetails.data?.urlName === 'my-shop') && !userData) {
+            let secretAccessCode = sessionStorage.getItem('secret-access-code');
+
+            if (JSON.parse(secretAccessCode!) === process.env.secretAccessCode_myShop) {
+               setSecure(200);
+            } else {
+               setSecure(401);
+            }
+         } else if (userData && (shopDetails.length === 1)) {
             if (userData.uid === shopDetails.data?.accountID) {
                setSecure(200);
             } else {
-               setSecure(403);
+               setSecure(403);//
             }
-         }
-         else if ((shopDetails.length === 0)) {
+         } else if ((shopDetails.length === 0)) {
             setSecure(404);
-         }
-         else if (userData === null) {
-            setSecure(401);
+         } else if (userData === null) {
+            setSecure(401);//
          }
       }
    }, [shopDetails, userData]);

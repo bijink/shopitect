@@ -33,6 +33,10 @@ const Home: NextPage = () => {
 
 
    useEffect(() => {
+      sessionStorage.removeItem('secret-access-code');
+   }, []);
+
+   useEffect(() => {
       dispatch(setAppPageId('appHome_page'));
    }, [dispatch]);
 
