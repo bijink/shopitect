@@ -116,7 +116,7 @@ const LoginConfirm = () => {
                      sx={{ backgroundColor: 'whitesmoke' }}
                   >
                      <Stack spacing={3} alignItems="center">
-                        <Typography variant="h4" component="h1">My Master Project Name</Typography>
+                        <Typography variant="h4" component="h1">Shopitect</Typography>
                         <Typography variant="h5" component="div">Login</Typography>
                         <form onSubmit={handleSubmit}>
                            <Stack spacing={2}>

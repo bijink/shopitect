@@ -10,13 +10,13 @@ const UnAuthProvider = ({ title }: { title: string; }) => {
    return (
       <>
          <Head>
-            <title>{title} · master-project</title>
+            <title>{title} · Shopitect</title>
          </Head>
 
          <Box display="flex" justifyContent="center" alignItems="center" p={5} >
             <Box>
                <Typography variant="h5" component="p" gutterBottom>
-                  You haven&apos;t selected your google account
+                  You haven&apos;t selected a google account
                </Typography>
                <Stack direction="row" spacing={2} justifyContent="center">
                   <Button variant="contained" size='small' color="error" onClick={() => {
