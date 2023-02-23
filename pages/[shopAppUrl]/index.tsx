@@ -18,6 +18,7 @@ import { selectProdSearchInput } from '../../redux/slices/prodSearchInput.slice'
 import { Public_navBar, ShopAdmin_navBar } from '../../components/navBar';
 import { Public_sideBar, ShopAdmin_sideBar } from '../../components/sideBar';
 import { Public_btmNavbar, ShopAdmin_btmNavbar } from '../../components/bottomNavBar';
+import secretAccess from '../../utility/secretAccess';
 
 
 const ShopHome: NextPage = () => {
@@ -58,23 +59,15 @@ const ShopHome: NextPage = () => {
       return arr;
    };
 
-
+   // #secret access
    useEffect(() => {
-      let secretAccessCode = sessionStorage.getItem('secret-access-code');
+      let secretAccess_storage = sessionStorage.getItem('secret-access');
 
-      if (!secretAccessCode && (status === 'unauthenticated') && (shopAppUrl === 'my-shop')) {
-         let hasSecretAccessCode = confirm('Click OK if you have the "Secret Access Code"');
-
-         if (hasSecretAccessCode) {
-            let promptValue = prompt('Enter the "Secret Access Code" to get the admin control without login : ');
-            if (promptValue === process.env.secretAccessCode_myShop) {
-               sessionStorage.setItem('secret-access-code', JSON.stringify(promptValue));
-            } else if ((promptValue !== null) && (promptValue !== process.env.secretAccessCode_myShop)) {
-               alert('Wrong Access Code');
-            }
-         }
+      if (!secretAccess_storage && (prodDataStatus !== 'loading') && (status === 'unauthenticated') && (shopAppUrl === 'my-shop')) {
+         let isSecretAccess = secretAccess();
+         isSecretAccess && router.reload();
       }
-   }, [status]);
+   }, [status, prodDataStatus]);
 
    // #all prodData
    useEffect(() => {

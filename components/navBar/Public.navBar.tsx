@@ -19,6 +19,8 @@ import { selectProdSearchInput, setProdSearchInput } from '../../redux/slices/pr
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { useShop } from '../../hooks';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import secretAccess from '../../utility/secretAccess';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -65,15 +67,17 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export default function Public_navBar() {
    const router = useRouter();
    const { shopAppUrl, category } = router.query;
-
    const dispatch = useAppDispatch();
    const pageId = useAppSelector(selectPageId);
    const searchInput = useAppSelector(selectProdSearchInput);
-
    const { data: shop } = useShop(shopAppUrl);
 
-   // const [searchInput, setSearchInput] = useState('');
+   let secretAccess_storage = JSON.parse(sessionStorage.getItem('secret-access')!);
 
+   const handleSecretAccess = () => {
+      let isSecretAccess = secretAccess();
+      isSecretAccess && router.reload();
+   }
 
    return (
       <>
@@ -108,6 +112,19 @@ export default function Public_navBar() {
                   </Typography>
                </Stack>
                <Box sx={{ flexGrow: 10 }} />
+               {((shopAppUrl === 'my-shop') && secretAccess_storage && !secretAccess_storage?.boolean) ? 
+                  (<Tooltip title="Secret Access" arrow >
+                     <IconButton
+                        size="small"
+                        aria-label="secret-access"
+                        color="inherit"
+                        onClick={handleSecretAccess}
+                     >
+                        <LockOpenIcon /> 
+                     </IconButton>
+                  </Tooltip>
+                  ) : null
+               }
                {(pageId === 'shopHome_page') && (
                   <Search sx={{ flexGrow: 2 }}>
                      <SearchIconWrapper>

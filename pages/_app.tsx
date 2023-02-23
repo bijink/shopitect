@@ -48,6 +48,7 @@ const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
             <meta name="viewport" content="initial-scale=1.0, width=device-width" />
             <meta name="description" content="An architect of shop management application" />
             <meta property="og:title" content="Shopitect" key="title" />
+            <meta name="google-site-verification" content="uGQeOYoDV-cyfJuBhV79hzfXC4nc7-7hYjydenFPVhI" />
          </Head>
 
          <SessionProvider session={session}>

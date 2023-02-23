@@ -46,9 +46,8 @@ const useShop = (shopAppUrl: string | string[] | undefined) => {
          if ((shopDetails.length === null) || (userData === undefined)) {
             setSecure('loading');
          } else if ((shopDetails.data?.urlName === 'my-shop') && !userData) {
-            let secretAccessCode = sessionStorage.getItem('secret-access-code');
-
-            if (JSON.parse(secretAccessCode!) === process.env.secretAccessCode_myShop) {
+            let secretAccess_storage = JSON.parse(sessionStorage.getItem('secret-access')!);
+            if ((secretAccess_storage?.code!) === process.env.secretAccessCode_myShop) {
                setSecure(200);
             } else {
                setSecure(401);

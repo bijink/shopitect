@@ -13,6 +13,9 @@ module.exports = {
       storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
       messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
       appId: process.env.FIREBASE_APP_ID,
+      googleClientId: process.env.GOOGLE_CLIENT_ID,
+      googleClientSecret : process.env.GOOGLE_CLIENT_SECRET,
+      nextSecret: process.env.NEXTAUTH_SECRET,
    },
    redirects: async () => {
       return [

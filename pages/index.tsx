@@ -33,7 +33,7 @@ const Home: NextPage = () => {
 
 
    useEffect(() => {
-      sessionStorage.removeItem('secret-access-code');
+      sessionStorage.removeItem('secret-access');
    }, []);
 
    useEffect(() => {
