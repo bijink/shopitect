@@ -27,7 +27,7 @@ interface MyAppProps extends AppProps {
 const clientSideEmotionCache = createEmotionCache();
 const theme = createTheme(customTheme);
 
-const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
+const MyApp: React.FunctionComponent<MyAppProps> = props => {
   const {
     Component,
     emotionCache = clientSideEmotionCache,
@@ -45,15 +45,12 @@ const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
   return (
     <>
       <Head>
-        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <meta name='viewport' content='initial-scale=1.0, width=device-width' />
+        <meta name='description' content='An architect of shop management application' />
+        <meta property='og:title' content='Shopitect' key='title' />
         <meta
-          name="description"
-          content="An architect of shop management application"
-        />
-        <meta property="og:title" content="Shopitect" key="title" />
-        <meta
-          name="google-site-verification"
-          content="uGQeOYoDV-cyfJuBhV79hzfXC4nc7-7hYjydenFPVhI"
+          name='google-site-verification'
+          content='uGQeOYoDV-cyfJuBhV79hzfXC4nc7-7hYjydenFPVhI'
         />
       </Head>
 

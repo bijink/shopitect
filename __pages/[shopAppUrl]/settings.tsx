@@ -28,7 +28,7 @@ function TabPanel(props: TabPanelProps) {
 
   return (
     <div
-      role="tabpanel"
+      role='tabpanel'
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
@@ -77,7 +77,7 @@ const SettingsPages: NextPage = () => {
 
   return (
     <>
-      <ShopPagesHead title="Settings" />
+      <ShopPagesHead title='Settings' />
 
       {(secure === "loading" && <PageSkeleton_layout />) ||
         (secure === 404 && <NotFound />) ||
@@ -88,21 +88,17 @@ const SettingsPages: NextPage = () => {
             btmNavbar={<ShopAdmin_btmNavbar />}
             title={settingsPages && capitalize(settingsPages.toString())}
           >
-            <Stack direction="row" pb={2}>
-              <Typography variant="h5" component="p">
+            <Stack direction='row' pb={2}>
+              <Typography variant='h5' component='p'>
                 Settings
               </Typography>
             </Stack>
 
             <Box sx={{ width: "100%", marginTop: "-10px" }}>
               <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                <Tabs
-                  value={value}
-                  onChange={handleChange}
-                  aria-label="basic tabs example"
-                >
-                  <Tab label="Profile" {...a11yProps(0)} />
-                  <Tab label="Account" {...a11yProps(1)} />
+                <Tabs value={value} onChange={handleChange} aria-label='basic tabs example'>
+                  <Tab label='Profile' {...a11yProps(0)} />
+                  <Tab label='Account' {...a11yProps(1)} />
                 </Tabs>
               </Box>
               <TabPanel value={value} index={0}>

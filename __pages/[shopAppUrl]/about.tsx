@@ -30,11 +30,8 @@ const About: NextPage = () => {
   useEffect(() => {
     shopAppUrl &&
       onSnapshot(
-        query(
-          collection(database, "shops"),
-          where("urlName", "==", shopAppUrl)
-        ),
-        (snapshot) => {
+        query(collection(database, "shops"), where("urlName", "==", shopAppUrl)),
+        snapshot => {
           // console.log(snapshot.docs.length);
           if (snapshot.docs.length == 0) {
             setShopNotExistOnServer(true);
@@ -50,60 +47,50 @@ const About: NextPage = () => {
 
   return (
     <>
-      <ShopPagesHead title="Info" />
+      <ShopPagesHead title='Info' />
 
       {(secure === "loading" && <PageSkeleton_layout />) ||
-        ((secure === 200 || secure === 404 || shopNotExistOnServer) && (
-          <NotFound />
-        )) ||
+        ((secure === 200 || secure === 404 || shopNotExistOnServer) && <NotFound />) ||
         ((secure === 401 || secure === 403) && (
           <Page_layout
             navbar={<Public_navBar />}
             sidebar={<Public_sideBar />}
             btmNavbar={<Public_btmNavbar />}
           >
-            <Typography variant="h5" component="p" gutterBottom>
+            <Typography variant='h5' component='p' gutterBottom>
               About Us
             </Typography>
 
             {shop && (
               <>
-                <Typography variant="h6" component="p">
+                <Typography variant='h6' component='p'>
                   {shop.name} - {shop.category}
                 </Typography>
                 <Typography
-                  variant="subtitle2"
-                  component="p"
+                  variant='subtitle2'
+                  component='p'
                   pb={2}
-                  fontWeight="800"
+                  fontWeight='800'
                   color={colors.grey[700]}
                 >
                   Owned by: {shop.ownerName}
                 </Typography>
                 {shop.about && (
-                  <Stack direction="column" pb={2}>
-                    {shop.about
-                      .split("\n")
-                      .map((str: string, index: number) => (
-                        <Typography key={index} variant="body2" component="p">
-                          {str}
-                        </Typography>
-                      ))}
+                  <Stack direction='column' pb={2}>
+                    {shop.about.split("\n").map((str: string, index: number) => (
+                      <Typography key={index} variant='body2' component='p'>
+                        {str}
+                      </Typography>
+                    ))}
                   </Stack>
                 )}
                 <Box>
                   {shop.address &&
-                    shop.address
-                      .split("\n")
-                      .map((str: string, index: number) => (
-                        <Typography
-                          key={index}
-                          variant="subtitle2"
-                          component="p"
-                        >
-                          {str}
-                        </Typography>
-                      ))}
+                    shop.address.split("\n").map((str: string, index: number) => (
+                      <Typography key={index} variant='subtitle2' component='p'>
+                        {str}
+                      </Typography>
+                    ))}
                 </Box>
               </>
             )}

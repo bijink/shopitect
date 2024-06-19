@@ -3,14 +3,7 @@ import type { NextPage } from "next";
 import type { ProdDetailsTypes } from "../../src/types/pages/shopHomePage.types";
 
 import Head from "next/head";
-import {
-  collection,
-  onSnapshot,
-  query,
-  where,
-  DocumentData,
-  orderBy,
-} from "firebase/firestore";
+import { collection, onSnapshot, query, where, DocumentData, orderBy } from "firebase/firestore";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import ProductCard from "../../components/productCard";
@@ -19,22 +12,12 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { setAppPageId } from "../../redux/slices/pageId.slice";
 import { PageSkeleton_layout, Page_layout } from "../../__layouts";
 import { useShop, useUser } from "../../hooks";
-import {
-  Box,
-  colors,
-  Pagination,
-  Skeleton,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, colors, Pagination, Skeleton, Stack, Typography } from "@mui/material";
 import NotFound from "../404";
 import { selectProdSearchInput } from "../../redux/slices/prodSearchInput.slice";
 import { Public_navBar, ShopAdmin_navBar } from "../../components/navBar";
 import { Public_sideBar, ShopAdmin_sideBar } from "../../components/sideBar";
-import {
-  Public_btmNavbar,
-  ShopAdmin_btmNavbar,
-} from "../../components/bottomNavBar";
+import { Public_btmNavbar, ShopAdmin_btmNavbar } from "../../components/bottomNavBar";
 import secretAccess from "../../src/utility/secretAccess";
 
 const ShopHome: NextPage = () => {
@@ -61,9 +44,7 @@ const ShopHome: NextPage = () => {
   const [prodData, setProdData] = useState<DocumentData>([]);
   const [prodData_filtered, setProdData_filtered] = useState<DocumentData>([]);
   const [prodData_slice, setProdData_slice] = useState<DocumentData>([]);
-  const [prodDataStatus, setProdDataStatus] = useState<boolean | "loading">(
-    "loading"
-  );
+  const [prodDataStatus, setProdDataStatus] = useState<boolean | "loading">("loading");
 
   const [shopNotExistOnServer, setShopNotExistOnServer] = useState(false);
 
@@ -99,7 +80,7 @@ const ShopHome: NextPage = () => {
           collection(database, "shops", shop.urlName, "products"),
           orderBy("createdAt", "desc")
         ),
-        (snapshot) => {
+        snapshot => {
           setProdData(snapshot.docs);
           setProdDocLg({ ...prodDocLg, all: snapshot.docs.length });
 
@@ -110,9 +91,8 @@ const ShopHome: NextPage = () => {
   // #search & category prodData
   useEffect(() => {
     if (Boolean(searchInput)) {
-      const searchFilter: Array<DocumentData> = prodData.filter(
-        (obj: DocumentData) =>
-          obj.data().name.toLowerCase().includes(searchInput.toLowerCase())
+      const searchFilter: Array<DocumentData> = prodData.filter((obj: DocumentData) =>
+        obj.data().name.toLowerCase().includes(searchInput.toLowerCase())
       );
       setProdDocLg({ ...prodDocLg, search: searchFilter.length });
       setProdData_filtered(searchFilter);
@@ -143,21 +123,14 @@ const ShopHome: NextPage = () => {
     let pageInt: number;
     const slicePoints = getSlicePoints(pageLg!);
 
-    if (
-      prodDocLg.search === null &&
-      prodDocLg.category === null &&
-      prodData.length > 0
-    ) {
+    if (prodDocLg.search === null && prodDocLg.category === null && prodData.length > 0) {
       // console.log('all');
       if (page && pageLg) {
         // #to catch and solve app breaking if an unmatchable page number exist on url
         if (parseInt(page.toString()) > slicePoints.length) {
           router.push(`/${shopAppUrl}?page=${pageLg}`);
           pageInt = pageLg;
-        } else if (
-          parseInt(page.toString()) < 1 ||
-          isNaN(parseInt(page.toString()))
-        ) {
+        } else if (parseInt(page.toString()) < 1 || isNaN(parseInt(page.toString()))) {
           router.push(`/${shopAppUrl}?page=${"1"}`);
           pageInt = 1;
         } else {
@@ -165,12 +138,7 @@ const ShopHome: NextPage = () => {
         }
 
         // #to get prodData_slice according to page number
-        setProdData_slice(
-          prodData.slice(
-            slicePoints[pageInt - 1][0],
-            slicePoints[pageInt - 1][1]
-          )
-        );
+        setProdData_slice(prodData.slice(slicePoints[pageInt - 1][0], slicePoints[pageInt - 1][1]));
       } else {
         // #to get prodData_slice for initial render or if no page exist on url
         setProdData_slice(prodData.slice(0, sliceLg));
@@ -181,10 +149,7 @@ const ShopHome: NextPage = () => {
         if (parseInt(page.toString()) > slicePoints.length) {
           router.push(`/${shopAppUrl}?category=${category}&page=${pageLg}`);
           pageInt = pageLg;
-        } else if (
-          parseInt(page.toString()) < 1 ||
-          isNaN(parseInt(page.toString()))
-        ) {
+        } else if (parseInt(page.toString()) < 1 || isNaN(parseInt(page.toString()))) {
           router.push(`/${shopAppUrl}?category=${category}&page=${"1"}`);
           pageInt = 1;
         } else {
@@ -192,10 +157,7 @@ const ShopHome: NextPage = () => {
         }
 
         setProdData_slice(
-          prodData_filtered.slice(
-            slicePoints[pageInt - 1][0],
-            slicePoints[pageInt - 1][1]
-          )
+          prodData_filtered.slice(slicePoints[pageInt - 1][0], slicePoints[pageInt - 1][1])
         );
       } else {
         setProdData_slice(prodData_filtered.slice(0, sliceLg));
@@ -206,34 +168,19 @@ const ShopHome: NextPage = () => {
         pageInt = parseInt(page.toString());
 
         setProdData_slice(
-          prodData_filtered.slice(
-            slicePoints[pageInt - 1][0],
-            slicePoints[pageInt - 1][1]
-          )
+          prodData_filtered.slice(slicePoints[pageInt - 1][0], slicePoints[pageInt - 1][1])
         );
       } else {
         setProdData_slice(prodData_filtered.slice(0, sliceLg));
       }
     }
-  }, [
-    router,
-    shopAppUrl,
-    prodData,
-    prodData_filtered,
-    page,
-    pageLg,
-    prodDocLg,
-    category,
-  ]);
+  }, [router, shopAppUrl, prodData, prodData_filtered, page, pageLg, prodDocLg, category]);
 
   useEffect(() => {
     shopAppUrl &&
       onSnapshot(
-        query(
-          collection(database, "shops"),
-          where("urlName", "==", shopAppUrl)
-        ),
-        (snapshot) => {
+        query(collection(database, "shops"), where("urlName", "==", shopAppUrl)),
+        snapshot => {
           if (snapshot.docs.length == 0) {
             setShopNotExistOnServer(true);
             sessionStorage.removeItem("shop-details");
@@ -245,7 +192,7 @@ const ShopHome: NextPage = () => {
           if (snapshot.docs.length === 0) docsLength = 0;
           else if (snapshot.docs.length === 1) docsLength = 1;
 
-          snapshot.forEach((obj) => (doc = obj.data()));
+          snapshot.forEach(obj => (doc = obj.data()));
 
           const shopDetails = {
             data: doc,
@@ -262,68 +209,55 @@ const ShopHome: NextPage = () => {
   }, [dispatch]);
 
   const ProductCardWrap = () => (
-    <Stack direction="column">
+    <Stack direction='column'>
       {/* #if prodDataStatus == true | 'loading' */}
       {prodDataStatus ? (
         <>
           {prodData_slice?.length > 0 ? (
             <Stack spacing={2}>
               {prodDocLg.search !== null && searchInput && (
-                <Stack direction="row" alignItems="start" spacing={0.7}>
+                <Stack direction='row' alignItems='start' spacing={0.7}>
                   <Typography>Search for</Typography>
-                  <Typography
-                    px={1.2}
-                    sx={{ bgcolor: colors.grey[300], borderRadius: 8 }}
-                  >
+                  <Typography px={1.2} sx={{ bgcolor: colors.grey[300], borderRadius: 8 }}>
                     {searchInput}
                   </Typography>
                 </Stack>
               )}
               {prodDocLg.category !== null && category && (
-                <Stack direction="row" alignItems="start" spacing={0.7}>
+                <Stack direction='row' alignItems='start' spacing={0.7}>
                   <Typography>Category for</Typography>
-                  <Typography
-                    px={1.2}
-                    sx={{ bgcolor: colors.grey[300], borderRadius: 8 }}
-                  >
+                  <Typography px={1.2} sx={{ bgcolor: colors.grey[300], borderRadius: 8 }}>
                     {category}
                   </Typography>
                 </Stack>
               )}
               {prodDocLg?.search === 0 ? (
-                <Typography
-                  variant="h6"
-                  component="p"
-                  fontWeight={300}
-                  textAlign="center"
-                >
+                <Typography variant='h6' component='p' fontWeight={300} textAlign='center'>
                   No result found !
                 </Typography>
               ) : (
                 <>
                   <Stack
-                    direction="row"
-                    justifyContent="center"
-                    alignItems="center"
-                    flexWrap="wrap"
+                    direction='row'
+                    justifyContent='center'
+                    alignItems='center'
+                    flexWrap='wrap'
                   >
-                    {prodData_slice?.map(
-                      (prod: ProdDetailsTypes, index: number) => (
-                        <ProductCard
-                          key={index}
-                          shopUrlName={shop?.urlName!}
-                          prodId={prod.id}
-                          prodName={prod.data().name}
-                          prodImg={prod.data().imageUrl}
-                          prodCategory={prod.data().category}
-                          sellPrice={prod.data().sellPrice}
-                        />
-                      )
-                    )}
+                    {prodData_slice?.map((prod: ProdDetailsTypes, index: number) => (
+                      <ProductCard
+                        key={index}
+                        shopUrlName={shop?.urlName!}
+                        prodId={prod.id}
+                        prodName={prod.data().name}
+                        prodImg={prod.data().imageUrl}
+                        prodCategory={prod.data().category}
+                        sellPrice={prod.data().sellPrice}
+                      />
+                    ))}
                   </Stack>
-                  <Stack justifyContent="center" alignItems="center">
+                  <Stack justifyContent='center' alignItems='center'>
                     <Pagination
-                      size="small"
+                      size='small'
                       boundaryCount={1}
                       // showFirstButton={page ? (page?.toString() !== '1') : false}
                       // showLastButton={page?.toString() !== pageLg?.toString()}
@@ -331,9 +265,7 @@ const ShopHome: NextPage = () => {
                       page={page ? parseInt(page.toString()) : 1}
                       onChange={(_, value: number) => {
                         category
-                          ? router.push(
-                              `/${shopAppUrl}?category=${category}&page=${value}`
-                            )
+                          ? router.push(`/${shopAppUrl}?category=${category}&page=${value}`)
                           : router.push(`/${shopAppUrl}?page=${value}`);
                       }}
                     />
@@ -345,28 +277,20 @@ const ShopHome: NextPage = () => {
             <>
               {category ? (
                 <Stack spacing={2}>
-                  <Stack direction="row" alignItems="start" spacing={0.7}>
+                  <Stack direction='row' alignItems='start' spacing={0.7}>
                     <Typography>Category for</Typography>
-                    <Typography
-                      px={1.2}
-                      sx={{ bgcolor: colors.grey[300], borderRadius: 8 }}
-                    >
+                    <Typography px={1.2} sx={{ bgcolor: colors.grey[300], borderRadius: 8 }}>
                       {category}
                     </Typography>
                   </Stack>
                 </Stack>
               ) : (
-                <Stack
-                  direction="row"
-                  justifyContent="center"
-                  alignItems="center"
-                  flexWrap="wrap"
-                >
+                <Stack direction='row' justifyContent='center' alignItems='center' flexWrap='wrap'>
                   {[...Array(2)].map((_, index) => (
                     <Box key={index} p={1}>
                       <Skeleton
-                        variant="rectangular"
-                        animation="wave"
+                        variant='rectangular'
+                        animation='wave'
                         sx={{
                           borderRadius: 0.8,
                           width: { xs: "120px", sm: "220px" },
@@ -381,7 +305,7 @@ const ShopHome: NextPage = () => {
           )}
         </>
       ) : (
-        <Typography variant="h6" component="p" textAlign="center">
+        <Typography variant='h6' component='p' textAlign='center'>
           Data is empty
         </Typography>
       )}
@@ -391,14 +315,12 @@ const ShopHome: NextPage = () => {
   return (
     <>
       <Head>
-        <title>
-          {shop ? shop.name : secure !== 404 ? "Loading..." : "404"}
-        </title>
-        <meta name="description" content={shop?.category} />
-        <meta property="og:title" content={shop?.name} key="title" />
+        <title>{shop ? shop.name : secure !== 404 ? "Loading..." : "404"}</title>
+        <meta name='description' content={shop?.category} />
+        <meta property='og:title' content={shop?.name} key='title' />
         <link
-          rel="icon"
-          type="image/*"
+          rel='icon'
+          type='image/*'
           href={shop ? shop.logoUrl : "/img/loading-blank-logo.png"}
         />
       </Head>
@@ -406,17 +328,12 @@ const ShopHome: NextPage = () => {
       <>
         {(secure === "loading" && (
           <PageSkeleton_layout>
-            <Stack
-              direction="row"
-              justifyContent="center"
-              alignItems="center"
-              flexWrap="wrap"
-            >
+            <Stack direction='row' justifyContent='center' alignItems='center' flexWrap='wrap'>
               {[...Array(2)].map((_, index) => (
                 <Box key={index} p={1}>
                   <Skeleton
-                    variant="rectangular"
-                    animation="wave"
+                    variant='rectangular'
+                    animation='wave'
                     sx={{
                       borderRadius: 0.8,
                       width: { xs: "120px", sm: "220px" },

@@ -2,13 +2,7 @@ import type { ShopData } from "../../src/types/global.types";
 
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-import {
-  collection,
-  DocumentData,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
+import { collection, DocumentData, onSnapshot, query, where } from "firebase/firestore";
 import { database } from "../../src/config/firebase.config";
 
 interface ShopDetailsState {
@@ -20,32 +14,27 @@ interface ShopDetailsState {
 }
 
 function fetchShopDetails(shopAppUrl: string | string[] | undefined) {
-  return new Promise<{ data: DocumentData | null; length: number | null }>(
-    (resolve) => {
-      onSnapshot(
-        query(
-          collection(database, "shops"),
-          where("urlName", "==", shopAppUrl)
-        ),
-        (snapshot) => {
-          let docsLength = null;
-          let doc = null;
+  return new Promise<{ data: DocumentData | null; length: number | null }>(resolve => {
+    onSnapshot(
+      query(collection(database, "shops"), where("urlName", "==", shopAppUrl)),
+      snapshot => {
+        let docsLength = null;
+        let doc = null;
 
-          if (snapshot.docs.length === 0) docsLength = 0;
-          else if (snapshot.docs.length === 1) docsLength = 1;
+        if (snapshot.docs.length === 0) docsLength = 0;
+        else if (snapshot.docs.length === 1) docsLength = 1;
 
-          snapshot.forEach((obj) => (doc = obj.data()));
+        snapshot.forEach(obj => (doc = obj.data()));
 
-          const shopDetails = {
-            data: doc,
-            length: docsLength,
-          };
+        const shopDetails = {
+          data: doc,
+          length: docsLength,
+        };
 
-          resolve(shopDetails);
-        }
-      );
-    }
-  );
+        resolve(shopDetails);
+      }
+    );
+  });
 }
 
 const initialState: ShopDetailsState = {
@@ -94,16 +83,16 @@ const shopDetailsSlice = createSlice({
       state.value = action.payload;
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
-      .addCase(setAppShopDetailsAsync.pending, (state) => {
+      .addCase(setAppShopDetailsAsync.pending, state => {
         state.status = "loading";
       })
       .addCase(setAppShopDetailsAsync.fulfilled, (state, action) => {
         state.status = "idle";
         state.value = action.payload;
       })
-      .addCase(setAppShopDetailsAsync.rejected, (state) => {
+      .addCase(setAppShopDetailsAsync.rejected, state => {
         state.status = "failed";
       });
   },

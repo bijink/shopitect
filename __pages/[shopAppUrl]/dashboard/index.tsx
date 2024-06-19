@@ -25,12 +25,7 @@ import {
   Typography,
 } from "@mui/material";
 import RefreshOutlinedIcon from "@mui/icons-material/RefreshOutlined";
-import {
-  collection,
-  DocumentData,
-  onSnapshot,
-  query,
-} from "firebase/firestore";
+import { collection, DocumentData, onSnapshot, query } from "firebase/firestore";
 import { database } from "../../../src/config/firebase.config";
 import { ShopAdmin_btmNavbar } from "../../../components/bottomNavBar";
 
@@ -93,7 +88,7 @@ const Dashboard: NextPage = () => {
     shopAppUrl &&
       onSnapshot(
         query(collection(database, "shops", shopAppUrl.toString(), "products")),
-        (snapshot) => {
+        snapshot => {
           // setProdDetails(snapshot.docs);
           setProdDocLength(snapshot.docs.length);
 
@@ -114,7 +109,7 @@ const Dashboard: NextPage = () => {
 
   return (
     <>
-      <ShopPagesHead title="Dashboard" />
+      <ShopPagesHead title='Dashboard' />
 
       {(secure === "loading" && <PageSkeleton_layout />) ||
         (secure === 404 && <NotFound />) ||
@@ -124,34 +119,31 @@ const Dashboard: NextPage = () => {
             sidebar={<ShopAdmin_sideBar />}
             btmNavbar={<ShopAdmin_btmNavbar />}
           >
-            <Stack direction="row" pb={2}>
-              <Typography variant="h5" component="p">
+            <Stack direction='row' pb={2}>
+              <Typography variant='h5' component='p'>
                 Dashboard
               </Typography>
             </Stack>
 
             {prodDocLength! > 0 || prodDocLength === null ? (
-              <Stack alignItems="center">
+              <Stack alignItems='center'>
                 {chartLength > 0 ? (
-                  <Stack width="100%" spacing={2}>
+                  <Stack width='100%' spacing={2}>
                     <Stack
-                      direction="row"
-                      divider={<Divider orientation="vertical" flexItem />}
-                      justifyContent="space-evenly"
-                      alignItems="center"
-                      width="85%"
-                      height="5rem"
+                      direction='row'
+                      divider={<Divider orientation='vertical' flexItem />}
+                      justifyContent='space-evenly'
+                      alignItems='center'
+                      width='85%'
+                      height='5rem'
                       bgcolor={colors.grey[300]}
-                      mx="auto"
+                      mx='auto'
                       borderRadius={1.5}
                     >
-                      <Typography
-                        component="p"
-                        fontSize={{ xs: "1rem", sm: "1.5rem" }}
-                      >
+                      <Typography component='p' fontSize={{ xs: "1rem", sm: "1.5rem" }}>
                         Product:
                         <Typography
-                          component="span"
+                          component='span'
                           fontSize={{ xs: "1.5rem", sm: "2rem" }}
                           pl={1}
                           fontWeight={600}
@@ -159,13 +151,10 @@ const Dashboard: NextPage = () => {
                           {prodDocLength}
                         </Typography>
                       </Typography>
-                      <Typography
-                        component="p"
-                        fontSize={{ xs: "1rem", sm: "1.5rem" }}
-                      >
+                      <Typography component='p' fontSize={{ xs: "1rem", sm: "1.5rem" }}>
                         Category:
                         <Typography
-                          component="span"
+                          component='span'
                           fontSize={{ xs: "1.5rem", sm: "2rem" }}
                           pl={1}
                           fontWeight={600}
@@ -174,21 +163,19 @@ const Dashboard: NextPage = () => {
                         </Typography>
                       </Typography>
                     </Stack>
-                    <Box display="flex" justifyContent="center">
+                    <Box display='flex' justifyContent='center'>
                       <Stack
-                        width="25rem"
+                        width='25rem'
                         spacing={3}
-                        alignItems="center"
+                        alignItems='center'
                         sx={{ cursor: "pointer" }}
                       >
                         <Doughnut data={datas} />
                         <Box>
                           <IconButton
-                            color="primary"
-                            size="small"
-                            onClick={() =>
-                              setChartColor(getRgbColors(chartLength))
-                            }
+                            color='primary'
+                            size='small'
+                            onClick={() => setChartColor(getRgbColors(chartLength))}
                           >
                             <RefreshOutlinedIcon />
                           </IconButton>
@@ -203,7 +190,7 @@ const Dashboard: NextPage = () => {
                 )}
               </Stack>
             ) : (
-              <Typography variant="h6" component="p" textAlign="center">
+              <Typography variant='h6' component='p' textAlign='center'>
                 Data is empty
               </Typography>
             )}

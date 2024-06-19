@@ -40,34 +40,25 @@ const Home: NextPage = () => {
     <>
       <Head>
         <title>Shopitect</title>
-        <link rel="icon" type="image/png" href="/img/shopitect-logo.png" />
+        <link rel='icon' type='image/png' href='/img/shopitect-logo.png' />
       </Head>
 
-      <Stack
-        direction="column"
-        justifyContent="space-evenly"
-        alignItems="center"
-        height={"100vh"}
-      >
-        <Stack justifyContent="center" spacing={3}>
-          <Stack direction="column" alignItems="center">
+      <Stack direction='column' justifyContent='space-evenly' alignItems='center' height={"100vh"}>
+        <Stack justifyContent='center' spacing={3}>
+          <Stack direction='column' alignItems='center'>
             <Box width={{ xs: "25vw", sm: "20vw", md: "15vw" }} pb={1}>
               <Image
-                alt="Shopitect"
-                src="/img/shopitect-logo.png"
+                alt='Shopitect'
+                src='/img/shopitect-logo.png'
                 width={200}
                 height={200}
-                layout="responsive"
+                layout='responsive'
               />
             </Box>
-            <Typography
-              fontSize={{ xs: "1.5rem", sm: "3rem" }}
-              component="h1"
-              textAlign="center"
-            >
+            <Typography fontSize={{ xs: "1.5rem", sm: "3rem" }} component='h1' textAlign='center'>
               Welcome to <b>Shopitect</b>
             </Typography>
-            <Typography variant="body1" textAlign="center">
+            <Typography variant='body1' textAlign='center'>
               An architect of shop management application
             </Typography>
           </Stack>
@@ -75,17 +66,17 @@ const Home: NextPage = () => {
           <Box>
             <Typography
               fontSize={{ xs: "1.1rem", sm: "1.5rem" }}
-              component="p"
-              textAlign="center"
+              component='p'
+              textAlign='center'
               pb={1}
             >
               Signup/Login with Google
             </Typography>
-            <Stack direction="row" spacing={2} justifyContent="center">
+            <Stack direction='row' spacing={2} justifyContent='center'>
               <LoadingButton
-                variant="contained"
-                color="primary"
-                size="small"
+                variant='contained'
+                color='primary'
+                size='small'
                 onClick={() => {
                   !loading_login && setLoading_signup(true);
                   !loading_login &&
@@ -96,25 +87,19 @@ const Home: NextPage = () => {
                       });
                     });
                 }}
-                loadingPosition="center"
+                loadingPosition='center'
                 loading={loading_signup}
                 disabled={userStatus === "loading"}
               >
                 signup
               </LoadingButton>
               <LoadingButton
-                variant="contained"
-                size="small"
+                variant='contained'
+                size='small'
                 sx={{
-                  bgcolor:
-                    userStatus === "authenticated"
-                      ? colors.green[700]
-                      : colors.teal[600],
+                  bgcolor: userStatus === "authenticated" ? colors.green[700] : colors.teal[600],
                   "&:hover": {
-                    bgcolor:
-                      userStatus === "authenticated"
-                        ? colors.green[800]
-                        : colors.teal[700],
+                    bgcolor: userStatus === "authenticated" ? colors.green[800] : colors.teal[700],
                   },
                 }}
                 onClick={() => {
@@ -127,7 +112,7 @@ const Home: NextPage = () => {
                           callbackUrl: `/auth/login`,
                         }));
                 }}
-                loadingPosition="center"
+                loadingPosition='center'
                 loading={loading_login}
                 disabled={userStatus === "loading"}
               >
@@ -137,29 +122,21 @@ const Home: NextPage = () => {
           </Box>
         </Stack>
 
-        <Box component="footer" width={"100%"} pt={8}>
-          <Container
-            maxWidth="xs"
-            sx={{ display: "flex", justifyContent: "center" }}
-          >
-            <Stack alignItems="center">
-              <Stack
-                spacing={1}
-                direction="row"
-                justifyContent="center"
-                pb={0.5}
-              >
+        <Box component='footer' width={"100%"} pt={8}>
+          <Container maxWidth='xs' sx={{ display: "flex", justifyContent: "center" }}>
+            <Stack alignItems='center'>
+              <Stack spacing={1} direction='row' justifyContent='center' pb={0.5}>
                 <App_about />
                 <App_help />
               </Stack>
               <a
-                href="https://github.com/bijink/shopitect"
-                target="_blank"
-                rel="noopener noreferrer"
+                href='https://github.com/bijink/shopitect'
+                target='_blank'
+                rel='noopener noreferrer'
               >
                 <GitHubIcon />
               </a>
-              <Typography variant="body2">Copyright © 2022 Bijin</Typography>
+              <Typography variant='body2'>Copyright © 2022 Bijin</Typography>
             </Stack>
           </Container>
         </Box>

@@ -7,7 +7,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "pretty": "prettier . --write"
   },
   "dependencies": {
     "@emotion/cache": "^11.11.0",
@@ -28,6 +29,7 @@
     "sharp": "^0.33.4"
   },
   "devDependencies": {
+    "@bijink/prettier-config": "^1.0.1",
     "@types/node": "^20",
     "@types/nprogress": "^0.2.3",
     "@types/react": "^18",
@@ -37,8 +39,10 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.4",
     "nprogress": "^0.2.0",
+    "prettier": "^3.3.2",
     "react-chartjs-2": "^5.2.0",
     "react-image-crop": "^11.0.5",
     "typescript": "^5"
-  }
+  },
+  "prettier": "@bijink/prettier-config"
 }

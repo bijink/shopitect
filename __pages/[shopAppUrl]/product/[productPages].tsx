@@ -17,10 +17,7 @@ import {
 } from "../../../__dynamicPages/productPage";
 import { Public_navBar, ShopAdmin_navBar } from "../../../components/navBar";
 import { Public_sideBar, ShopAdmin_sideBar } from "../../../components/sideBar";
-import {
-  Public_btmNavbar,
-  ShopAdmin_btmNavbar,
-} from "../../../components/bottomNavBar";
+import { Public_btmNavbar, ShopAdmin_btmNavbar } from "../../../components/bottomNavBar";
 
 const ProductPages: NextPage = () => {
   const router = useRouter();
@@ -36,15 +33,13 @@ const ProductPages: NextPage = () => {
 
   return (
     <>
-      <ShopPagesHead title="Product" />
+      <ShopPagesHead title='Product' />
 
       {(secure === "loading" && <PageSkeleton_layout />) ||
         ((secure === 404 ||
-          !(
-            productPages === "table" ||
-            productPages === "add" ||
-            productPages === "view"
-          )) && <NotFound />) ||
+          !(productPages === "table" || productPages === "add" || productPages === "view")) && (
+          <NotFound />
+        )) ||
         (secure === 200 && (
           <Page_layout
             navbar={<ShopAdmin_navBar />}

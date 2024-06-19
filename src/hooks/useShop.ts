@@ -5,10 +5,7 @@ import type { ShopData } from "../types/global.types";
 import { useEffect, useState } from "react";
 import { auth } from "../src/config/firebase.config";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import {
-  setAppShopDetailsAsync,
-  selectShopDetails,
-} from "../redux/slices/shopDetails.slice";
+import { setAppShopDetailsAsync, selectShopDetails } from "../redux/slices/shopDetails.slice";
 
 const useShop = (shopAppUrl: string | string[] | undefined) => {
   const dispatch = useAppDispatch();
@@ -20,9 +17,7 @@ const useShop = (shopAppUrl: string | string[] | undefined) => {
   // const [data, setData] = useState<ShopData | undefined>(undefined);
   const [data, setData] = useState<ShopData | null>(null);
   // #shopSecurePage
-  const [secure, setSecure] = useState<"loading" | 200 | 401 | 403 | 404>(
-    "loading"
-  );
+  const [secure, setSecure] = useState<"loading" | 200 | 401 | 403 | 404>("loading");
   /**
    *# 200 - OK - (user authorized, have content access)
    *# 401 - Unauthorized - (user not authorized, not have content access)
@@ -31,7 +26,7 @@ const useShop = (shopAppUrl: string | string[] | undefined) => {
    */
 
   useEffect(() =>
-    auth.onAuthStateChanged((user) => {
+    auth.onAuthStateChanged(user => {
       setUserData(user);
     })
   );
@@ -50,12 +45,8 @@ const useShop = (shopAppUrl: string | string[] | undefined) => {
       if (shopDetails.length === null || userData === undefined) {
         setSecure("loading");
       } else if (shopDetails.data?.urlName === "my-shop" && !userData) {
-        let secretAccess_storage = JSON.parse(
-          sessionStorage.getItem("secret-access")!
-        );
-        if (
-          secretAccess_storage?.code! === process.env.secretAccessCode_myShop
-        ) {
+        let secretAccess_storage = JSON.parse(sessionStorage.getItem("secret-access")!);
+        if (secretAccess_storage?.code! === process.env.secretAccessCode_myShop) {
           setSecure(200);
         } else {
           setSecure(401);

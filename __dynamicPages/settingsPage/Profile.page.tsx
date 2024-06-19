@@ -2,14 +2,7 @@ import { Box, Stack, TextField, Typography } from "@mui/material";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useAppDispatch } from "../../redux/hooks";
 import { setAppShopDetailsAsync } from "../../redux/slices/shopDetails.slice";
-import {
-  collection,
-  doc,
-  onSnapshot,
-  query,
-  updateDoc,
-  where,
-} from "firebase/firestore";
+import { collection, doc, onSnapshot, query, updateDoc, where } from "firebase/firestore";
 import { database, storage } from "../../src/config/firebase.config";
 import { LoadingButton } from "@mui/lab";
 import { useRouter } from "next/router";
@@ -51,7 +44,7 @@ const Profile_page = () => {
       })
         .then(() => {
           uploadBytes(logoRef, shopLogo!).then(() => {
-            getDownloadURL(logoRef).then((url) => {
+            getDownloadURL(logoRef).then(url => {
               updateDoc(doc(database, "shops", shop?.urlName!), {
                 logoUrl: url,
               }).then(() => {
@@ -60,7 +53,7 @@ const Profile_page = () => {
             });
           });
         })
-        .catch((err) => {
+        .catch(err => {
           console.error(err.message);
         });
     } else {
@@ -74,7 +67,7 @@ const Profile_page = () => {
         .then(() => {
           setLoading(false);
         })
-        .catch((err) => {
+        .catch(err => {
           console.error(err.message);
         });
     }
@@ -83,18 +76,15 @@ const Profile_page = () => {
   useEffect(() => {
     shopAppUrl &&
       onSnapshot(
-        query(
-          collection(database, "shops"),
-          where("urlName", "==", shopAppUrl)
-        ),
-        (snapshot) => {
+        query(collection(database, "shops"), where("urlName", "==", shopAppUrl)),
+        snapshot => {
           let docsLength = null;
           let doc = null;
 
           if (snapshot.docs.length === 0) docsLength = 0;
           else if (snapshot.docs.length === 1) docsLength = 1;
 
-          snapshot.forEach((obj) => {
+          snapshot.forEach(obj => {
             setShopName(obj.data().name);
             setShopOwnerName(obj.data().ownerName);
             setShopCategory(obj.data().category);
@@ -119,96 +109,83 @@ const Profile_page = () => {
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <Stack direction="column" spacing={2}>
+        <Stack direction='column' spacing={2}>
           <Box>
-            <Typography variant="body1" fontWeight={500} gutterBottom>
+            <Typography variant='body1' fontWeight={500} gutterBottom>
               Shop Name
             </Typography>
             <TextField
-              size="small"
-              id="outlined-required"
+              size='small'
+              id='outlined-required'
               fullWidth
               required
               value={shopName}
-              onInput={(e: ChangeEvent<HTMLInputElement>) =>
-                setShopName(e.target.value)
-              }
+              onInput={(e: ChangeEvent<HTMLInputElement>) => setShopName(e.target.value)}
             />
           </Box>
           <Box>
-            <Typography variant="body1" fontWeight={500} gutterBottom>
+            <Typography variant='body1' fontWeight={500} gutterBottom>
               Owner Name
             </Typography>
             <TextField
-              size="small"
-              id="outlined-required"
+              size='small'
+              id='outlined-required'
               fullWidth
               required
               value={shopOwnerName}
-              onInput={(e: ChangeEvent<HTMLInputElement>) =>
-                setShopOwnerName(e.target.value)
-              }
+              onInput={(e: ChangeEvent<HTMLInputElement>) => setShopOwnerName(e.target.value)}
             />
           </Box>
           <Box>
-            <Typography variant="body1" fontWeight={500} gutterBottom>
+            <Typography variant='body1' fontWeight={500} gutterBottom>
               Category
             </Typography>
             <TextField
-              size="small"
-              id="outlined-required"
+              size='small'
+              id='outlined-required'
               fullWidth
               required
               value={shopCategory}
-              onInput={(e: ChangeEvent<HTMLInputElement>) =>
-                setShopCategory(e.target.value)
-              }
+              onInput={(e: ChangeEvent<HTMLInputElement>) => setShopCategory(e.target.value)}
             />
           </Box>
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={{ xs: 2, sm: 0 }}
-          >
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={{ xs: 2, sm: 0 }}>
             <Box width={"100%"}>
-              <Typography variant="body1" fontWeight={500} gutterBottom>
+              <Typography variant='body1' fontWeight={500} gutterBottom>
                 Address
               </Typography>
               <TextField
-                size="small"
-                id="outlined-required"
-                placeholder="Shop Address*"
+                size='small'
+                id='outlined-required'
+                placeholder='Shop Address*'
                 fullWidth
                 multiline
                 minRows={3}
                 maxRows={5}
                 value={shopAddress}
-                onInput={(e: ChangeEvent<HTMLInputElement>) =>
-                  setShopAddress(e.target.value)
-                }
+                onInput={(e: ChangeEvent<HTMLInputElement>) => setShopAddress(e.target.value)}
                 required
               />
             </Box>
-            <Box width={"100%"} pl="1%">
-              <Typography variant="body1" fontWeight={500} gutterBottom>
+            <Box width={"100%"} pl='1%'>
+              <Typography variant='body1' fontWeight={500} gutterBottom>
                 About
               </Typography>
               <TextField
-                size="small"
-                id="outlined-required"
-                placeholder="About Shop"
+                size='small'
+                id='outlined-required'
+                placeholder='About Shop'
                 fullWidth
                 multiline
                 minRows={3}
                 maxRows={5}
                 value={shopAbout}
-                onInput={(e: ChangeEvent<HTMLInputElement>) =>
-                  setShopAbout(e.target.value)
-                }
+                onInput={(e: ChangeEvent<HTMLInputElement>) => setShopAbout(e.target.value)}
               />
             </Box>
           </Stack>
           <Box>
-            <Typography variant="body1" fontWeight={500} gutterBottom>
+            <Typography variant='body1' fontWeight={500} gutterBottom>
               Shop Logo
             </Typography>
             <ImageCropper getBlob={setShopLogo} />
@@ -216,13 +193,13 @@ const Profile_page = () => {
 
           <Box pt={2}>
             <LoadingButton
-              variant="contained"
-              type="submit"
+              variant='contained'
+              type='submit'
               color={"success"}
-              size="medium"
+              size='medium'
               sx={{ textTransform: "none" }}
               loading={loading}
-              loadingPosition="start"
+              loadingPosition='start'
               startIcon={<UpdateIcon />}
             >
               Update Profile

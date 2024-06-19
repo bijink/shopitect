@@ -2,13 +2,7 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Button, CircularProgress, Stack, Typography } from "@mui/material";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { auth, database } from "../../src/config/firebase.config";
 import {
@@ -36,12 +30,9 @@ const SignupConfirm = () => {
   useEffect(() => {
     user &&
       onSnapshot(
-        query(
-          collection(database, "shops"),
-          where("accountID", "==", user.uid)
-        ),
-        (snapshot) => {
-          snapshot.forEach((obj) => {
+        query(collection(database, "shops"), where("accountID", "==", user.uid)),
+        snapshot => {
+          snapshot.forEach(obj => {
             // console.log(obj.data());
             if (sessionStatus === "authenticated") {
               router.push(`/${obj.data().urlName}`).then(() => {
@@ -56,16 +47,13 @@ const SignupConfirm = () => {
   useEffect(() => {
     session &&
       onSnapshot(
-        query(
-          collection(database, "shops"),
-          where("providerID", "==", session.user?.uid)
-        ),
-        (snapshot) => {
+        query(collection(database, "shops"), where("providerID", "==", session.user?.uid)),
+        snapshot => {
           // console.log('data:', snapshot.docs.length);
           if (snapshot.docs.length === 1) {
             // #if there is an existing account
             setIsAccountExist(true);
-            snapshot.forEach((obj) => {
+            snapshot.forEach(obj => {
               setShopUrlName(obj.data().urlName);
             });
           } else {
@@ -80,74 +68,46 @@ const SignupConfirm = () => {
     <>
       <Head>
         <title>Signup · Shopitect</title>
-        <link rel="icon" type="image/png" href="/img/shopitect-logo.png" />
+        <link rel='icon' type='image/png' href='/img/shopitect-logo.png' />
       </Head>
 
-      {(sessionStatus === "unauthenticated" && (
-        <UnAuthProvider title="Signup" />
-      )) ||
+      {(sessionStatus === "unauthenticated" && <UnAuthProvider title='Signup' />) ||
         (isAccountExist && userStatus === "unauthenticated" && (
           <>
-            <Box
-              height={"100vh"}
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-            >
-              <Box
-                px={3}
-                py={8}
-                borderRadius={1.5}
-                sx={{ backgroundColor: "whitesmoke" }}
-              >
-                <Stack spacing={3} alignItems="center">
-                  <Typography variant="h4" component="h1">
+            <Box height={"100vh"} display='flex' justifyContent='center' alignItems='center'>
+              <Box px={3} py={8} borderRadius={1.5} sx={{ backgroundColor: "whitesmoke" }}>
+                <Stack spacing={3} alignItems='center'>
+                  <Typography variant='h4' component='h1'>
                     Shopitect
                   </Typography>
-                  <Typography variant="h5" component="div">
+                  <Typography variant='h5' component='div'>
                     Confirm Account
                   </Typography>
                   <Box>
-                    <Typography variant="body1" component="p">
+                    <Typography variant='body1' component='p'>
                       We found that you already have an account from this Gmail.
                     </Typography>
-                    <Stack
-                      direction={"row"}
-                      alignItems="center"
-                      justifyContent={"center"}
-                    >
-                      <Typography variant="body1" component="p">
+                    <Stack direction={"row"} alignItems='center' justifyContent={"center"}>
+                      <Typography variant='body1' component='p'>
                         With the &apos;Shop Url Name&apos; :
                       </Typography>
-                      <Typography
-                        component={"span"}
-                        sx={{ fontWeight: "bold" }}
-                        pl={1}
-                      >
+                      <Typography component={"span"} sx={{ fontWeight: "bold" }} pl={1}>
                         {shopUrlName}
                       </Typography>
                     </Stack>
-                    <Stack
-                      pt={2}
-                      spacing={1}
-                      direction={"column"}
-                      alignItems="center"
-                    >
+                    <Stack pt={2} spacing={1} direction={"column"} alignItems='center'>
                       <Typography>
                         Do you want to login into
-                        <Typography
-                          component={"span"}
-                          sx={{ fontWeight: "bold" }}
-                        >
+                        <Typography component={"span"} sx={{ fontWeight: "bold" }}>
                           {" "}
                           {shopUrlName} ?
                         </Typography>
                       </Typography>
-                      <Stack direction="row" spacing={2}>
+                      <Stack direction='row' spacing={2}>
                         <Button
-                          variant="contained"
-                          size="small"
-                          color="error"
+                          variant='contained'
+                          size='small'
+                          color='error'
                           onClick={() => {
                             signOutFromProvider({
                               redirect: false,
@@ -158,10 +118,10 @@ const SignupConfirm = () => {
                           cancel
                         </Button>
                         <LoadingButton
-                          variant="contained"
-                          size="small"
+                          variant='contained'
+                          size='small'
                           loading={loading}
-                          loadingPosition="center"
+                          loadingPosition='center'
                           onClick={() => {
                             setLoading(true);
                             router.push("/auth/login").then(() => {
@@ -179,10 +139,8 @@ const SignupConfirm = () => {
             </Box>
           </>
         )) ||
-        ((sessionStatus === "loading" ||
-          userStatus === "loading" ||
-          !isAccountExist) && (
-          <Stack justifyContent="center" alignItems="center" pt={5}>
+        ((sessionStatus === "loading" || userStatus === "loading" || !isAccountExist) && (
+          <Stack justifyContent='center' alignItems='center' pt={5}>
             <CircularProgress />
           </Stack>
         ))}

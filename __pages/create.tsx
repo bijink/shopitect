@@ -71,7 +71,7 @@ const Create_app: NextPage = () => {
       setIsFormSubmit(true);
 
       await createUserWithEmailAndPassword(auth, shopEmail, password)
-        .then((userCredential) => {
+        .then(userCredential => {
           // Signed in
           // const user = userCredential.user;
           // ...
@@ -96,7 +96,7 @@ const Create_app: NextPage = () => {
             }).then(() => {
               const logoRef = ref(storage, `/${shopUrlName}/shop-logo`);
               uploadBytes(logoRef, shopLogo!).then(() => {
-                getDownloadURL(logoRef).then((url) => {
+                getDownloadURL(logoRef).then(url => {
                   updateDoc(doc(database, "shops", shopUrlName), {
                     logoUrl: url,
                   }).then(() => {
@@ -117,7 +117,7 @@ const Create_app: NextPage = () => {
             });
           });
         })
-        .catch((error) => {
+        .catch(error => {
           const errorCode = error.code;
           // const errorMessage = error.message;
           // ..
@@ -154,14 +154,11 @@ const Create_app: NextPage = () => {
 
     session &&
       onSnapshot(
-        query(
-          collection(database, "shops"),
-          where("providerID", "==", session.user.uid)
-        ),
-        (snapshot) => {
+        query(collection(database, "shops"), where("providerID", "==", session.user.uid)),
+        snapshot => {
           if (snapshot.docs.length === 1) {
             // #if there is an existing account
-            snapshot.forEach((obj) => {
+            snapshot.forEach(obj => {
               router.push(`/${obj.data().urlName}`);
             });
           } else {
@@ -178,13 +175,13 @@ const Create_app: NextPage = () => {
   }, [session, sessionStatus, isAccountNotExist, router]);
 
   useEffect(() => {
-    onSnapshot(query(collection(database, "shops")), (snapshot) => {
+    onSnapshot(query(collection(database, "shops")), snapshot => {
       const arr: Array<string> = [];
-      snapshot.forEach((obj) => {
+      snapshot.forEach(obj => {
         arr.push(obj.id);
       });
       // console.log(!(shopDocIds.some(arr => arr == shopUrlName)));
-      setIsShopUrlNameUnique(!arr.some((arr) => arr == shopUrlName));
+      setIsShopUrlNameUnique(!arr.some(arr => arr == shopUrlName));
     });
   }, [shopUrlName]);
 
@@ -196,7 +193,7 @@ const Create_app: NextPage = () => {
     <>
       <Head>
         <title>Create · Shopitect</title>
-        <link rel="icon" type="image/png" href="/img/shopitect-logo.png" />
+        <link rel='icon' type='image/png' href='/img/shopitect-logo.png' />
       </Head>
 
       {isAccountNotExist && sessionStatus == "authenticated" ? (
@@ -204,31 +201,29 @@ const Create_app: NextPage = () => {
           <Container>
             <Typography
               fontSize={{ xs: "2rem", sm: "2.5rem" }}
-              component="h1"
-              textAlign="center"
+              component='h1'
+              textAlign='center'
               sx={{ color: "primary.dark" }}
             >
               Shopitect
             </Typography>
-            <Typography variant="h5" component={"div"} gutterBottom>
+            <Typography variant='h5' component={"div"} gutterBottom>
               Create App
             </Typography>
             <form onSubmit={handleFormSubmit}>
-              <Stack direction="column" spacing={3}>
+              <Stack direction='column' spacing={3}>
                 <TextField
-                  label="Shop Name"
-                  size="small"
+                  label='Shop Name'
+                  size='small'
                   fullWidth
                   value={shopName}
-                  onInput={(e: ChangeEvent<HTMLInputElement>) =>
-                    setShopName(e.target.value)
-                  }
+                  onInput={(e: ChangeEvent<HTMLInputElement>) => setShopName(e.target.value)}
                   inputRef={inputFocusRef}
                   required
                 />
                 <TextField
-                  label="Shop Url Name"
-                  size="small"
+                  label='Shop Url Name'
+                  size='small'
                   fullWidth
                   helperText={
                     Boolean(shopUrlName) && !isFormSubmit
@@ -239,131 +234,109 @@ const Create_app: NextPage = () => {
                   }
                   value={shopUrlName}
                   onInput={(e: ChangeEvent<HTMLInputElement>) =>
-                    setShopUrlName(
-                      e.target.value.split(" ").join("").toLowerCase()
-                    )
+                    setShopUrlName(e.target.value.split(" ").join("").toLowerCase())
                   }
                   required
                   error={!isFormSubmit && !isShopUrlNameUnique}
                 />
                 <TextField
-                  label="Shop Category"
-                  size="small"
+                  label='Shop Category'
+                  size='small'
                   fullWidth
                   value={shopCategory}
-                  onInput={(e: ChangeEvent<HTMLInputElement>) =>
-                    setShopCategory(e.target.value)
-                  }
+                  onInput={(e: ChangeEvent<HTMLInputElement>) => setShopCategory(e.target.value)}
                   required
                 />
                 <TextField
-                  label="Shop Ower Name"
-                  size="small"
+                  label='Shop Ower Name'
+                  size='small'
                   fullWidth
                   value={shopOwnerName}
-                  onInput={(e: ChangeEvent<HTMLInputElement>) =>
-                    setShopOwnerName(e.target.value)
-                  }
+                  onInput={(e: ChangeEvent<HTMLInputElement>) => setShopOwnerName(e.target.value)}
                   required
                 />
                 <TextField
-                  label="Shop Address"
-                  size="small"
+                  label='Shop Address'
+                  size='small'
                   multiline
                   minRows={3}
                   maxRows={5}
                   fullWidth
                   value={shopAddress}
-                  onInput={(e: ChangeEvent<HTMLInputElement>) =>
-                    setShopAddress(e.target.value)
-                  }
+                  onInput={(e: ChangeEvent<HTMLInputElement>) => setShopAddress(e.target.value)}
                   required
                 />
                 {session && (
                   <>
                     <TextField
-                      label="Email Address"
-                      size="small"
+                      label='Email Address'
+                      size='small'
                       fullWidth
-                      type="email"
-                      color="warning"
+                      type='email'
+                      color='warning'
                       defaultValue={session?.user.email}
                       InputProps={{ readOnly: true }}
                     />
                     <TextField
-                      label="Password"
-                      size="small"
+                      label='Password'
+                      size='small'
                       fullWidth
                       type={showPassword ? "text" : "password"}
                       value={password}
-                      onInput={(e: ChangeEvent<HTMLInputElement>) =>
-                        setPassword(e.target.value)
-                      }
+                      onInput={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                       InputProps={{
                         endAdornment: (
-                          <InputAdornment position="end">
+                          <InputAdornment position='end'>
                             <IconButton
-                              aria-label="toggle password visibility"
-                              onClick={() => setShowPassword((prev) => !prev)}
-                              edge="end"
+                              aria-label='toggle password visibility'
+                              onClick={() => setShowPassword(prev => !prev)}
+                              edge='end'
                             >
-                              {showPassword ? (
-                                <Visibility />
-                              ) : (
-                                <VisibilityOff />
-                              )}
+                              {showPassword ? <Visibility /> : <VisibilityOff />}
                             </IconButton>
                           </InputAdornment>
                         ),
                       }}
-                      helperText="Password must exceed 8 characters"
+                      helperText='Password must exceed 8 characters'
                       required
                     />
                   </>
                 )}
                 <Box>
-                  <ImageCropper inputLabel="Shop Logo" getBlob={setShopLogo} />
+                  <ImageCropper inputLabel='Shop Logo' getBlob={setShopLogo} />
                 </Box>
               </Stack>
 
-              <Stack
-                direction={{ xs: "column-reverse", sm: "row" }}
-                spacing={{ xs: 2 }}
-                pt={4}
-              >
-                <Stack
-                  direction={{ xs: "row" }}
-                  width="100%"
-                  spacing={{ xs: 2 }}
-                >
+              <Stack direction={{ xs: "column-reverse", sm: "row" }} spacing={{ xs: 2 }} pt={4}>
+                <Stack direction={{ xs: "row" }} width='100%' spacing={{ xs: 2 }}>
                   <Button
-                    variant="contained"
+                    variant='contained'
                     onClick={() => {
                       router.push("/");
                     }}
-                    size="medium"
+                    size='medium'
                     fullWidth
-                    color="error"
+                    color='error'
                   >
                     cancel
                   </Button>
                   <Button
-                    variant="contained"
+                    variant='contained'
                     onClick={handleFormReset}
-                    size="medium"
+                    size='medium'
                     fullWidth
-                    color="warning"
+                    color='warning'
                   >
                     reset
                   </Button>
                 </Stack>
                 <LoadingButton
-                  variant="contained"
-                  type="submit"
-                  size="medium"
+                  variant='contained'
+                  type='submit'
+                  size='medium'
                   fullWidth
                   loading={loading}
-                  loadingPosition="start"
+                  loadingPosition='start'
                   startIcon={<PublishRoundedIcon />}
                 >
                   submit
@@ -373,7 +346,7 @@ const Create_app: NextPage = () => {
           </Container>
         </Box>
       ) : (
-        <Stack justifyContent="center" alignItems="center" pt={5}>
+        <Stack justifyContent='center' alignItems='center' pt={5}>
           <CircularProgress />
         </Stack>
       )}

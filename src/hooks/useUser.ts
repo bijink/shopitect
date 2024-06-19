@@ -8,12 +8,10 @@ const useUser = () => {
   const [isUser, setIsUser] = useState<boolean | null>(null);
 
   const [data, setData] = useState<User | null>(null);
-  const [status, setStatus] = useState<
-    "loading" | "authenticated" | "unauthenticated"
-  >("loading");
+  const [status, setStatus] = useState<"loading" | "authenticated" | "unauthenticated">("loading");
 
   useEffect(() =>
-    auth.onAuthStateChanged((user) => {
+    auth.onAuthStateChanged(user => {
       user ? setIsUser(true) : setIsUser(false);
       setData(user);
     })
