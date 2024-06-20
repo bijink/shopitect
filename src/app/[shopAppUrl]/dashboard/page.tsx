@@ -1,12 +1,13 @@
+"use client";
 // *dashboard page
 import type { NextPage } from "next";
 
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import ShopPagesHead from "../../../components/shopPagesHead";
 import { useShop } from "../../../hooks";
-import { PageSkeleton_layout, Page_layout } from "../../../__layouts";
+import { PageSkeleton_layout, Page_layout } from "../../../layouts";
 import Forbidden from "../../403";
-import NotFound from "../../404";
+import NotFound from "@/app/not-found";
 import { useCallback, useEffect, useState } from "react";
 import { useAppDispatch } from "../../../redux/hooks";
 import { setAppPageId } from "../../../redux/slices/pageId.slice";
@@ -26,7 +27,7 @@ import {
 } from "@mui/material";
 import RefreshOutlinedIcon from "@mui/icons-material/RefreshOutlined";
 import { collection, DocumentData, onSnapshot, query } from "firebase/firestore";
-import { database } from "../../../src/config/firebase.config";
+import { database } from "@/config/firebase.config";
 import { ShopAdmin_btmNavbar } from "../../../components/bottomNavBar";
 
 ChartJS.register(ArcElement, Tooltip, Legend);

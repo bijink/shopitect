@@ -5,7 +5,7 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { capitalize, CardActionArea, colors } from "@mui/material";
 import { Box } from "@mui/material";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 const ProductCard = ({

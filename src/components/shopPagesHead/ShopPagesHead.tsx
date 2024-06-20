@@ -1,10 +1,14 @@
 import Head from "next/head";
-import { useRouter } from "next/router";
+import { usePathname, useRouter } from "next/navigation";
 import { useShop } from "../../hooks";
 
 const ShopPagesHead = ({ title = "" }: { title: string }) => {
   const router = useRouter();
-  const { shopAppUrl } = router.query;
+  // const { shopAppUrl } = router.query;
+  const pathname = usePathname();
+  const routename = pathname.slice(1).split("/");
+
+  const shopAppUrl = routename[0];
 
   const { data: shop, secure } = useShop(shopAppUrl);
 

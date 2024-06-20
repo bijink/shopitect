@@ -3,7 +3,8 @@ import type { User } from "firebase/auth";
 import type { ShopData } from "../types/global.types";
 
 import { useEffect, useState } from "react";
-import { auth } from "../src/config/firebase.config";
+// import { auth } from "../src/config/firebase.config";
+import { auth } from "@/config/firebase.config";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { setAppShopDetailsAsync, selectShopDetails } from "../redux/slices/shopDetails.slice";
 

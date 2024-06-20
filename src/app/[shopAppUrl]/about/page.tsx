@@ -1,20 +1,21 @@
+"use client";
 // *about page
 import { Typography, colors, Stack, Box } from "@mui/material";
 import type { NextPage } from "next";
 
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useShop } from "../../hooks";
-import { useAppDispatch } from "../../redux/hooks";
-import { setAppPageId } from "../../redux/slices/pageId.slice";
+import { useShop } from "@/hooks";
+import { useAppDispatch } from "@/redux/hooks";
+import { setAppPageId } from "@/redux/slices/pageId.slice";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
-import { database } from "../../src/config/firebase.config";
-import ShopPagesHead from "../../components/shopPagesHead";
-import { PageSkeleton_layout, Page_layout } from "../../__layouts";
-import NotFound from "../404";
-import { Public_navBar } from "../../components/navBar";
-import { Public_sideBar } from "../../components/sideBar";
-import { Public_btmNavbar } from "../../components/bottomNavBar";
+import { database } from "@/config/firebase.config";
+import ShopPagesHead from "@/components/shopPagesHead";
+import { PageSkeleton_layout, Page_layout } from "@/layouts";
+import NotFound from "@/app/not-found";
+import { Public_navBar } from "@/components/navBar";
+import { Public_sideBar } from "@/components/sideBar";
+import { Public_btmNavbar } from "@/components/bottomNavBar";
 
 const About: NextPage = () => {
   const router = useRouter();

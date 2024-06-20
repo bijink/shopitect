@@ -1,10 +1,15 @@
 import { Box, Typography, Container, Stack } from "@mui/material";
-import { useRouter } from "next/router";
+import { usePathname, useRouter } from "next/navigation";
 import { useShop } from "../../hooks";
 
 const Footer = () => {
-  const router = useRouter();
-  const { shopAppUrl } = router.query;
+  // const router = useRouter();
+  // const { shopAppUrl } = router.query;
+  const pathname = usePathname();
+  const routename = pathname.slice(1).split("/");
+
+  const shopAppUrl = routename[0];
+  // console.log("params", { shopAppUrl });
 
   const { data: shop } = useShop(shopAppUrl);
 

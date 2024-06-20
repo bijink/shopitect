@@ -1,9 +1,11 @@
-import type { ShopData } from "../../src/types/global.types";
+// import type { ShopData } from "../../src/types/global.types";
 
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { collection, DocumentData, onSnapshot, query, where } from "firebase/firestore";
-import { database } from "../../src/config/firebase.config";
+import { ShopData } from "@/types/global.types";
+import { database } from "@/config/firebase.config";
+// import { database } from "../../src/config/firebase.config";
 
 interface ShopDetailsState {
   value: {

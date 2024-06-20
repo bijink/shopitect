@@ -24,7 +24,7 @@ import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { database } from "../../config/firebase.config";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { selectPageId } from "../../redux/slices/pageId.slice";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { changeProdTableCollapse } from "../../redux/slices/prodTableCollapse.slice";
@@ -44,7 +44,14 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 
 export default function ShopAdmin_btmNavbar() {
   const router = useRouter();
-  const { shopAppUrl, category } = router.query;
+  // const { shopAppUrl, category } = router.query;
+  const pathname = usePathname();
+  const routename = pathname.slice(1).split("/");
+  const searchParams = useSearchParams();
+
+  const shopAppUrl = routename[0];
+  const category = searchParams.get("category");
+  // console.log("params", { shopAppUrl, category });
 
   const dispatch = useAppDispatch();
   const pageId = useAppSelector(selectPageId);
@@ -122,13 +129,11 @@ export default function ShopAdmin_btmNavbar() {
                       pageId === "shopHome_page" ? `/${shopAppUrl}` : `/${shopAppUrl}/product/table`
                     );
                   } else {
-                    router.push({
-                      pathname:
-                        pageId === "shopHome_page"
-                          ? `/${shopAppUrl}`
-                          : `/${shopAppUrl}/product/table`,
-                      query: { category: text },
-                    });
+                    router.push(
+                      pageId === "shopHome_page"
+                        ? `/${shopAppUrl}?category=${text}`
+                        : `/${shopAppUrl}/product/table?category=${text}`
+                    );
                   }
                 }}
               >

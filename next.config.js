@@ -18,13 +18,8 @@ const nextConfig = {
     googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
     nextSecret: process.env.NEXTAUTH_SECRET,
   },
-  redirects: async () => {
+  async redirects() {
     return [
-      {
-        source: "/auth",
-        destination: "/",
-        permanent: true,
-      },
       {
         source: "/:shopAppUrl/product",
         destination: "/:shopAppUrl/product/table",

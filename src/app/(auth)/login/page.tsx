@@ -1,3 +1,4 @@
+"use client";
 // *Login confirm page
 import {
   useSession,
@@ -5,7 +6,7 @@ import {
   signIn as signInToProvider,
 } from "next-auth/react";
 import Head from "next/head";
-import { useRouter } from "next/router";
+// import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import {
   Box,
@@ -18,22 +19,24 @@ import {
   Typography,
 } from "@mui/material";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
-import { auth, database } from "../../src/config/firebase.config";
+// import { auth, database } from "../../src/config/firebase.config";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import UnAuthProvider from "../../components/unAuthProvider";
-import { useUser } from "../../hooks";
+import UnAuthProvider from "../../../components/unAuthProvider";
+import { useUser } from "../../../hooks";
 import LoginIcon from "@mui/icons-material/Login";
 import { LoadingButton } from "@mui/lab";
 import CircleIcon from "@mui/icons-material/Circle";
+import { auth, database } from "@/config/firebase.config";
+import { useRouter } from "next/navigation";
 
 const LoginConfirm = () => {
   const router = useRouter();
 
   const { data: session, status: sessionStatus } = useSession();
-  // console.log(sessionStatus);
+  console.log({ sessionStatus, session });
   const { data: user, status: userStatus } = useUser();
   // console.log(userStatus);
 
@@ -57,7 +60,6 @@ const LoginConfirm = () => {
         .then(userCredential => {
           setInputChange(false);
           setIsPasswordConfirmed(true);
-          setLoading(false);
 
           router.push(`/${shopUrlNameInput}`);
         })
@@ -80,9 +82,11 @@ const LoginConfirm = () => {
           snapshot.forEach(obj => {
             // console.log(obj.data());
             if (userStatus === "authenticated") {
-              router.push(`/${obj.data().urlName}`).then(() => {
-                router.reload();
-              });
+              // router.push(`/${obj.data().urlName}`).then(() => {
+              //   router.reload();
+              // });
+              router.push(`/${obj.data().urlName}`);
+              router.refresh();
             }
           });
         }

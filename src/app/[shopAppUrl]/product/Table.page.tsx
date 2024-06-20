@@ -1,21 +1,28 @@
+"use client";
 // *Product-table page
 import { Box, Button, colors, Skeleton, Stack, TablePagination, Typography } from "@mui/material";
-import { useRouter } from "next/router";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ChangeEvent, MouseEvent, useEffect, useState } from "react";
-import ProductTable from "../../components/productTable";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import ProductTable from "@/components/productTable";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { signIn as signInProvider } from "next-auth/react";
-import { useShop } from "../../hooks";
-import { changeProdTableCollapse } from "../../redux/slices/prodTableCollapse.slice";
-import Snackbars from "../../components/snackbars";
-import { setAppPageId } from "../../redux/slices/pageId.slice";
+import { useShop } from "@/hooks";
+import { changeProdTableCollapse } from "@/redux/slices/prodTableCollapse.slice";
+import Snackbars from "@/components/snackbars";
+import { setAppPageId } from "@/redux/slices/pageId.slice";
 import { collection, DocumentData, onSnapshot, orderBy, query } from "firebase/firestore";
-import { database } from "../../src/config/firebase.config";
-import { selectProdSearchInput } from "../../redux/slices/prodSearchInput.slice";
+import { database } from "@/config/firebase.config";
+import { selectProdSearchInput } from "@/redux/slices/prodSearchInput.slice";
 
 const ProductTable_page = () => {
   const router = useRouter();
-  const { shopAppUrl, category } = router.query;
+  // const { shopAppUrl, category } = router.query;
+  const pathname = usePathname();
+  const routename = pathname.slice(1).split("/");
+  const searchParams = useSearchParams();
+
+  const shopAppUrl = routename[0];
+  const category = searchParams.get("category");
 
   const dispatch = useAppDispatch();
   const searchInput = useAppSelector(selectProdSearchInput);

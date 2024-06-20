@@ -1,28 +1,35 @@
+"use client";
 // *shopApp homePage
 import type { NextPage } from "next";
-import type { ProdDetailsTypes } from "../../src/types/pages/shopHomePage.types";
+import type { ProdDetailsTypes } from "../../types/pages/shopHomePage.types";
 
 import Head from "next/head";
 import { collection, onSnapshot, query, where, DocumentData, orderBy } from "firebase/firestore";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ProductCard from "../../components/productCard";
-import { database } from "../../src/config/firebase.config";
+import { database } from "../../config/firebase.config";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { setAppPageId } from "../../redux/slices/pageId.slice";
-import { PageSkeleton_layout, Page_layout } from "../../__layouts";
+import { PageSkeleton_layout, Page_layout } from "../../layouts";
 import { useShop, useUser } from "../../hooks";
 import { Box, colors, Pagination, Skeleton, Stack, Typography } from "@mui/material";
-import NotFound from "../404";
+import NotFound from "@/app/not-found";
 import { selectProdSearchInput } from "../../redux/slices/prodSearchInput.slice";
 import { Public_navBar, ShopAdmin_navBar } from "../../components/navBar";
 import { Public_sideBar, ShopAdmin_sideBar } from "../../components/sideBar";
 import { Public_btmNavbar, ShopAdmin_btmNavbar } from "../../components/bottomNavBar";
-import secretAccess from "../../src/utility/secretAccess";
+import secretAccess from "../../utility/secretAccess";
 
-const ShopHome: NextPage = () => {
+const ShopHome = ({
+  params,
+}: {
+  params: { shopAppUrl: string; category: string; page: string };
+}) => {
   const router = useRouter();
-  const { shopAppUrl, category, page } = router.query;
+  // const { shopAppUrl,category, page } = router.query;
+  const { shopAppUrl, category, page } = params;
+  // console.log("p:: ", { shopAppUrl, category, page });
 
   const dispatch = useAppDispatch();
   const searchInput = useAppSelector(selectProdSearchInput);
@@ -68,7 +75,7 @@ const ShopHome: NextPage = () => {
       shopAppUrl === "my-shop"
     ) {
       let isSecretAccess = secretAccess();
-      isSecretAccess && router.reload();
+      isSecretAccess && router.refresh();
     }
   }, [status, prodDataStatus]);
 

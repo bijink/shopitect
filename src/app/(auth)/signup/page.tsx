@@ -1,10 +1,13 @@
+"use client";
 // *Signup confirm page
 import Head from "next/head";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Box, Button, CircularProgress, Stack, Typography } from "@mui/material";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
-import { auth, database } from "../../src/config/firebase.config";
+// import { auth, database } from "../../src/config/firebase.config";
+import { database } from "@/config/firebase.config";
+
 import {
   signOut as signOutFromProvider,
   signIn as signInToProvider,
@@ -12,8 +15,8 @@ import {
 } from "next-auth/react";
 import { LoadingButton } from "@mui/lab";
 import LoginIcon from "@mui/icons-material/Login";
-import UnAuthProvider from "../../components/unAuthProvider";
-import { useUser } from "../../hooks";
+import UnAuthProvider from "../../../components/unAuthProvider";
+import { useUser } from "../../../hooks";
 
 const SignupConfirm = () => {
   const router = useRouter();
@@ -35,9 +38,11 @@ const SignupConfirm = () => {
           snapshot.forEach(obj => {
             // console.log(obj.data());
             if (sessionStatus === "authenticated") {
-              router.push(`/${obj.data().urlName}`).then(() => {
-                router.reload();
-              });
+              // router.push(`/${obj.data().urlName}`).then(() => {
+              //   router.reload();
+              // });
+              router.push(`/${obj.data().urlName}`);
+              router.refresh();
             }
           });
         }
@@ -124,9 +129,11 @@ const SignupConfirm = () => {
                           loadingPosition='center'
                           onClick={() => {
                             setLoading(true);
-                            router.push("/auth/login").then(() => {
-                              setLoading(false);
-                            });
+                            // router.push("/auth/login").then(() => {
+                            //   setLoading(false);
+                            // });
+                            router.push("/auth/login");
+                            setLoading(false);
                           }}
                         >
                           login

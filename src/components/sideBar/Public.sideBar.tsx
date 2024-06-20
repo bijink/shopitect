@@ -19,7 +19,7 @@ import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { database } from "../../config/firebase.config";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { selectPageId } from "../../redux/slices/pageId.slice";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
@@ -42,7 +42,13 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 
 export default function Public_sideBar() {
   const router = useRouter();
-  const { shopAppUrl, category } = router.query;
+  // const { shopAppUrl, category } = router.query;
+  const pathname = usePathname();
+  const routename = pathname.slice(1).split("/");
+  const searchParams = useSearchParams();
+
+  const shopAppUrl = routename[0];
+  const category = searchParams.get("category");
 
   const dispatch = useAppDispatch();
   const pageId = useAppSelector(selectPageId);
@@ -114,10 +120,7 @@ export default function Public_sideBar() {
                   if (text === "all") {
                     router.push(`/${shopAppUrl}`);
                   } else {
-                    router.push({
-                      pathname: `/${shopAppUrl}`,
-                      query: { category: text },
-                    });
+                    router.push(`/${shopAppUrl}?category=${text}`);
                   }
                 }}
               >

@@ -1,3 +1,4 @@
+"use client";
 import * as React from "react";
 import {
   Box,
@@ -14,7 +15,7 @@ import {
 } from "@mui/material";
 import { styled, alpha } from "@mui/material/styles";
 import SearchIcon from "@mui/icons-material/Search";
-import { useRouter } from "next/router";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { useShop } from "../../hooks";
 import { selectPageId } from "../../redux/slices/pageId.slice";
@@ -70,7 +71,14 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function ShopAdmin_navBar() {
   const router = useRouter();
-  const { shopAppUrl, category, productPages } = router.query;
+  const pathname = usePathname();
+  const routename = pathname.slice(1).split("/");
+  const searchParams = useSearchParams();
+
+  const shopAppUrl = routename[0];
+  const category = searchParams.get("category");
+  const productPages = searchParams.get("productPages");
+  // console.log("params", { shopAppUrl, category, productPages });
 
   const dispatch = useAppDispatch();
   const pageId = useAppSelector(selectPageId);

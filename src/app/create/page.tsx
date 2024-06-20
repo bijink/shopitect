@@ -1,5 +1,5 @@
+"use client";
 import type { NextPage } from "next";
-
 import { LoadingButton } from "@mui/lab";
 import {
   Box,
@@ -23,17 +23,17 @@ import {
   where,
 } from "firebase/firestore";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
-import { database, auth, storage } from "../src/config/firebase.config";
+import { database, auth, storage } from "@/config/firebase.config";
 import PublishRoundedIcon from "@mui/icons-material/PublishRounded";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { signIn as signInProvider, useSession } from "next-auth/react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import Head from "next/head";
-import { setAppPageId } from "../redux/slices/pageId.slice";
-import { useAppDispatch } from "../redux/hooks";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { ImageCropper } from "../components/dialogs";
+import { setAppPageId } from "@/redux/slices/pageId.slice";
+import { ImageCropper } from "@/components/dialogs";
+import { useAppDispatch } from "@/redux/hooks";
 
 const Create_app: NextPage = () => {
   const router = useRouter();
@@ -41,6 +41,7 @@ const Create_app: NextPage = () => {
   const dispatch = useAppDispatch();
 
   const { data: session, status: sessionStatus } = useSession();
+  console.log({ session });
 
   const inputFocusRef = useRef<any>(null);
 
@@ -108,9 +109,11 @@ const Create_app: NextPage = () => {
                     setShopLogo(null);
 
                     setLoading(false);
-                    router.push(`/${shopUrlName}`).then(() => {
-                      router.reload();
-                    });
+                    // router.push(`/${shopUrlName}`).then(() => {
+                    //   router.reload();
+                    // });
+                    router.push(`/${shopUrlName}`);
+                    router.refresh();
                   });
                 });
               });

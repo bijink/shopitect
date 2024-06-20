@@ -1,113 +1,140 @@
+"use client";
+// *Welcome page
+import { Box, colors, Container, Stack, Typography } from "@mui/material";
+import { signIn as signInProvider } from "next-auth/react";
+import { auth } from "@/config/firebase.config";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { signOut as signOutAccount } from "firebase/auth";
+import { setAppPageId } from "../redux/slices/pageId.slice";
+import { useAppDispatch } from "../redux/hooks";
+import { useUser } from "../hooks";
+import { LoadingButton } from "@mui/lab";
 import Image from "next/image";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import { App_about, App_help } from "../components/dialogs";
 
 export default function Home() {
+  const router = useRouter();
+
+  const dispatch = useAppDispatch();
+
+  const { status: userStatus } = useUser();
+
+  const [loading_signup, setLoading_signup] = useState(false);
+  const [loading_login, setLoading_login] = useState(false);
+
+  // (loading_signup || loading_login) && setTimeout(() => router.reload(), 60000);
+  (loading_signup || loading_login) && setTimeout(() => router.refresh(), 60000);
+
+  useEffect(() => {
+    sessionStorage.removeItem("secret-access");
+  }, []);
+
+  useEffect(() => {
+    dispatch(setAppPageId("appHome_page"));
+  }, [dispatch]);
+
   return (
-    <main className='flex min-h-screen flex-col items-center justify-between p-24'>
-      <div className='z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex'>
-        <p className='fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30'>
-          Get started by editingsasasf&nbsp;
-          <code className='font-mono font-bold'>src/app/page.tsx</code>
-        </p>
-        <div className='fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none'>
-          <a
-            className='pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0'
-            href='https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            By{" "}
-            <Image
-              src='/vercel.svg'
-              alt='Vercel Logo'
-              className='dark:invert'
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    <>
+      <Stack direction='column' justifyContent='space-evenly' alignItems='center' height={"100vh"}>
+        <Stack justifyContent='center' spacing={3}>
+          <Stack direction='column' alignItems='center'>
+            <Box width={{ xs: "25vw", sm: "20vw", md: "15vw" }} pb={1}>
+              <Image
+                alt='Shopitect'
+                src='/img/shopitect-logo.png'
+                width={200}
+                height={200}
+                layout='responsive'
+              />
+            </Box>
+            <Typography fontSize={{ xs: "1.5rem", sm: "3rem" }} component='h1' textAlign='center'>
+              Welcome to <b>Shopitect</b>
+            </Typography>
+            <Typography variant='body1' textAlign='center'>
+              An architect of shop management application
+            </Typography>
+          </Stack>
 
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className='relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert'
-          src='/next.svg'
-          alt='Next.js Logo'
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+          <Box>
+            <Typography
+              fontSize={{ xs: "1.1rem", sm: "1.5rem" }}
+              component='p'
+              textAlign='center'
+              pb={1}
+            >
+              Signup/Login with Google
+            </Typography>
+            <Stack direction='row' spacing={2} justifyContent='center'>
+              <LoadingButton
+                variant='contained'
+                color='primary'
+                size='small'
+                onClick={() => {
+                  !loading_login && setLoading_signup(true);
+                  !loading_login &&
+                    signOutAccount(auth).then(() => {
+                      signInProvider("google", {
+                        redirect: false,
+                        callbackUrl: `/signup`,
+                      });
+                    });
+                }}
+                loadingPosition='center'
+                loading={loading_signup}
+                disabled={userStatus === "loading"}
+              >
+                signup
+              </LoadingButton>
+              <LoadingButton
+                variant='contained'
+                size='small'
+                sx={{
+                  bgcolor: userStatus === "authenticated" ? colors.green[700] : colors.teal[600],
+                  "&:hover": {
+                    bgcolor: userStatus === "authenticated" ? colors.green[800] : colors.teal[700],
+                  },
+                }}
+                onClick={() => {
+                  !loading_signup && setLoading_login(true);
+                  !loading_signup &&
+                    (userStatus === "authenticated"
+                      ? router.push(`/auth/login`)
+                      : signInProvider("google", {
+                          redirect: false,
+                          callbackUrl: `/login`,
+                        }));
+                }}
+                loadingPosition='center'
+                loading={loading_login}
+                disabled={userStatus === "loading"}
+              >
+                login
+              </LoadingButton>
+            </Stack>
+          </Box>
+        </Stack>
 
-      <div className='mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left'>
-        <a
-          href='https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app'
-          className='group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30'
-          target='_blank'
-          rel='noopener noreferrer'
-        >
-          <h2 className='mb-3 text-2xl font-semibold'>
-            Docs{" "}
-            <span className='inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none'>
-              -&gt;
-            </span>
-          </h2>
-          <p className='m-0 max-w-[30ch] text-sm opacity-50'>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href='https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app'
-          className='group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30'
-          target='_blank'
-          rel='noopener noreferrer'
-        >
-          <h2 className='mb-3 text-2xl font-semibold'>
-            Learn{" "}
-            <span className='inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none'>
-              -&gt;
-            </span>
-          </h2>
-          <p className='m-0 max-w-[30ch] text-sm opacity-50'>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href='https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app'
-          className='group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30'
-          target='_blank'
-          rel='noopener noreferrer'
-        >
-          <h2 className='mb-3 text-2xl font-semibold'>
-            Templates{" "}
-            <span className='inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none'>
-              -&gt;
-            </span>
-          </h2>
-          <p className='m-0 max-w-[30ch] text-sm opacity-50'>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href='https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app'
-          className='group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30'
-          target='_blank'
-          rel='noopener noreferrer'
-        >
-          <h2 className='mb-3 text-2xl font-semibold'>
-            Deploy{" "}
-            <span className='inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none'>
-              -&gt;
-            </span>
-          </h2>
-          <p className='m-0 max-w-[30ch] text-balance text-sm opacity-50'>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+        <Box component='footer' width={"100%"} pt={8}>
+          <Container maxWidth='xs' sx={{ display: "flex", justifyContent: "center" }}>
+            <Stack alignItems='center'>
+              <Stack spacing={1} direction='row' justifyContent='center' pb={0.5}>
+                <App_about />
+                <App_help />
+              </Stack>
+              <a
+                href='https://github.com/bijink/shopitect'
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                <GitHubIcon />
+              </a>
+              <Typography variant='body2'>Copyright © 2022 Bijin</Typography>
+            </Stack>
+          </Container>
+        </Box>
+      </Stack>
+    </>
   );
 }

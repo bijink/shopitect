@@ -1,19 +1,24 @@
+"use client";
 import { Box, Stack, TextField, Typography } from "@mui/material";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { useAppDispatch } from "../../redux/hooks";
-import { setAppShopDetailsAsync } from "../../redux/slices/shopDetails.slice";
+import { useAppDispatch } from "@/redux/hooks";
+import { setAppShopDetailsAsync } from "@/redux/slices/shopDetails.slice";
 import { collection, doc, onSnapshot, query, updateDoc, where } from "firebase/firestore";
-import { database, storage } from "../../src/config/firebase.config";
+import { database, storage } from "@/config/firebase.config";
 import { LoadingButton } from "@mui/lab";
-import { useRouter } from "next/router";
+import { usePathname, useRouter } from "next/navigation";
 import UpdateIcon from "@mui/icons-material/Update";
-import { useShop } from "../../hooks";
-import { ImageCropper } from "../../components/dialogs";
+import { useShop } from "@/hooks";
+import { ImageCropper } from "@/components/dialogs";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 const Profile_page = () => {
   const router = useRouter();
-  const { shopAppUrl } = router.query;
+  // const { shopAppUrl } = router.query;
+  const pathname = usePathname();
+  const routename = pathname.slice(1).split("/");
+
+  const shopAppUrl = routename[0];
 
   const dispatch = useAppDispatch();
 

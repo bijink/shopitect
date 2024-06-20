@@ -1,5 +1,6 @@
+"use client";
 import { Box, Typography } from "@mui/material";
-import { AccountDelete_dialog } from "../../components/dialogs";
+import { AccountDelete_dialog } from "@/components/dialogs";
 
 const Account_page = () => {
   return (

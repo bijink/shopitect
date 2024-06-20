@@ -9,7 +9,7 @@ import {
   Stack,
   Avatar,
 } from "@mui/material";
-import { useRouter } from "next/router";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { selectPageId } from "../../redux/slices/pageId.slice";
 import InfoIcon from "@mui/icons-material/Info";
@@ -68,7 +68,14 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function Public_navBar() {
   const router = useRouter();
-  const { shopAppUrl, category } = router.query;
+  // const { shopAppUrl, category } = router.query;
+  const pathname = usePathname();
+  const routename = pathname.slice(1).split("/");
+  const searchParams = useSearchParams();
+
+  const shopAppUrl = routename[0];
+  const category = searchParams.get("category");
+
   const dispatch = useAppDispatch();
   const pageId = useAppSelector(selectPageId);
   const searchInput = useAppSelector(selectProdSearchInput);
@@ -78,7 +85,7 @@ export default function Public_navBar() {
 
   const handleSecretAccess = () => {
     let isSecretAccess = secretAccess();
-    isSecretAccess && router.reload();
+    isSecretAccess && router.refresh();
   };
 
   return (

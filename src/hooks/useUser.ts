@@ -2,7 +2,8 @@
 import { User } from "firebase/auth";
 
 import { useEffect, useState } from "react";
-import { auth } from "../src/config/firebase.config";
+// import { auth } from "../src/config/firebase.config";
+import { auth } from "@/config/firebase.config";
 
 const useUser = () => {
   const [isUser, setIsUser] = useState<boolean | null>(null);

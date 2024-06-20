@@ -1,17 +1,22 @@
+"use client";
 // *Product-add Page
 import { Stack, Typography } from "@mui/material";
-import ProductInputForm from "../../components/productInputForm";
+import ProductInputForm from "@/components/productInputForm";
 import { useEffect } from "react";
-import { useRouter } from "next/router";
-import { useAppDispatch } from "../../redux/hooks";
-import { useShop } from "../../hooks";
+import { usePathname, useRouter } from "next/navigation";
+import { useAppDispatch } from "@/redux/hooks";
+import { useShop } from "@/hooks";
 import { signIn as signInProvider } from "next-auth/react";
-import Snackbars from "../../components/snackbars";
-import { setAppPageId } from "../../redux/slices/pageId.slice";
+import Snackbars from "@/components/snackbars";
+import { setAppPageId } from "@/redux/slices/pageId.slice";
 
 const ProductAdd_page = () => {
   const router = useRouter();
-  const { shopAppUrl } = router.query;
+  // const { shopAppUrl } = router.query;
+  const pathname = usePathname();
+  const routename = pathname.slice(1).split("/");
+
+  const shopAppUrl = routename[0];
 
   const dispatch = useAppDispatch();
 

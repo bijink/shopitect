@@ -1,21 +1,23 @@
+"use client";
 // *settings page
 import type { NextPage } from "next";
 
 import { Box, capitalize, Stack, Tab, Tabs, Typography } from "@mui/material";
-import { useRouter } from "next/router";
-import { Account_page, Profile_page } from "../../__dynamicPages/settingsPage";
-import ShopPagesHead from "../../components/shopPagesHead";
-import { useShop } from "../../hooks";
-import { PageSkeleton_layout, Page_layout } from "../../__layouts";
-import Forbidden from "../403";
-import NotFound from "../404";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import Profile_page from "./Profile.page";
+import Account_page from "./Account.page";
+import ShopPagesHead from "@/components/shopPagesHead";
+import { useShop } from "@/hooks";
+import { PageSkeleton_layout, Page_layout } from "@/layouts";
+import Forbidden from "@/app/403";
+import NotFound from "@/app/not-found";
 import { useEffect, useState } from "react";
 import { signIn as signInProvider } from "next-auth/react";
-import { useAppDispatch } from "../../redux/hooks";
-import { setAppPageId } from "../../redux/slices/pageId.slice";
-import { ShopAdmin_navBar } from "../../components/navBar";
-import { ShopAdmin_sideBar } from "../../components/sideBar";
-import { ShopAdmin_btmNavbar } from "../../components/bottomNavBar";
+import { useAppDispatch } from "@/redux/hooks";
+import { setAppPageId } from "@/redux/slices/pageId.slice";
+import { ShopAdmin_navBar } from "@/components/navBar";
+import { ShopAdmin_sideBar } from "@/components/sideBar";
+import { ShopAdmin_btmNavbar } from "@/components/bottomNavBar";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -48,7 +50,14 @@ function a11yProps(index: number) {
 
 const SettingsPages: NextPage = () => {
   const router = useRouter();
-  const { shopAppUrl, settingsPages } = router.query;
+  // const { shopAppUrl, settingsPages } = router.query;
+  // const { settingsPages } = router.query;
+  const pathname = usePathname();
+  const routename = pathname.slice(1).split("/");
+  const searchParams = useSearchParams();
+
+  const shopAppUrl = routename[0];
+  const settingsPages = searchParams.get("settingsPages");
 
   const dispatch = useAppDispatch();
 
@@ -66,7 +75,7 @@ const SettingsPages: NextPage = () => {
       else
         signInProvider("google", {
           redirect: false,
-          callbackUrl: `/auth/signup`,
+          callbackUrl: `/signup`,
         });
     }
   }, [secure, shopAppUrl, settingsPages, router]);
@@ -77,8 +86,7 @@ const SettingsPages: NextPage = () => {
 
   return (
     <>
-      <ShopPagesHead title='Settings' />
-
+      <ShopPagesHead title='Settings' />\
       {(secure === "loading" && <PageSkeleton_layout />) ||
         (secure === 404 && <NotFound />) ||
         (secure === 200 && (

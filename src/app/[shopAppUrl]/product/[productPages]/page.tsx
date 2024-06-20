@@ -1,27 +1,28 @@
+"use client";
 // *product page
 import type { NextPage } from "next";
 
-import { useRouter } from "next/router";
-import ShopPagesHead from "../../../components/shopPagesHead";
-import { useShop } from "../../../hooks";
-import { PageSkeleton_layout, Page_layout } from "../../../__layouts";
-import Forbidden from "../../403";
-import NotFound from "../../404";
+import { useRouter } from "next/navigation";
+import ShopPagesHead from "../../../../components/shopPagesHead";
+import { useShop } from "../../../../hooks";
+import { PageSkeleton_layout, Page_layout } from "../../../../layouts";
+import Forbidden from "@/app/403";
+import NotFound from "@/app/not-found";
 import { useEffect } from "react";
-import { useAppDispatch } from "../../../redux/hooks";
-import { setAppPageId } from "../../../redux/slices/pageId.slice";
-import {
-  ProductAdd_page,
-  ProductTable_page,
-  ProductView_page,
-} from "../../../__dynamicPages/productPage";
-import { Public_navBar, ShopAdmin_navBar } from "../../../components/navBar";
-import { Public_sideBar, ShopAdmin_sideBar } from "../../../components/sideBar";
-import { Public_btmNavbar, ShopAdmin_btmNavbar } from "../../../components/bottomNavBar";
+import { useAppDispatch } from "../../../../redux/hooks";
+import { setAppPageId } from "../../../../redux/slices/pageId.slice";
+import ProductTable_page from "../Table.page";
+import ProductAdd_page from "../Add.page";
+import ProductView_page from "../View.page";
+import { Public_navBar, ShopAdmin_navBar } from "../../../../components/navBar";
+import { Public_sideBar, ShopAdmin_sideBar } from "../../../../components/sideBar";
+import { Public_btmNavbar, ShopAdmin_btmNavbar } from "../../../../components/bottomNavBar";
 
-const ProductPages: NextPage = () => {
+const ProductPages = ({ params }: { params: { shopAppUrl: string; productPages: string } }) => {
   const router = useRouter();
-  const { shopAppUrl, productPages } = router.query;
+  // const { shopAppUrl, productPages } = router.query;
+  const { shopAppUrl, productPages } = params;
+  console.log({ shopAppUrl, productPages });
 
   const dispatch = useAppDispatch();
 

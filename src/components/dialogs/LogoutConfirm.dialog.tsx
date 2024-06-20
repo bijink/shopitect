@@ -9,14 +9,18 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { colors, MenuItem, Typography } from "@mui/material";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import { useRouter } from "next/router";
+import { usePathname, useRouter } from "next/navigation";
 import { auth } from "../../config/firebase.config";
 import { signOut as signOutProvider } from "next-auth/react";
 import { signOut as signOutAccount } from "firebase/auth";
 
 export default function LogoutConfirm_dialog({ handleMenuClose }: LogoutConfirmProps) {
   const router = useRouter();
-  const { shopAppUrl } = router.query;
+  // const { shopAppUrl } = router.query;
+  const pathname = usePathname();
+  const routename = pathname.slice(1).split("/");
+
+  const shopAppUrl = routename[0];
 
   const [open, setOpen] = React.useState(false);
 
@@ -28,14 +32,19 @@ export default function LogoutConfirm_dialog({ handleMenuClose }: LogoutConfirmP
     setOpen(false);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     handleClose();
 
-    router.push(`/${shopAppUrl}`).then(() => {
-      signOutProvider({ redirect: false }).then(() => {
-        signOutAccount(auth);
-      });
+    // router.push(`/${shopAppUrl}`).then(() => {
+    //   signOutProvider({ redirect: false }).then(() => {
+    //     signOutAccount(auth);
+    //   });
+    // });
+
+    await signOutProvider({ redirect: false }).then(() => {
+      signOutAccount(auth);
     });
+    router.push(`/${shopAppUrl}`);
   };
 
   return (

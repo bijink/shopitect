@@ -1,17 +1,24 @@
+"use client";
 import { Box, Typography, Stack, CircularProgress, capitalize, Divider } from "@mui/material";
 import { useEffect, useState } from "react";
 import { DocumentData } from "firebase/firestore";
-import { database } from "../../src/config/firebase.config";
+import { database } from "@/config/firebase.config";
 import { doc, getDoc } from "firebase/firestore";
-import { useRouter } from "next/router";
-import { useAppDispatch } from "../../redux/hooks";
-import { ProductTypes } from "../../src/types/pages/productView.types";
-import { setAppPageId } from "../../redux/slices/pageId.slice";
-import { useShop } from "../../hooks";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useAppDispatch } from "@/redux/hooks";
+import { ProductTypes } from "@/types/pages/productView.types";
+import { setAppPageId } from "@/redux/slices/pageId.slice";
+import { useShop } from "@/hooks";
 
 const ProductView_page = () => {
   const router = useRouter();
-  const { id: productId, shopAppUrl } = router.query;
+  // const { id: productId, shopAppUrl } = router.query;
+  const pathname = usePathname();
+  const routename = pathname.slice(1).split("/");
+  const searchParams = useSearchParams();
+
+  const shopAppUrl = routename[0];
+  const productId = searchParams.get("id");
 
   const dispatch = useAppDispatch();
 

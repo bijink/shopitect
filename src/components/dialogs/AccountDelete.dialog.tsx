@@ -23,11 +23,15 @@ import { deleteUser, EmailAuthProvider, reauthenticateWithCredential } from "fir
 import { useShop, useUser } from "../../hooks";
 import { deleteObject, ref } from "firebase/storage";
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
-import { useRouter } from "next/router";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function AccountDelete_dialog() {
   const router = useRouter();
-  const { shopAppUrl } = router.query;
+  // const { shopAppUrl } = router.query;
+  const pathname = usePathname();
+  const routename = pathname.slice(1).split("/");
+
+  const shopAppUrl = routename[0];
 
   const { data: session } = useSession();
   const { data: user } = useUser();

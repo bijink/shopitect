@@ -1,3 +1,4 @@
+"use client";
 import { Divider, Stack, Typography } from "@mui/material";
 import Head from "next/head";
 

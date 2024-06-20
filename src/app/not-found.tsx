@@ -1,13 +1,13 @@
 import { Divider, Stack, Typography } from "@mui/material";
-import Head from "next/head";
+// import Head from "next/head";
 
 const NotFound = () => {
   return (
     <>
-      <Head>
+      {/* <Head>
         <title>404 · Page Not Found</title>
         <link rel='icon' type='image/webp' href='/img/404-logo.webp' />
-      </Head>
+      </Head> */}
 
       <Stack
         width='100%'
