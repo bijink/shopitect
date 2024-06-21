@@ -147,7 +147,7 @@ const ProductTable_page = () => {
     secure === 401 &&
       signInProvider("google", {
         redirect: false,
-        callbackUrl: `/auth/signup`,
+        callbackUrl: `/signup`,
       });
   }, [secure]);
 

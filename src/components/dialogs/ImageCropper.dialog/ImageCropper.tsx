@@ -152,7 +152,6 @@ export default function ImageCropper({
               src={previewSrc}
               width={150}
               height={150}
-              layout='responsive'
               style={{ borderRadius: "50%" }}
             />
           </Box>

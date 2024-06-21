@@ -75,23 +75,23 @@ export default function AccountDelete_dialog() {
   }
   function deleteAccount() {
     return new Promise(resolve => {
-      router.push("/").then(() => {
-        const imageRef = ref(storage, `/${shop?.urlName}/shop-logo`);
-        deleteObject(imageRef).then(() => {
-          shop &&
-            deleteDoc(doc(database, "shops", shop.urlName)).then(() => {
-              sessionStorage.removeItem("shop-details");
+      // router.push("/").then(() => {
+      const imageRef = ref(storage, `/${shop?.urlName}/shop-logo`);
+      deleteObject(imageRef).then(() => {
+        shop &&
+          deleteDoc(doc(database, "shops", shop.urlName)).then(() => {
+            sessionStorage.removeItem("shop-details");
 
-              user &&
-                deleteUser(user).then(() => {
-                  // signOutProvider({ callbackUrl: '/' }).then(() => {
-                  signOutProvider({ redirect: false }).then(() => {
-                    resolve(null);
-                  });
+            user &&
+              deleteUser(user).then(() => {
+                // signOutProvider({ callbackUrl: "/" }).then(() => {
+                signOutProvider({ redirect: false }).then(() => {
+                  resolve(null);
                 });
-            });
-        });
+              });
+          });
       });
+      // });
     });
   }
 

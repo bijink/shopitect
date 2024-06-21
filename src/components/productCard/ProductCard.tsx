@@ -26,10 +26,7 @@ const ProductCard = ({
       <Card
         sx={{ width: { xs: cardWidth_xs, sm: cardWidth }, bgcolor: "whitesmoke" }}
         onClick={() => {
-          router.push({
-            pathname: `/${shopUrlName}/product/view`,
-            query: { id: prodId },
-          });
+          router.push(`/${shopUrlName}/product/view?id=${prodId}`);
         }}
       >
         <CardActionArea>

@@ -96,7 +96,8 @@ const Row = ({
               src={prodImg}
               placeholder='blur'
               blurDataURL={prodImg}
-              layout='fill'
+              width={40}
+              height={40}
             />
           </Avatar>
         </TableCell>

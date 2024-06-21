@@ -78,6 +78,9 @@ const SettingsPages: NextPage = () => {
           callbackUrl: `/signup`,
         });
     }
+    if (secure === 404) {
+      router.push("/");
+    }
   }, [secure, shopAppUrl, settingsPages, router]);
 
   useEffect(() => {
@@ -94,7 +97,7 @@ const SettingsPages: NextPage = () => {
             navbar={<ShopAdmin_navBar />}
             sidebar={<ShopAdmin_sideBar />}
             btmNavbar={<ShopAdmin_btmNavbar />}
-            title={settingsPages && capitalize(settingsPages.toString())}
+            // title={settingsPages && capitalize(settingsPages.toString())}
           >
             <Stack direction='row' pb={2}>
               <Typography variant='h5' component='p'>

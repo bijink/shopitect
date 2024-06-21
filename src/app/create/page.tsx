@@ -152,8 +152,7 @@ const Create_app: NextPage = () => {
   };
 
   useEffect(() => {
-    if (sessionStatus == "unauthenticated")
-      signInProvider("google", { callbackUrl: "/auth/signup" });
+    if (sessionStatus == "unauthenticated") signInProvider("google", { callbackUrl: "/signup" });
 
     session &&
       onSnapshot(

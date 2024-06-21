@@ -1,8 +1,5 @@
 "use client";
 // *dashboard page
-import type { NextPage } from "next";
-
-import { useRouter } from "next/navigation";
 import ShopPagesHead from "../../../components/shopPagesHead";
 import { useShop } from "../../../hooks";
 import { PageSkeleton_layout, Page_layout } from "../../../layouts";
@@ -32,9 +29,10 @@ import { ShopAdmin_btmNavbar } from "../../../components/bottomNavBar";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const Dashboard: NextPage = () => {
-  const router = useRouter();
-  const { shopAppUrl } = router.query;
+const Dashboard = ({ params }: { params: { shopAppUrl: string } }) => {
+  // const router = useRouter();
+  // const { shopAppUrl } = router.query;
+  const { shopAppUrl } = params;
 
   const dispatch = useAppDispatch();
 

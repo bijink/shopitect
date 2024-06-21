@@ -129,10 +129,10 @@ const SignupConfirm = () => {
                           loadingPosition='center'
                           onClick={() => {
                             setLoading(true);
-                            // router.push("/auth/login").then(() => {
+                            // router.push("/login").then(() => {
                             //   setLoading(false);
                             // });
-                            router.push("/auth/login");
+                            router.push("/login");
                             setLoading(false);
                           }}
                         >

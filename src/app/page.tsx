@@ -46,7 +46,7 @@ export default function Home() {
                 src='/img/shopitect-logo.png'
                 width={200}
                 height={200}
-                layout='responsive'
+                priority
               />
             </Box>
             <Typography fontSize={{ xs: "1.5rem", sm: "3rem" }} component='h1' textAlign='center'>
@@ -100,7 +100,7 @@ export default function Home() {
                   !loading_signup && setLoading_login(true);
                   !loading_signup &&
                     (userStatus === "authenticated"
-                      ? router.push(`/auth/login`)
+                      ? router.push(`/login`)
                       : signInProvider("google", {
                           redirect: false,
                           callbackUrl: `/login`,

@@ -1,6 +1,5 @@
 "use client";
 // *shopApp homePage
-import type { NextPage } from "next";
 import type { ProdDetailsTypes } from "../../types/pages/shopHomePage.types";
 
 import Head from "next/head";
@@ -23,13 +22,16 @@ import secretAccess from "../../utility/secretAccess";
 
 const ShopHome = ({
   params,
+  searchParams,
 }: {
-  params: { shopAppUrl: string; category: string; page: string };
+  params: { shopAppUrl: string };
+  searchParams: { category: string; page: string };
 }) => {
   const router = useRouter();
   // const { shopAppUrl,category, page } = router.query;
-  const { shopAppUrl, category, page } = params;
-  // console.log("p:: ", { shopAppUrl, category, page });
+  const { shopAppUrl } = params;
+  const { category, page } = searchParams;
+  // console.log("PARAMS:: ", { shopAppUrl, category, page });
 
   const dispatch = useAppDispatch();
   const searchInput = useAppSelector(selectProdSearchInput);

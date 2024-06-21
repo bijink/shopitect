@@ -22,7 +22,7 @@ const ProductPages = ({ params }: { params: { shopAppUrl: string; productPages: 
   const router = useRouter();
   // const { shopAppUrl, productPages } = router.query;
   const { shopAppUrl, productPages } = params;
-  console.log({ shopAppUrl, productPages });
+  // console.log({ shopAppUrl, productPages });
 
   const dispatch = useAppDispatch();
 

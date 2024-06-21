@@ -23,7 +23,7 @@ const ProductAdd_page = () => {
   const { data: shop, secure } = useShop(shopAppUrl);
 
   useEffect(() => {
-    secure === 401 && signInProvider("google", { redirect: false, callbackUrl: `/auth/signup` });
+    secure === 401 && signInProvider("google", { redirect: false, callbackUrl: `/signup` });
   }, [secure]);
 
   useEffect(() => {

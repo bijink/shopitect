@@ -1,9 +1,6 @@
 "use client";
 // *about page
 import { Typography, colors, Stack, Box } from "@mui/material";
-import type { NextPage } from "next";
-
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useShop } from "@/hooks";
 import { useAppDispatch } from "@/redux/hooks";
@@ -17,9 +14,10 @@ import { Public_navBar } from "@/components/navBar";
 import { Public_sideBar } from "@/components/sideBar";
 import { Public_btmNavbar } from "@/components/bottomNavBar";
 
-const About: NextPage = () => {
-  const router = useRouter();
-  const { shopAppUrl, infoPages } = router.query;
+const About = ({ params }: { params: { shopAppUrl: string } }) => {
+  // const router = useRouter();
+  // const { shopAppUrl, infoPages } = router.query;
+  const { shopAppUrl } = params;
 
   const dispatch = useAppDispatch();
 
