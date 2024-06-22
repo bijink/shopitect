@@ -71,6 +71,24 @@ const Create_app: NextPage = () => {
       setLoading(true);
       setIsFormSubmit(true);
 
+      // todo::
+      await fetch(`http://localhost:3000/api/v1/mongo?shop=${shopUrlName}`, {
+        method: "POST",
+        body: JSON.stringify({
+          name: shopName,
+          urlName: shopUrlName,
+          category: shopCategory,
+          ownerName: shopOwnerName,
+          address: shopAddress,
+          email: shopEmail,
+          providerID: session?.user.uid,
+          // accountID: auth.currentUser?.uid,
+          createdAt: serverTimestamp(),
+          about: "",
+        }),
+      });
+      // todo::
+
       await createUserWithEmailAndPassword(auth, shopEmail, password)
         .then(userCredential => {
           // Signed in

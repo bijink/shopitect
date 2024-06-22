@@ -29,6 +29,22 @@ export default function Home() {
 
   useEffect(() => {
     sessionStorage.removeItem("secret-access");
+
+    async function foo() {
+      const data = await fetch(`http://localhost:3000/api/v1/mongo?shop=${"test"}`).then(res =>
+        res.json()
+      );
+
+      // await fetch(`http://localhost:3000/api/v1/mongo?shop=${"shopUrlName"}`, {
+      //   method: "POST",
+      //   body: JSON.stringify({
+      //     name: "1234",
+      //   }),
+      // });
+
+      console.log(data);
+    }
+    foo();
   }, []);
 
   useEffect(() => {
