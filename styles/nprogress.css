@@ -82,14 +82,13 @@
    }
 }*/
 
-
 #nprogress .bar {
-   background: #26a69a;
-   z-index: 9999;
-   height: 2.5px;
+  background: #26a69a;
+  z-index: 9999;
+  height: 2.5px;
 }
 
 /* Fancy blur effect */
 #nprogress .peg {
-   box-shadow: none;
+  box-shadow: none;
 }
