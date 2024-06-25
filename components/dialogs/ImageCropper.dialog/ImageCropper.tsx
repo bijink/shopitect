@@ -4,11 +4,11 @@ import {
   Button,
   Stack,
   TextField,
-  Typography,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  IconButton,
 } from "@mui/material";
 import ReactCrop, { centerCrop, makeAspectCrop, Crop, PixelCrop } from "react-image-crop";
 import useDebounceEffect from "./useDebounceEffect";
@@ -16,6 +16,7 @@ import canvasPreview from "./canvasPreview";
 import croppedImgData from "./croppedImgData";
 import InputSlider from "./InputSlider";
 import Image from "next/image";
+import AddPhotoAlternateOutlinedIcon from "@mui/icons-material/AddPhotoAlternateOutlined";
 
 import "react-image-crop/dist/ReactCrop.css";
 
@@ -38,12 +39,12 @@ function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: numbe
 }
 
 export default function ImageCropper({
-  inputLabel,
   getBlob,
 }: {
   inputLabel?: string;
   getBlob: React.Dispatch<React.SetStateAction<Blob | null>>;
 }) {
+  const imgInputRef = useRef<any>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -62,6 +63,10 @@ export default function ImageCropper({
   };
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleImgInputBrowse = () => {
+    imgInputRef.current.click();
   };
 
   useDebounceEffect(
@@ -90,6 +95,7 @@ export default function ImageCropper({
       const reader = new FileReader();
       reader.addEventListener("load", () => setImgSrc(reader?.result?.toString() || ""));
       reader.readAsDataURL(e.target.files[0]);
+      handleClickOpen();
     }
   }
 
@@ -123,40 +129,54 @@ export default function ImageCropper({
     <>
       <Stack direction='column' spacing={2}>
         <Stack direction='row' spacing={{ xs: 1, sm: 2 }} width='100%' alignItems='center'>
-          {inputLabel && (
-            <Typography variant='body1' component='p' sx={{ whiteSpace: "nowrap" }}>
-              {inputLabel}&nbsp;:
-            </Typography>
-          )}
-          <TextField
-            type='file'
-            size='small'
-            fullWidth
-            inputProps={{ accept: "image/*" }}
-            onChange={onSelectFile}
-          />
-          <Button
-            variant='contained'
-            disabled={!hasImgSrcInput}
-            onClick={handleClickOpen}
-            sx={{ bgcolor: "primary.light" }}
+          <Box
+            sx={{
+              width: { xs: "250px", md: "350px" },
+              height: { xs: "250px", md: "350px" },
+              border: "1px solid gray",
+              borderRadius: "50%",
+              cursor: "pointer",
+            }}
+            display='flex'
+            justifyContent='center'
+            alignItems='center'
+            onClick={handleImgInputBrowse}
           >
-            crop
-          </Button>
-        </Stack>
-
-        {hasImgSrcInput && previewSrc && (
-          <Box width={{ xs: "30%", sm: "15%" }}>
-            <Image
-              alt='Crop preview'
-              src={previewSrc}
-              width={150}
-              height={150}
-              layout='responsive'
-              style={{ borderRadius: "50%" }}
+            <TextField
+              type='file'
+              size='small'
+              fullWidth
+              inputProps={{ accept: "image/*" }}
+              onChange={onSelectFile}
+              id='selectedFile'
+              sx={{ display: "none" }}
+              inputRef={imgInputRef}
             />
+            <IconButton
+              size='small'
+              aria-label='secret-access'
+              color='inherit'
+              sx={{
+                position: "absolute",
+                display: !previewSrc ? "inline" : "none",
+              }}
+            >
+              <AddPhotoAlternateOutlinedIcon fontSize='large' />
+            </IconButton>
+            {hasImgSrcInput && previewSrc && (
+              <Box width={"100%"}>
+                <Image
+                  alt='Crop preview'
+                  src={previewSrc}
+                  width={150}
+                  height={150}
+                  layout='responsive'
+                  style={{ borderRadius: "50%" }}
+                />
+              </Box>
+            )}
           </Box>
-        )}
+        </Stack>
       </Stack>
 
       <Dialog
@@ -165,6 +185,7 @@ export default function ImageCropper({
         scroll='paper'
         aria-labelledby='scroll-dialog-title'
         aria-describedby='scroll-dialog-description'
+        maxWidth='md'
       >
         <DialogTitle id='scroll-dialog-title'>Crop Image</DialogTitle>
         <DialogContent dividers>

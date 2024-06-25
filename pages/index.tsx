@@ -137,7 +137,7 @@ const Home: NextPage = () => {
               >
                 <GitHubIcon />
               </a>
-              <Typography variant='body2'>Copyright © 2022 Bijin</Typography>
+              <Typography variant='body2'>Copyright © 2022 Bijin Kandengala</Typography>
             </Stack>
           </Container>
         </Box>

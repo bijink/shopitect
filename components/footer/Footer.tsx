@@ -11,8 +11,11 @@ const Footer = () => {
   const shopYear = shop?.createdAt && new Date(shop.createdAt.seconds * 1000).getFullYear();
 
   return (
-    <Box width={"100%"} py={5}>
-      <Container maxWidth='xs' sx={{ display: "flex", justifyContent: "center" }}>
+    <Box width={"100%"} height={"10vh"}>
+      <Container
+        maxWidth='xs'
+        sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}
+      >
         <Stack>
           {shopYear && (
             <Typography variant='body1'>

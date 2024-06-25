@@ -237,7 +237,7 @@ const ProductInputForm = ({ shopData }: ProductInputProps) => {
                   <img
                     width={150}
                     height={150}
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: "pointer", borderRadius: "8px" }}
                     src={prodImage ? URL.createObjectURL(prodImage) : ""}
                     alt='product'
                   />

@@ -6,6 +6,7 @@ import {
   Button,
   CircularProgress,
   Container,
+  Grid,
   IconButton,
   InputAdornment,
   Stack,
@@ -200,114 +201,139 @@ const Create_app: NextPage = () => {
         <Box py={3}>
           <Container>
             <Typography
-              fontSize={{ xs: "2rem", sm: "2.5rem" }}
+              fontSize={{ xs: "2rem", sm: "2.8rem" }}
               component='h1'
               textAlign='center'
               sx={{ color: "primary.dark" }}
+              mt={2}
+              mb={4}
             >
               Shopitect
             </Typography>
-            <Typography variant='h5' component={"div"} gutterBottom>
+            <Typography variant='h5' component={"div"} mb={4} gutterBottom>
               Create App
             </Typography>
             <form onSubmit={handleFormSubmit}>
-              <Stack direction='column' spacing={3}>
-                <TextField
-                  label='Shop Name'
-                  size='small'
-                  fullWidth
-                  value={shopName}
-                  onInput={(e: ChangeEvent<HTMLInputElement>) => setShopName(e.target.value)}
-                  inputRef={inputFocusRef}
-                  required
-                />
-                <TextField
-                  label='Shop Url Name'
-                  size='small'
-                  fullWidth
-                  helperText={
-                    Boolean(shopUrlName) && !isFormSubmit
-                      ? isShopUrlNameUnique
-                        ? "Url is unique"
-                        : "Url is not unique"
-                      : "* This name is used in url for identifing your app. Make sure to enter a unique name"
-                  }
-                  value={shopUrlName}
-                  onInput={(e: ChangeEvent<HTMLInputElement>) =>
-                    setShopUrlName(e.target.value.split(" ").join("").toLowerCase())
-                  }
-                  required
-                  error={!isFormSubmit && !isShopUrlNameUnique}
-                />
-                <TextField
-                  label='Shop Category'
-                  size='small'
-                  fullWidth
-                  value={shopCategory}
-                  onInput={(e: ChangeEvent<HTMLInputElement>) => setShopCategory(e.target.value)}
-                  required
-                />
-                <TextField
-                  label='Shop Ower Name'
-                  size='small'
-                  fullWidth
-                  value={shopOwnerName}
-                  onInput={(e: ChangeEvent<HTMLInputElement>) => setShopOwnerName(e.target.value)}
-                  required
-                />
-                <TextField
-                  label='Shop Address'
-                  size='small'
-                  multiline
-                  minRows={3}
-                  maxRows={5}
-                  fullWidth
-                  value={shopAddress}
-                  onInput={(e: ChangeEvent<HTMLInputElement>) => setShopAddress(e.target.value)}
-                  required
-                />
-                {session && (
-                  <>
+              <Grid container columnSpacing={5} rowSpacing={3}>
+                <Grid item xs={12} md={7}>
+                  <Stack direction='column' spacing={3}>
                     <TextField
-                      label='Email Address'
+                      label='Shop Name'
                       size='small'
                       fullWidth
-                      type='email'
-                      color='warning'
-                      defaultValue={session?.user.email}
-                      InputProps={{ readOnly: true }}
-                    />
-                    <TextField
-                      label='Password'
-                      size='small'
-                      fullWidth
-                      type={showPassword ? "text" : "password"}
-                      value={password}
-                      onInput={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position='end'>
-                            <IconButton
-                              aria-label='toggle password visibility'
-                              onClick={() => setShowPassword(prev => !prev)}
-                              edge='end'
-                            >
-                              {showPassword ? <Visibility /> : <VisibilityOff />}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                      helperText='Password must exceed 8 characters'
+                      value={shopName}
+                      onInput={(e: ChangeEvent<HTMLInputElement>) => setShopName(e.target.value)}
+                      inputRef={inputFocusRef}
                       required
                     />
-                  </>
-                )}
-                <Box>
-                  <ImageCropper inputLabel='Shop Logo' getBlob={setShopLogo} />
-                </Box>
-              </Stack>
+                    <TextField
+                      label='Shop Url Name'
+                      size='small'
+                      fullWidth
+                      helperText={
+                        Boolean(shopUrlName) && !isFormSubmit
+                          ? isShopUrlNameUnique
+                            ? "Url is unique"
+                            : "Url is not unique"
+                          : "* This name is used in url for identifing your app. Make sure to enter a unique name"
+                      }
+                      value={shopUrlName}
+                      onInput={(e: ChangeEvent<HTMLInputElement>) =>
+                        setShopUrlName(e.target.value.split(" ").join("").toLowerCase())
+                      }
+                      required
+                      error={!isFormSubmit && !isShopUrlNameUnique}
+                    />
+                    <TextField
+                      label='Shop Category'
+                      size='small'
+                      fullWidth
+                      value={shopCategory}
+                      onInput={(e: ChangeEvent<HTMLInputElement>) =>
+                        setShopCategory(e.target.value)
+                      }
+                      required
+                    />
+                    <TextField
+                      label='Shop Ower Name'
+                      size='small'
+                      fullWidth
+                      value={shopOwnerName}
+                      onInput={(e: ChangeEvent<HTMLInputElement>) =>
+                        setShopOwnerName(e.target.value)
+                      }
+                      required
+                    />
+                    <TextField
+                      label='Shop Address'
+                      size='small'
+                      multiline
+                      minRows={3}
+                      maxRows={5}
+                      fullWidth
+                      value={shopAddress}
+                      onInput={(e: ChangeEvent<HTMLInputElement>) => setShopAddress(e.target.value)}
+                      required
+                    />
+                    {session && (
+                      <>
+                        <TextField
+                          label='Email Address'
+                          size='small'
+                          fullWidth
+                          type='email'
+                          color='warning'
+                          defaultValue={session?.user.email}
+                          InputProps={{ readOnly: true }}
+                        />
+                        <TextField
+                          label='Password'
+                          size='small'
+                          fullWidth
+                          type={showPassword ? "text" : "password"}
+                          value={password}
+                          onInput={(e: ChangeEvent<HTMLInputElement>) =>
+                            setPassword(e.target.value)
+                          }
+                          InputProps={{
+                            endAdornment: (
+                              <InputAdornment position='end'>
+                                <IconButton
+                                  aria-label='toggle password visibility'
+                                  onClick={() => setShowPassword(prev => !prev)}
+                                  edge='end'
+                                >
+                                  {showPassword ? <Visibility /> : <VisibilityOff />}
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                          }}
+                          helperText='Password must exceed 8 characters'
+                          required
+                        />
+                      </>
+                    )}
+                  </Stack>
+                </Grid>
+                <Grid item xs={12} md={5}>
+                  <Stack sx={{ paddingTop: { md: "30px" } }}>
+                    <Box display={"flex"} justifyContent={"center"}>
+                      <ImageCropper getBlob={setShopLogo} />
+                    </Box>
+                    <Typography
+                      variant='body1'
+                      component='p'
+                      marginTop={2}
+                      textAlign={"center"}
+                      fontSize={"20px"}
+                    >
+                      Shop Logo
+                    </Typography>
+                  </Stack>
+                </Grid>
+              </Grid>
 
-              <Stack direction={{ xs: "column-reverse", sm: "row" }} spacing={{ xs: 2 }} pt={4}>
+              <Stack direction={{ xs: "column-reverse", sm: "row" }} spacing={{ xs: 2 }} pt={5}>
                 <Stack direction={{ xs: "row" }} width='100%' spacing={{ xs: 2 }}>
                   <Button
                     variant='contained'

@@ -25,15 +25,8 @@ const Page_layout = ({ children, navbar, sidebar, btmNavbar, title }: PageLayout
           {btmNavbar}
         </Box>
       )}
-      <Box component='main' minHeight='80vh' pl={{ xs: 0, sm: sidebarWidth }} pb={{ xs: 8, sm: 0 }}>
+      <Box component='main' minHeight='90vh' pl={{ xs: 0, sm: sidebarWidth }} pb={{ xs: 8, sm: 0 }}>
         <Toolbar />
-        {/* {(pageId === 'settings_page') && (
-               <Stack spacing={1} direction='row' alignItems="center" px={3} py={1} bgcolor="skyblue" >
-                  <Typography variant="h6" component='div' >Settings</Typography>
-                  <ArrowForwardIosIcon sx={{ fontSize: '12px' }} />
-                  <Typography variant="h6" component='div' sx={{ color: '#757575' }} >{title}</Typography>
-               </Stack>
-            )} */}
         <Box p={2}>{children}</Box>
       </Box>
       <Box component='footer' width='100%' display={{ xs: "none", sm: "block" }} pl={sidebarWidth}>

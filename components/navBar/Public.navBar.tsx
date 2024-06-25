@@ -22,6 +22,8 @@ import {
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useShop } from "../../hooks";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import LoginIcon from "@mui/icons-material/Login";
+import Link from "next/link";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -143,6 +145,15 @@ export default function Public_navBar() {
               >
                 <InfoIcon />
               </IconButton>
+            </Tooltip>
+          )}
+          {pageId == `about_page` && (
+            <Tooltip title='Login' arrow>
+              <Link href={"/auth/login"} passHref>
+                <IconButton size='small' aria-label='about the shop' color='inherit'>
+                  <LoginIcon />
+                </IconButton>
+              </Link>
             </Tooltip>
           )}
         </Toolbar>
