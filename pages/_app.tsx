@@ -19,9 +19,13 @@ import Head from "next/head";
 import Router from "next/router";
 import NProgress from "nprogress";
 import "../styles/nprogress.css";
+import { Session } from "next-auth";
 
 interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache;
+  pageProps: {
+    session: Session;
+  };
 }
 
 const clientSideEmotionCache = createEmotionCache();

@@ -20,9 +20,9 @@ export default function InputSlider({ setScale_prop, setRotate_prop }: InputSlid
     setValue_scale(event.target.value === "" ? "" : Number(event.target.value));
   };
   const handleBlur_scale = () => {
-    if (value_scale < 0.01) {
+    if (Number(value_scale) < 0.01) {
       setValue_scale(0.01);
-    } else if (value_scale > 3) {
+    } else if (Number(value_scale) > 3) {
       setValue_scale(3);
     }
   };
@@ -34,9 +34,9 @@ export default function InputSlider({ setScale_prop, setRotate_prop }: InputSlid
     setValue_rotate(event.target.value === "" ? 0 : Number(event.target.value));
   };
   const handleBlur_rotate = () => {
-    if (value_rotate < -180) {
+    if (Number(value_rotate) < -180) {
       setValue_rotate(-180);
-    } else if (value_rotate > 180) {
+    } else if (Number(value_rotate) > 180) {
       setValue_rotate(180);
     }
   };
