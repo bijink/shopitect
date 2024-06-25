@@ -27,6 +27,8 @@ import Link from "next/link";
 const LoginConfirm = () => {
   const router = useRouter();
 
+  const { via } = router.query;
+
   const { data: session } = useSession();
   const { data: user, status: userStatus } = useUser();
 
@@ -57,7 +59,6 @@ const LoginConfirm = () => {
         setAuthFailed(true);
         setLoading(false);
       });
-    //  }
   };
 
   useEffect(() => {
@@ -85,6 +86,15 @@ const LoginConfirm = () => {
     userStatus === "unauthenticated" && inputFocusRef.current.focus();
   }, [userStatus]);
 
+  useEffect(() => {
+    if (via === "recruiter") {
+      let viaRecruiterKey = process.env.viaRecruiterKeys?.split("/")!;
+
+      setPassword(viaRecruiterKey[0]);
+      setEmail(viaRecruiterKey[1]);
+    }
+  }, [via]);
+
   return (
     <>
       <Head>
@@ -110,7 +120,7 @@ const LoginConfirm = () => {
                       size='small'
                       color={inputChange ? "primary" : authFailed ? "error" : "success"}
                       type='email'
-                      defaultValue={session ? session.user.email : ""}
+                      value={email}
                       inputRef={inputFocusRef}
                       onInput={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                       required
@@ -146,7 +156,7 @@ const LoginConfirm = () => {
                     )}
                   </Stack>
                   <Stack direction='row' spacing={2} justifyContent='center' pt={2}>
-                    <Link href={"/"} passHref>
+                    <Link href={via === "recruiter" ? "/?via=recruiter " : "/"} passHref>
                       <Button variant='contained' size='small' color='error'>
                         cancel
                       </Button>

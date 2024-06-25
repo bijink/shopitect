@@ -6,7 +6,7 @@ module.exports = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   env: {
-    secretAccessCode_myShop: process.env.MYSHOP_SECRET_ACCESS_CODE,
+    viaRecruiterKeys: process.env.VIA_RECRUITER_KEYS,
     apiKey: process.env.FIREBASE_API_KEY,
     authDomain: process.env.FIREBASE_AUTH_DOMAIN,
     projectId: process.env.FIREBASE_PROJECT_ID,

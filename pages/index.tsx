@@ -19,6 +19,8 @@ import { App_about, App_help } from "../components/dialogs";
 const Home: NextPage = () => {
   const router = useRouter();
 
+  const { via } = router.query;
+
   const dispatch = useAppDispatch();
 
   const { status: userStatus } = useUser();
@@ -106,7 +108,9 @@ const Home: NextPage = () => {
                 onClick={() => {
                   if (!loading_signup) {
                     setLoading_login(true);
-                    router.push(`/auth/login`);
+                    via === "recruiter"
+                      ? router.push(`/auth/login?via=recruiter`)
+                      : router.push(`/auth/login`);
                   }
                 }}
                 loadingPosition='center'

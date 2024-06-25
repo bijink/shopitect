@@ -22,8 +22,6 @@ import {
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useShop } from "../../hooks";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import secretAccess from "../../utility/secretAccess";
-import LockOpenIcon from "@mui/icons-material/LockOpen";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -74,13 +72,6 @@ export default function Public_navBar() {
   const searchInput = useAppSelector(selectProdSearchInput);
   const { data: shop } = useShop(shopAppUrl);
 
-  let secretAccess_storage = JSON.parse(sessionStorage.getItem("secret-access")!);
-
-  const handleSecretAccess = () => {
-    let isSecretAccess = secretAccess();
-    isSecretAccess && router.reload();
-  };
-
   return (
     <>
       <AppBar position='fixed' sx={{ zIndex: theme => theme.zIndex.drawer + 1 }}>
@@ -112,18 +103,6 @@ export default function Public_navBar() {
             </Typography>
           </Stack>
           <Box sx={{ flexGrow: 10 }} />
-          {shopAppUrl === "my-shop" && secretAccess_storage && !secretAccess_storage?.boolean ? (
-            <Tooltip title='Secret Access' arrow>
-              <IconButton
-                size='small'
-                aria-label='secret-access'
-                color='inherit'
-                onClick={handleSecretAccess}
-              >
-                <LockOpenIcon />
-              </IconButton>
-            </Tooltip>
-          ) : null}
           {pageId === "shopHome_page" && (
             <Search sx={{ flexGrow: 2 }}>
               <SearchIconWrapper>

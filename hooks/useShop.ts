@@ -14,7 +14,6 @@ const useShop = (shopAppUrl: string | string[] | undefined) => {
   const [userData, setUserData] = useState<User | null | undefined>(undefined);
 
   // #shopData
-  // const [data, setData] = useState<ShopData | undefined>(undefined);
   const [data, setData] = useState<ShopData | null>(null);
   // #shopSecurePage
   const [secure, setSecure] = useState<"loading" | 200 | 401 | 403 | 404>("loading");
@@ -44,13 +43,6 @@ const useShop = (shopAppUrl: string | string[] | undefined) => {
     if (shopAppUrl && shopDetails) {
       if (shopDetails.length === null || userData === undefined) {
         setSecure("loading");
-      } else if (shopDetails.data?.urlName === "my-shop" && !userData) {
-        let secretAccess_storage = JSON.parse(sessionStorage.getItem("secret-access")!);
-        if (secretAccess_storage?.code! === process.env.secretAccessCode_myShop) {
-          setSecure(200);
-        } else {
-          setSecure(401);
-        }
       } else if (userData && shopDetails.length === 1) {
         if (userData.uid === shopDetails.data?.accountID) {
           setSecure(200);

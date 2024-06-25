@@ -18,7 +18,6 @@ import { selectProdSearchInput } from "../../redux/slices/prodSearchInput.slice"
 import { Public_navBar, ShopAdmin_navBar } from "../../components/navBar";
 import { Public_sideBar, ShopAdmin_sideBar } from "../../components/sideBar";
 import { Public_btmNavbar, ShopAdmin_btmNavbar } from "../../components/bottomNavBar";
-import secretAccess from "../../utility/secretAccess";
 
 const ShopHome: NextPage = () => {
   const router = useRouter();
@@ -27,7 +26,6 @@ const ShopHome: NextPage = () => {
   const dispatch = useAppDispatch();
   const searchInput = useAppSelector(selectProdSearchInput);
 
-  const { status } = useUser();
   const { data: shop, secure } = useShop(shopAppUrl);
 
   const sliceLg = 10;
@@ -56,21 +54,6 @@ const ShopHome: NextPage = () => {
     }
     return arr;
   };
-
-  // #secret access
-  useEffect(() => {
-    let secretAccess_storage = sessionStorage.getItem("secret-access");
-
-    if (
-      !secretAccess_storage &&
-      prodDataStatus !== "loading" &&
-      status === "unauthenticated" &&
-      shopAppUrl === "my-shop"
-    ) {
-      let isSecretAccess = secretAccess();
-      isSecretAccess && router.reload();
-    }
-  }, [status, prodDataStatus]);
 
   // #all prodData
   useEffect(() => {
