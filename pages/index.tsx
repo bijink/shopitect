@@ -78,14 +78,15 @@ const Home: NextPage = () => {
                 color='primary'
                 size='small'
                 onClick={() => {
-                  !loading_login && setLoading_signup(true);
-                  !loading_login &&
+                  if (!loading_login) {
+                    setLoading_signup(true);
                     signOutAccount(auth).then(() => {
                       signInProvider("google", {
                         redirect: false,
                         callbackUrl: `/auth/signup`,
                       });
                     });
+                  }
                 }}
                 loadingPosition='center'
                 loading={loading_signup}
@@ -103,14 +104,10 @@ const Home: NextPage = () => {
                   },
                 }}
                 onClick={() => {
-                  !loading_signup && setLoading_login(true);
-                  !loading_signup &&
-                    (userStatus === "authenticated"
-                      ? router.push(`/auth/login`)
-                      : signInProvider("google", {
-                          redirect: false,
-                          callbackUrl: `/auth/login`,
-                        }));
+                  if (!loading_signup) {
+                    setLoading_login(true);
+                    router.push(`/auth/login`);
+                  }
                 }}
                 loadingPosition='center'
                 loading={loading_login}
