@@ -1,9 +1,9 @@
 export interface ProdCardProps {
-   shopUrlName: string,
+  shopUrlName: string;
 
-   prodId: string;
-   prodName: string;
-   prodCategory: string;
-   prodImg: string;
-   sellPrice: number;
-};
+  prodId: string;
+  prodName: string;
+  prodCategory: string;
+  prodImg: string;
+  sellPrice: number;
+}
