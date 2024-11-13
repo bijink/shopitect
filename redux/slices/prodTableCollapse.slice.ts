@@ -1,16 +1,16 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { RootState } from "../store";
+import { createSlice } from '@reduxjs/toolkit';
+import { RootState } from '../store';
 
 const initialState: { value: boolean } = {
   value: false,
 };
 
 const prodTableCloseCollapseSlice = createSlice({
-  name: "product-table-close-collapse",
+  name: 'product-table-close-collapse',
   initialState,
 
   reducers: {
-    changeProdTableCollapse: state => {
+    changeProdTableCollapse: (state) => {
       state.value = !state.value;
     },
   },

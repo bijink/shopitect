@@ -1,12 +1,12 @@
-import type { ProdCardProps } from "./productCard.types";
+import type { ProdCardProps } from './productCard.types';
 
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import { capitalize, CardActionArea, colors } from "@mui/material";
-import { Box } from "@mui/material";
-import { useRouter } from "next/router";
-import Image from "next/image";
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import { capitalize, CardActionArea, colors } from '@mui/material';
+import { Box } from '@mui/material';
+import { useRouter } from 'next/router';
+import Image from 'next/image';
 
 const ProductCard = ({
   shopUrlName,
@@ -24,7 +24,7 @@ const ProductCard = ({
   return (
     <Box p={1}>
       <Card
-        sx={{ width: { xs: cardWidth_xs, sm: cardWidth }, bgcolor: "whitesmoke" }}
+        sx={{ width: { xs: cardWidth_xs, sm: cardWidth }, bgcolor: 'whitesmoke' }}
         onClick={() => {
           router.push({
             pathname: `/${shopUrlName}/product/view`,
@@ -36,20 +36,20 @@ const ProductCard = ({
           <Image
             alt={`product:${capitalize(prodName)}`}
             src={prodImg}
-            placeholder='blur'
+            placeholder="blur"
             blurDataURL={prodImg}
             width={cardWidth}
             height={130}
             style={{ borderBottomLeftRadius: 4, borderBottomRightRadius: 4 }}
           />
           <CardContent sx={{ paddingX: 1, paddingY: 0.5 }}>
-            <Typography variant='body1' component='h3' fontWeight={600}>
+            <Typography variant="body1" component="h3" fontWeight={600}>
               {capitalize(prodName)}
             </Typography>
-            <Typography variant='inherit' component='p' color='GrayText'>
+            <Typography variant="inherit" component="p" color="GrayText">
               {capitalize(prodCategory)}
             </Typography>
-            <Typography variant='subtitle2' component='p'>
+            <Typography variant="subtitle2" component="p">
               &#x20B9; {sellPrice}
             </Typography>
           </CardContent>

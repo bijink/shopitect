@@ -1,3 +1,3 @@
-import ShopPagesHead from "./ShopPagesHead";
+import ShopPagesHead from './ShopPagesHead';
 
 export default ShopPagesHead;

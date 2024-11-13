@@ -1,42 +1,42 @@
-import type { ProductEditProps } from "./dialogs.types";
+import type { ProductEditProps } from './dialogs.types';
 
+import CloseIcon from '@mui/icons-material/Close';
+import EditIcon from '@mui/icons-material/Edit';
 import {
-  Box,
-  IconButton,
-  TextField,
-  Stack,
-  Typography,
-  Tooltip,
-  Button,
-  InputAdornment,
-  FormControl,
-  FormLabel,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Toolbar,
   AppBar,
+  Box,
+  Button,
   Dialog,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  IconButton,
+  InputAdornment,
+  Radio,
+  RadioGroup,
   Slide,
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import { TransitionProps } from "@mui/material/transitions";
-import { ChangeEvent, FormEvent, forwardRef, useEffect, useState } from "react";
-import EditIcon from "@mui/icons-material/Edit";
-import { doc, updateDoc } from "firebase/firestore";
-import { database } from "../../config/firebase.config";
-import amountCalculate from "../../utility/amountCalculate";
-import { useAppDispatch } from "../../redux/hooks";
-import { changeProdTableCollapse } from "../../redux/slices/prodTableCollapse.slice";
-import { setSnackbarState } from "../../redux/slices/snackbarState.slice";
+  Stack,
+  TextField,
+  Toolbar,
+  Tooltip,
+  Typography,
+} from '@mui/material';
+import { TransitionProps } from '@mui/material/transitions';
+import { doc, updateDoc } from 'firebase/firestore';
+import { ChangeEvent, FormEvent, forwardRef, useEffect, useState } from 'react';
+import { useAppDispatch } from '../../redux/hooks';
+import { changeProdTableCollapse } from '../../redux/slices/prodTableCollapse.slice';
+import { setSnackbarState } from '../../redux/slices/snackbarState.slice';
+import { database } from '../../src/config/firebase.config';
+import amountCalculate from '../../utility/amountCalculate';
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement;
   },
-  ref: React.Ref<unknown>
+  ref: React.Ref<unknown>,
 ) {
-  return <Slide direction='up' ref={ref} {...props} />;
+  return <Slide direction="up" ref={ref} {...props} />;
 });
 
 export default function ProductEdit_dialog({
@@ -62,12 +62,12 @@ export default function ProductEdit_dialog({
   const [prodBrandInput, setProdBrandInput] = useState(prodBrand);
   const [quantityInput, setQuantityInput] = useState(quantity.toString());
 
-  const [getPriceInput, setGetPriceInput] = useState<string>("");
-  const [sellPriceInput, setSellPriceInput] = useState<string>("");
-  const [profitAmountInput, setProfitAmountInput] = useState<string>("");
-  const [profitPercentageInput, setProfitPercentageInput] = useState<string>("");
+  const [getPriceInput, setGetPriceInput] = useState<string>('');
+  const [sellPriceInput, setSellPriceInput] = useState<string>('');
+  const [profitAmountInput, setProfitAmountInput] = useState<string>('');
+  const [profitPercentageInput, setProfitPercentageInput] = useState<string>('');
 
-  const [calcMethod, setCalcMethod] = useState("method-1");
+  const [calcMethod, setCalcMethod] = useState('method-1');
   const [canCalcuProceed, setCanCalcuProceed] = useState(false);
 
   const handleOpen = () => {
@@ -83,30 +83,30 @@ export default function ProductEdit_dialog({
   const calculate = () => {
     setCanCalcuProceed(true);
 
-    if (calcMethod === "method-1") {
+    if (calcMethod === 'method-1') {
       // #(getPrice, sellPrice) =>> (profitAmount, profitPercentage)
       const [profitAmount, profitPercentage] = amountCalculate(
         calcMethod,
         getPriceInput,
-        sellPriceInput
+        sellPriceInput,
       );
       setProfitAmountInput(profitAmount);
       setProfitPercentageInput(profitPercentage);
-    } else if (calcMethod === "method-2") {
+    } else if (calcMethod === 'method-2') {
       // #(getPrice, profitPercentage) =>> (profitAmount, sellPrice)
       const [profitAmount, sellPrice] = amountCalculate(
         calcMethod,
         getPriceInput,
-        profitPercentageInput
+        profitPercentageInput,
       );
       setProfitAmountInput(profitAmount);
       setSellPriceInput(sellPrice);
-    } else if (calcMethod === "method-3") {
+    } else if (calcMethod === 'method-3') {
       // #(getPrice, profitAmount) =>> (sellPrice, profitPercentage)
       const [sellPrice, profitPercentage] = amountCalculate(
         calcMethod,
         getPriceInput,
-        profitAmountInput
+        profitAmountInput,
       );
       setSellPriceInput(sellPrice);
       setProfitPercentageInput(profitPercentage);
@@ -114,17 +114,17 @@ export default function ProductEdit_dialog({
   };
 
   const calculateReset = () => {
-    setGetPriceInput("");
-    setSellPriceInput("");
-    setProfitAmountInput("");
-    setProfitPercentageInput("");
+    setGetPriceInput('');
+    setSellPriceInput('');
+    setProfitAmountInput('');
+    setProfitPercentageInput('');
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch(changeProdTableCollapse());
 
-    await updateDoc(doc(database, "shops", shopUrlName, "products", prodId), {
+    await updateDoc(doc(database, 'shops', shopUrlName, 'products', prodId), {
       name: prodNameInput,
       codeName: prodCodeNameInput,
       category: prodCategoryInput.toLowerCase(),
@@ -138,10 +138,10 @@ export default function ProductEdit_dialog({
       setOpen(false);
       dispatch(
         setSnackbarState({
-          id: "prod_edit",
+          id: 'prod_edit',
           open: true,
-          message: "Product details successfully edited...",
-        })
+          message: 'Product details successfully edited...',
+        }),
       );
     });
   };
@@ -150,23 +150,23 @@ export default function ProductEdit_dialog({
     setCanCalcuProceed(false);
 
     if (!canCalcuProceed) {
-      if (calcMethod === "method-1") {
+      if (calcMethod === 'method-1') {
         if (getPrice.toString() != getPriceInput || sellPrice.toString() != sellPriceInput) {
-          setProfitAmountInput("");
-          setProfitPercentageInput("");
+          setProfitAmountInput('');
+          setProfitPercentageInput('');
         }
-      } else if (calcMethod === "method-2") {
+      } else if (calcMethod === 'method-2') {
         if (
           getPrice.toString() != getPriceInput ||
           profitPercentage.toString() != profitPercentageInput
         ) {
-          setSellPriceInput("");
-          setProfitAmountInput("");
+          setSellPriceInput('');
+          setProfitAmountInput('');
         }
-      } else if (calcMethod === "method-3") {
+      } else if (calcMethod === 'method-3') {
         if (getPrice.toString() != getPriceInput || profitAmount.toString() != profitAmountInput) {
-          setSellPriceInput("");
-          setProfitPercentageInput("");
+          setSellPriceInput('');
+          setProfitPercentageInput('');
         }
       }
     }
@@ -184,64 +184,64 @@ export default function ProductEdit_dialog({
 
   return (
     <div>
-      <Tooltip title='Edit' placement='left' arrow>
-        <IconButton size='small' sx={{ color: "orange" }} onClick={handleOpen}>
+      <Tooltip title="Edit" placement="left" arrow>
+        <IconButton size="small" sx={{ color: 'orange' }} onClick={handleOpen}>
           <EditIcon />
         </IconButton>
       </Tooltip>
 
       <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
         <form onSubmit={handleSubmit}>
-          <AppBar sx={{ position: "relative" }}>
+          <AppBar sx={{ position: 'relative' }}>
             <Toolbar>
-              <IconButton edge='start' color='inherit' onClick={handleClose} aria-label='close'>
+              <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
                 <CloseIcon />
               </IconButton>
-              <Typography sx={{ ml: 2, flex: 1 }} variant='h6' component='div'>
+              <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
                 Edit Product Details
               </Typography>
-              <Button autoFocus color='inherit' type='submit'>
+              <Button autoFocus color="inherit" type="submit">
                 submit
               </Button>
             </Toolbar>
           </AppBar>
 
-          <Box width={"100%"} height={"100%"} p={3}>
-            <Stack direction='row' spacing={2} py={1}>
-              <Stack flexGrow={1} justifyContent='center' alignItems='center' width='100%'>
-                <Typography component='p' sx={{ fontSize: "18px", fontWeight: "600" }}>
+          <Box width={'100%'} height={'100%'} p={3}>
+            <Stack direction="row" spacing={2} py={1}>
+              <Stack flexGrow={1} justifyContent="center" alignItems="center" width="100%">
+                <Typography component="p" sx={{ fontSize: '18px', fontWeight: '600' }}>
                   Previous
                 </Typography>
               </Stack>
-              <Stack flexGrow={1} justifyContent='center' alignItems='center' width='100%'>
-                <Typography component='p' sx={{ fontSize: "18px", fontWeight: "600" }}>
+              <Stack flexGrow={1} justifyContent="center" alignItems="center" width="100%">
+                <Typography component="p" sx={{ fontSize: '18px', fontWeight: '600' }}>
                   Titles
                 </Typography>
               </Stack>
-              <Stack flexGrow={1} justifyContent='center' alignItems='center' width='100%'>
-                <Typography component='p' sx={{ fontSize: "18px", fontWeight: "600" }}>
+              <Stack flexGrow={1} justifyContent="center" alignItems="center" width="100%">
+                <Typography component="p" sx={{ fontSize: '18px', fontWeight: '600' }}>
                   New
                 </Typography>
               </Stack>
             </Stack>
 
-            <Stack direction='column' spacing={2}>
-              <Stack direction='row' spacing={2}>
+            <Stack direction="column" spacing={2}>
+              <Stack direction="row" spacing={2}>
                 <TextField
-                  size='small'
-                  id='outlined-required'
+                  size="small"
+                  id="outlined-required"
                   defaultValue={prodCodeName}
                   fullWidth
                   disabled
                 />
-                <Stack flexGrow={1} justifyContent='center' width='100%'>
-                  <Typography component='p' textAlign='center' sx={{ fontWeight: "500" }}>
+                <Stack flexGrow={1} justifyContent="center" width="100%">
+                  <Typography component="p" textAlign="center" sx={{ fontWeight: '500' }}>
                     Product Code
                   </Typography>
                 </Stack>
                 <TextField
-                  size='small'
-                  id='outlined-required'
+                  size="small"
+                  id="outlined-required"
                   fullWidth
                   required
                   value={prodCodeNameInput}
@@ -250,44 +250,44 @@ export default function ProductEdit_dialog({
                   }
                 />
               </Stack>
-              <Stack direction='row' spacing={2}>
+              <Stack direction="row" spacing={2}>
                 <TextField
-                  size='small'
-                  id='outlined-required'
+                  size="small"
+                  id="outlined-required"
                   defaultValue={prodName}
                   fullWidth
                   disabled
                 />
-                <Stack flexGrow={1} justifyContent='center' width='100%'>
-                  <Typography component='p' textAlign='center' sx={{ fontWeight: "500" }}>
+                <Stack flexGrow={1} justifyContent="center" width="100%">
+                  <Typography component="p" textAlign="center" sx={{ fontWeight: '500' }}>
                     Product Name
                   </Typography>
                 </Stack>
                 <TextField
-                  size='small'
-                  id='outlined-required'
+                  size="small"
+                  id="outlined-required"
                   fullWidth
                   required
                   value={prodNameInput}
                   onInput={(e: ChangeEvent<HTMLInputElement>) => setProdNameInput(e.target.value)}
                 />
               </Stack>
-              <Stack direction='row' spacing={2}>
+              <Stack direction="row" spacing={2}>
                 <TextField
-                  size='small'
-                  id='outlined-required'
+                  size="small"
+                  id="outlined-required"
                   defaultValue={prodCategory}
                   fullWidth
                   disabled
                 />
-                <Stack flexGrow={1} justifyContent='center' width='100%'>
-                  <Typography component='p' textAlign='center' sx={{ fontWeight: "500" }}>
+                <Stack flexGrow={1} justifyContent="center" width="100%">
+                  <Typography component="p" textAlign="center" sx={{ fontWeight: '500' }}>
                     Category
                   </Typography>
                 </Stack>
                 <TextField
-                  size='small'
-                  id='outlined-required'
+                  size="small"
+                  id="outlined-required"
                   fullWidth
                   required
                   value={prodCategoryInput}
@@ -296,45 +296,45 @@ export default function ProductEdit_dialog({
                   }
                 />
               </Stack>
-              <Stack direction='row' spacing={2}>
+              <Stack direction="row" spacing={2}>
                 <TextField
-                  size='small'
-                  id='outlined-required'
+                  size="small"
+                  id="outlined-required"
                   defaultValue={prodBrand}
                   fullWidth
                   disabled
                 />
-                <Stack flexGrow={1} justifyContent='center' width='100%'>
-                  <Typography component='p' textAlign='center' sx={{ fontWeight: "500" }}>
+                <Stack flexGrow={1} justifyContent="center" width="100%">
+                  <Typography component="p" textAlign="center" sx={{ fontWeight: '500' }}>
                     Brand Name
                   </Typography>
                 </Stack>
                 <TextField
-                  size='small'
-                  id='outlined-required'
+                  size="small"
+                  id="outlined-required"
                   fullWidth
                   required
                   value={prodBrandInput}
                   onInput={(e: ChangeEvent<HTMLInputElement>) => setProdBrandInput(e.target.value)}
                 />
               </Stack>
-              <Stack direction='row' spacing={2}>
+              <Stack direction="row" spacing={2}>
                 <TextField
-                  size='small'
-                  id='outlined-required'
+                  size="small"
+                  id="outlined-required"
                   defaultValue={quantity}
                   fullWidth
                   disabled
                 />
-                <Stack flexGrow={1} justifyContent='center' width='100%'>
-                  <Typography component='p' textAlign='center' sx={{ fontWeight: "500" }}>
+                <Stack flexGrow={1} justifyContent="center" width="100%">
+                  <Typography component="p" textAlign="center" sx={{ fontWeight: '500' }}>
                     Quantiy
                   </Typography>
                 </Stack>
                 <TextField
-                  size='small'
-                  id='outlined-required'
-                  type='number'
+                  size="small"
+                  id="outlined-required"
+                  type="number"
                   fullWidth
                   required
                   value={quantityInput}
@@ -343,48 +343,48 @@ export default function ProductEdit_dialog({
               </Stack>
               <Box>
                 <Stack
-                  direction={{ xs: "column", sm: "row" }}
-                  spacing='auto'
+                  direction={{ xs: 'column', sm: 'row' }}
+                  spacing="auto"
                   pb={3}
-                  alignItems='start'
+                  alignItems="start"
                 >
                   <FormControl>
-                    <FormLabel id='row-radio-buttons-group-label'>Amount Calculation</FormLabel>
+                    <FormLabel id="row-radio-buttons-group-label">Amount Calculation</FormLabel>
                     <RadioGroup
                       row
-                      aria-labelledby='row-radio-buttons-group-label'
-                      name='row-radio-buttons-group'
+                      aria-labelledby="row-radio-buttons-group-label"
+                      name="row-radio-buttons-group"
                       value={calcMethod}
                       onChange={(e: ChangeEvent<HTMLInputElement>) => setCalcMethod(e.target.value)}
                     >
-                      <FormControlLabel value='method-1' control={<Radio />} label='Method 1' />
-                      <FormControlLabel value='method-2' control={<Radio />} label='Method 2' />
-                      <FormControlLabel value='method-3' control={<Radio />} label='Method 3' />
+                      <FormControlLabel value="method-1" control={<Radio />} label="Method 1" />
+                      <FormControlLabel value="method-2" control={<Radio />} label="Method 2" />
+                      <FormControlLabel value="method-3" control={<Radio />} label="Method 3" />
                     </RadioGroup>
                   </FormControl>
                   <Stack
-                    width={{ xs: "100%", sm: "inherit" }}
-                    direction={{ xs: "row", sm: "column-reverse", md: "row" }}
+                    width={{ xs: '100%', sm: 'inherit' }}
+                    direction={{ xs: 'row', sm: 'column-reverse', md: 'row' }}
                     spacing={2}
                   >
-                    <Button variant='outlined' size='small' color='error' onClick={calculateReset}>
+                    <Button variant="outlined" size="small" color="error" onClick={calculateReset}>
                       Reset
                     </Button>
-                    <Button variant='contained' size='small' onClick={calculate}>
+                    <Button variant="contained" size="small" onClick={calculate}>
                       Calculate
                     </Button>
                   </Stack>
                 </Stack>
-                <Stack direction={{ xs: "column", sm: "row" }} alignItems='center' spacing={1}>
-                  <Stack direction={{ xs: "column", md: "row" }} width='100%' spacing={1}>
+                <Stack direction={{ xs: 'column', sm: 'row' }} alignItems="center" spacing={1}>
+                  <Stack direction={{ xs: 'column', md: 'row' }} width="100%" spacing={1}>
                     <TextField
-                      label='Get Price'
-                      size='small'
+                      label="Get Price"
+                      size="small"
                       fullWidth
-                      type='number'
-                      helperText='*helper text'
+                      type="number"
+                      helperText="*helper text"
                       InputProps={{
-                        startAdornment: <InputAdornment position='start'>Rs.</InputAdornment>,
+                        startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
                       }}
                       value={getPriceInput}
                       onInput={(e: ChangeEvent<HTMLInputElement>) =>
@@ -392,15 +392,15 @@ export default function ProductEdit_dialog({
                       }
                       required
                     />
-                    {calcMethod == "method-1" && (
+                    {calcMethod == 'method-1' && (
                       <TextField
-                        label='Sell Price'
-                        size='small'
+                        label="Sell Price"
+                        size="small"
                         fullWidth
-                        type='number'
-                        helperText='*helper text'
+                        type="number"
+                        helperText="*helper text"
                         InputProps={{
-                          startAdornment: <InputAdornment position='start'>Rs.</InputAdornment>,
+                          startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
                         }}
                         value={sellPriceInput}
                         onInput={(e: ChangeEvent<HTMLInputElement>) =>
@@ -409,15 +409,15 @@ export default function ProductEdit_dialog({
                         required
                       />
                     )}
-                    {calcMethod == "method-2" && (
+                    {calcMethod == 'method-2' && (
                       <TextField
-                        label='Profit Percentage'
-                        size='small'
+                        label="Profit Percentage"
+                        size="small"
                         fullWidth
-                        type='number'
-                        helperText='*helper text'
+                        type="number"
+                        helperText="*helper text"
                         InputProps={{
-                          endAdornment: <InputAdornment position='end'>%</InputAdornment>,
+                          endAdornment: <InputAdornment position="end">%</InputAdornment>,
                         }}
                         value={profitPercentageInput}
                         onInput={(e: ChangeEvent<HTMLInputElement>) =>
@@ -426,16 +426,16 @@ export default function ProductEdit_dialog({
                         required
                       />
                     )}
-                    {calcMethod == "method-3" && (
+                    {calcMethod == 'method-3' && (
                       <TextField
-                        label='Profit Amount'
-                        size='small'
+                        label="Profit Amount"
+                        size="small"
                         fullWidth
-                        type='number'
-                        helperText='*helper text'
+                        type="number"
+                        helperText="*helper text"
                         InputProps={{
-                          startAdornment: <InputAdornment position='start'>Rs.</InputAdornment>,
-                          endAdornment: <InputAdornment position='end'>+</InputAdornment>,
+                          startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
+                          endAdornment: <InputAdornment position="end">+</InputAdornment>,
                         }}
                         value={profitAmountInput}
                         onInput={(e: ChangeEvent<HTMLInputElement>) =>
@@ -446,102 +446,102 @@ export default function ProductEdit_dialog({
                     )}
                   </Stack>
                   <Typography
-                    fontSize='1.5rem'
+                    fontSize="1.5rem"
                     pb={3}
-                    sx={{ transform: { xs: "rotate(90deg)", sm: "rotate(0deg)" } }}
+                    sx={{ transform: { xs: 'rotate(90deg)', sm: 'rotate(0deg)' } }}
                   >
                     »
                   </Typography>
-                  <Stack direction={{ xs: "column", md: "row" }} width='100%' spacing={1}>
-                    {calcMethod == "method-1" && (
+                  <Stack direction={{ xs: 'column', md: 'row' }} width="100%" spacing={1}>
+                    {calcMethod == 'method-1' && (
                       <>
                         <TextField
-                          label='Profit Percentage'
-                          size='small'
+                          label="Profit Percentage"
+                          size="small"
                           fullWidth
-                          type='number'
-                          helperText='*helper text'
+                          type="number"
+                          helperText="*helper text"
                           InputProps={{
-                            endAdornment: <InputAdornment position='end'>%</InputAdornment>,
+                            endAdornment: <InputAdornment position="end">%</InputAdornment>,
                           }}
                           value={profitPercentageInput}
-                          color='warning'
+                          color="warning"
                           required
                         />
                         <TextField
-                          label='Profit Amount'
-                          size='small'
+                          label="Profit Amount"
+                          size="small"
                           fullWidth
-                          type='number'
-                          helperText='*helper text'
+                          type="number"
+                          helperText="*helper text"
                           InputProps={{
-                            startAdornment: <InputAdornment position='start'>Rs.</InputAdornment>,
-                            endAdornment: <InputAdornment position='end'>+</InputAdornment>,
+                            startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
+                            endAdornment: <InputAdornment position="end">+</InputAdornment>,
                           }}
                           value={profitAmountInput}
-                          color='warning'
+                          color="warning"
                           required
                         />
                       </>
                     )}
-                    {calcMethod == "method-2" && (
+                    {calcMethod == 'method-2' && (
                       <>
                         <TextField
-                          label='Sell Price'
-                          size='small'
+                          label="Sell Price"
+                          size="small"
                           fullWidth
-                          type='number'
-                          helperText='*helper text'
+                          type="number"
+                          helperText="*helper text"
                           InputProps={{
-                            startAdornment: <InputAdornment position='start'>Rs.</InputAdornment>,
+                            startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
                           }}
                           value={sellPriceInput}
-                          color='warning'
+                          color="warning"
                           required
                         />
                         <TextField
-                          label='Profit Amount'
-                          size='small'
+                          label="Profit Amount"
+                          size="small"
                           fullWidth
-                          type='number'
-                          helperText='*helper text'
+                          type="number"
+                          helperText="*helper text"
                           InputProps={{
-                            startAdornment: <InputAdornment position='start'>Rs.</InputAdornment>,
-                            endAdornment: <InputAdornment position='end'>+</InputAdornment>,
+                            startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
+                            endAdornment: <InputAdornment position="end">+</InputAdornment>,
                           }}
                           value={profitAmountInput}
-                          color='warning'
+                          color="warning"
                           required
                         />
                       </>
                     )}
-                    {calcMethod == "method-3" && (
+                    {calcMethod == 'method-3' && (
                       <>
-                        <Stack direction={{ xs: "column", md: "row" }} spacing={1}>
+                        <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
                           <TextField
-                            label='Sell Price'
-                            size='small'
+                            label="Sell Price"
+                            size="small"
                             fullWidth
-                            type='number'
-                            helperText='*helper text'
+                            type="number"
+                            helperText="*helper text"
                             InputProps={{
-                              startAdornment: <InputAdornment position='start'>Rs.</InputAdornment>,
+                              startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
                             }}
                             value={sellPriceInput}
-                            color='warning'
+                            color="warning"
                             required
                           />
                           <TextField
-                            label='Profit Percentage'
-                            size='small'
+                            label="Profit Percentage"
+                            size="small"
                             fullWidth
-                            type='number'
-                            helperText='*helper text'
+                            type="number"
+                            helperText="*helper text"
                             InputProps={{
-                              endAdornment: <InputAdornment position='end'>%</InputAdornment>,
+                              endAdornment: <InputAdornment position="end">%</InputAdornment>,
                             }}
                             value={profitPercentageInput}
-                            color='warning'
+                            color="warning"
                             required
                           />
                         </Stack>

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef } from 'react';
 import {
   Box,
   Button,
@@ -9,16 +9,16 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
-} from "@mui/material";
-import ReactCrop, { centerCrop, makeAspectCrop, Crop, PixelCrop } from "react-image-crop";
-import useDebounceEffect from "./useDebounceEffect";
-import canvasPreview from "./canvasPreview";
-import croppedImgData from "./croppedImgData";
-import InputSlider from "./InputSlider";
-import Image from "next/image";
-import AddPhotoAlternateOutlinedIcon from "@mui/icons-material/AddPhotoAlternateOutlined";
+} from '@mui/material';
+import ReactCrop, { centerCrop, makeAspectCrop, Crop, PixelCrop } from 'react-image-crop';
+import useDebounceEffect from './useDebounceEffect';
+import canvasPreview from './canvasPreview';
+import croppedImgData from './croppedImgData';
+import InputSlider from './InputSlider';
+import Image from 'next/image';
+import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternateOutlined';
 
-import "react-image-crop/dist/ReactCrop.css";
+import 'react-image-crop/dist/ReactCrop.css';
 
 // This is to demonstate how to make and center a % aspect crop
 // which is a bit trickier so we use some helper functions.
@@ -26,15 +26,15 @@ function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: numbe
   return centerCrop(
     makeAspectCrop(
       {
-        unit: "%",
+        unit: '%',
         width: 90,
       },
       aspect,
       mediaWidth,
-      mediaHeight
+      mediaHeight,
     ),
     mediaWidth,
-    mediaHeight
+    mediaHeight,
   );
 }
 
@@ -49,14 +49,14 @@ export default function ImageCropper({
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
 
   const [open, setOpen] = React.useState(false);
-  const [imgSrc, setImgSrc] = useState("");
+  const [imgSrc, setImgSrc] = useState('');
   const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [scale, setScale] = useState(1);
   const [rotate, setRotate] = useState(0);
   const [aspect, setAspect] = useState<number | undefined>(1 / 1);
   const [hasImgSrcInput, setHasImgSrcInput] = useState(false);
-  const [previewSrc, setPreviewSrc] = useState("");
+  const [previewSrc, setPreviewSrc] = useState('');
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -82,18 +82,18 @@ export default function ImageCropper({
       }
     },
     100,
-    [completedCrop, scale, rotate]
+    [completedCrop, scale, rotate],
   );
 
   function onSelectFile(e: React.ChangeEvent<HTMLInputElement>) {
     e.target.files?.length! > 0 ? setHasImgSrcInput(true) : setHasImgSrcInput(false);
-    setPreviewSrc("");
+    setPreviewSrc('');
     getBlob(null);
 
     if (e.target.files && e.target.files.length > 0) {
       setCrop(undefined); // Makes crop preview update between images.
       const reader = new FileReader();
-      reader.addEventListener("load", () => setImgSrc(reader?.result?.toString() || ""));
+      reader.addEventListener('load', () => setImgSrc(reader?.result?.toString() || ''));
       reader.readAsDataURL(e.target.files[0]);
       handleClickOpen();
     }
@@ -107,11 +107,11 @@ export default function ImageCropper({
   }
 
   const getCroppedImgData = async () => {
-    await croppedImgData(imgRef.current!, completedCrop!, scale, rotate, "image/webp", 0.8).then(
-      response => {
+    await croppedImgData(imgRef.current!, completedCrop!, scale, rotate, 'image/webp', 0.8).then(
+      (response) => {
         getBlob(response.blob);
         setPreviewSrc(response.previewUrl);
-      }
+      },
     );
   };
 
@@ -127,51 +127,51 @@ export default function ImageCropper({
 
   return (
     <>
-      <Stack direction='column' spacing={2}>
-        <Stack direction='row' spacing={{ xs: 1, sm: 2 }} width='100%' alignItems='center'>
+      <Stack direction="column" spacing={2}>
+        <Stack direction="row" spacing={{ xs: 1, sm: 2 }} width="100%" alignItems="center">
           <Box
             sx={{
-              width: { xs: "250px", md: "350px" },
-              height: { xs: "250px", md: "350px" },
-              border: "1px solid gray",
-              borderRadius: "50%",
-              cursor: "pointer",
+              width: { xs: '250px', md: '350px' },
+              height: { xs: '250px', md: '350px' },
+              border: '1px solid gray',
+              borderRadius: '50%',
+              cursor: 'pointer',
             }}
-            display='flex'
-            justifyContent='center'
-            alignItems='center'
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
             onClick={handleImgInputBrowse}
           >
             <TextField
-              type='file'
-              size='small'
+              type="file"
+              size="small"
               fullWidth
-              inputProps={{ accept: "image/*" }}
+              inputProps={{ accept: 'image/*' }}
               onChange={onSelectFile}
-              id='selectedFile'
-              sx={{ display: "none" }}
+              id="selectedFile"
+              sx={{ display: 'none' }}
               inputRef={imgInputRef}
             />
             <IconButton
-              size='small'
-              aria-label='secret-access'
-              color='inherit'
+              size="small"
+              aria-label="secret-access"
+              color="inherit"
               sx={{
-                position: "absolute",
-                display: !previewSrc ? "inline" : "none",
+                position: 'absolute',
+                display: !previewSrc ? 'inline' : 'none',
               }}
             >
-              <AddPhotoAlternateOutlinedIcon fontSize='large' />
+              <AddPhotoAlternateOutlinedIcon fontSize="large" />
             </IconButton>
             {hasImgSrcInput && previewSrc && (
-              <Box width={"100%"}>
+              <Box width={'100%'}>
                 <Image
-                  alt='Crop preview'
+                  alt="Crop preview"
                   src={previewSrc}
                   width={150}
                   height={150}
-                  layout='responsive'
-                  style={{ borderRadius: "50%" }}
+                  layout="responsive"
+                  style={{ borderRadius: '50%' }}
                 />
               </Box>
             )}
@@ -182,31 +182,31 @@ export default function ImageCropper({
       <Dialog
         open={open}
         onClose={handleClose}
-        scroll='paper'
-        aria-labelledby='scroll-dialog-title'
-        aria-describedby='scroll-dialog-description'
-        maxWidth='md'
+        scroll="paper"
+        aria-labelledby="scroll-dialog-title"
+        aria-describedby="scroll-dialog-description"
+        maxWidth="md"
       >
-        <DialogTitle id='scroll-dialog-title'>Crop Image</DialogTitle>
+        <DialogTitle id="scroll-dialog-title">Crop Image</DialogTitle>
         <DialogContent dividers>
-          <Stack direction='column' spacing={2}>
+          <Stack direction="column" spacing={2}>
             {hasImgSrcInput && (
-              <Stack direction='column' spacing={2}>
+              <Stack direction="column" spacing={2}>
                 <InputSlider setScale_prop={setScale} setRotate_prop={setRotate} />
 
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                   {Boolean(imgSrc) && (
-                    <Box width='100%'>
+                    <Box width="100%">
                       <ReactCrop
                         crop={crop}
                         circularCrop
                         onChange={(_, percentCrop) => setCrop(percentCrop)}
-                        onComplete={c => setCompletedCrop(c)}
+                        onComplete={(c) => setCompletedCrop(c)}
                         aspect={aspect}
                       >
                         <img
                           ref={imgRef}
-                          alt='Crop me'
+                          alt="Crop me"
                           src={imgSrc}
                           style={{
                             transform: `scale(${scale}) rotate(${rotate}deg)`,
@@ -217,13 +217,13 @@ export default function ImageCropper({
                     </Box>
                   )}
                   {Boolean(completedCrop) && (
-                    <Box width='100%' display='flex' justifyContent='center' alignItems='center'>
+                    <Box width="100%" display="flex" justifyContent="center" alignItems="center">
                       <canvas
                         ref={previewCanvasRef}
                         style={{
-                          border: "1px solid black",
-                          borderRadius: "50%",
-                          objectFit: "contain",
+                          border: '1px solid black',
+                          borderRadius: '50%',
+                          objectFit: 'contain',
                           width: completedCrop?.width,
                           height: completedCrop?.height,
                         }}

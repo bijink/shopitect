@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../store";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from '../store';
 
 interface snackbarStateType {
   id: string;
@@ -8,13 +8,13 @@ interface snackbarStateType {
 }
 
 const initialState: snackbarStateType = {
-  id: "",
+  id: '',
   open: false,
-  message: "",
+  message: '',
 };
 
 const snackbarStateSlice = createSlice({
-  name: "snackbar-state",
+  name: 'snackbar-state',
   initialState,
 
   reducers: {

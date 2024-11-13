@@ -1,0 +1,8 @@
+/* * {
+  box-sizing: border-box;
+  background: rgb(0 100 1 / 0.1) !important;
+} */
+
+::-ms-reveal {
+  display: none;
+}

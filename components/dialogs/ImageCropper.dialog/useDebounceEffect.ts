@@ -1,4 +1,4 @@
-import { useEffect, DependencyList } from "react";
+import { useEffect, DependencyList } from 'react';
 
 export default function useDebounceEffect(fn: () => void, waitTime: number, deps?: DependencyList) {
   useEffect(() => {

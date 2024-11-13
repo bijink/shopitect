@@ -1,9 +1,9 @@
-import { colors } from "@mui/material";
-import { ThemeOptions } from "@mui/material/styles";
+import { colors } from '@mui/material';
+import { ThemeOptions } from '@mui/material/styles';
 
 const customTheme: ThemeOptions = {
   palette: {
-    mode: "light",
+    mode: 'light',
     // mode: 'dark',
     primary: {
       main: colors.teal[800],

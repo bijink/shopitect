@@ -1,3 +1,3 @@
-import ProductInputForm from "./ProductInputForm";
+import ProductInputForm from './ProductInputForm';
 
 export default ProductInputForm;

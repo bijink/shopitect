@@ -1,8 +1,8 @@
-import { Box, Grid, Stack, Typography, Slider, Input, colors, Divider } from "@mui/material";
-import React, { useState, useEffect } from "react";
-import "react-image-crop/dist/ReactCrop.css";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
+import { Box, Grid, Stack, Typography, Slider, Input, colors, Divider } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import 'react-image-crop/dist/ReactCrop.css';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 interface InputSliderProps {
   setScale_prop: React.Dispatch<React.SetStateAction<number>>;
@@ -17,7 +17,7 @@ export default function InputSlider({ setScale_prop, setRotate_prop }: InputSlid
     setValue_scale(newValue);
   };
   const handleInputChange_scale = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue_scale(event.target.value === "" ? "" : Number(event.target.value));
+    setValue_scale(event.target.value === '' ? '' : Number(event.target.value));
   };
   const handleBlur_scale = () => {
     if (Number(value_scale) < 0.01) {
@@ -31,7 +31,7 @@ export default function InputSlider({ setScale_prop, setRotate_prop }: InputSlid
     setValue_rotate(newValue);
   };
   const handleInputChange_rotate = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue_rotate(event.target.value === "" ? 0 : Number(event.target.value));
+    setValue_rotate(event.target.value === '' ? 0 : Number(event.target.value));
   };
   const handleBlur_rotate = () => {
     if (Number(value_rotate) < -180) {
@@ -52,88 +52,88 @@ export default function InputSlider({ setScale_prop, setRotate_prop }: InputSlid
   return (
     <Stack
       spacing={1.5}
-      direction={{ xs: "column", sm: "row" }}
-      width='100%'
-      divider={<Divider orientation='vertical' flexItem />}
+      direction={{ xs: 'column', sm: 'row' }}
+      width="100%"
+      divider={<Divider orientation="vertical" flexItem />}
     >
-      <Box sx={{ width: "100%" }}>
+      <Box sx={{ width: '100%' }}>
         {/* Scale Slider */}
-        <Stack direction='row' spacing={"auto"} alignItems='center'>
-          <Typography variant='body2' id='input-slider' gutterBottom>
+        <Stack direction="row" spacing={'auto'} alignItems="center">
+          <Typography variant="body2" id="input-slider" gutterBottom>
             Scale :
           </Typography>
           <Input
             value={value_scale}
-            size='small'
+            size="small"
             onChange={handleInputChange_scale}
             onBlur={handleBlur_scale}
             inputProps={{
               step: 0.01,
               min: 0.01,
               max: 3,
-              type: "number",
-              "aria-labelledby": "input-slider",
+              type: 'number',
+              'aria-labelledby': 'input-slider',
             }}
           />
         </Stack>
-        <Grid container spacing={0.5} pt={1} alignItems='center'>
+        <Grid container spacing={0.5} pt={1} alignItems="center">
           <Grid item>
-            <RemoveIcon fontSize='small' sx={{ color: colors.grey[600] }} />
+            <RemoveIcon fontSize="small" sx={{ color: colors.grey[600] }} />
           </Grid>
           <Grid item xs>
             <Slider
-              size='small'
+              size="small"
               step={0.01}
               min={0.01}
               max={3}
-              value={typeof value_scale === "number" ? value_scale : 1}
+              value={typeof value_scale === 'number' ? value_scale : 1}
               onChange={handleSliderChange_scale}
-              aria-labelledby='input-slider'
+              aria-labelledby="input-slider"
             />
           </Grid>
           <Grid item>
-            <AddIcon fontSize='small' sx={{ color: colors.grey[600] }} />
+            <AddIcon fontSize="small" sx={{ color: colors.grey[600] }} />
           </Grid>
         </Grid>
       </Box>
 
       {/* Rotate Slider */}
-      <Box sx={{ width: "100%" }}>
-        <Stack direction='row' spacing={"auto"} alignItems='center'>
-          <Typography variant='body2' id='input-slider' gutterBottom>
+      <Box sx={{ width: '100%' }}>
+        <Stack direction="row" spacing={'auto'} alignItems="center">
+          <Typography variant="body2" id="input-slider" gutterBottom>
             Rotate&deg; :
           </Typography>
           <Input
             value={value_rotate}
-            size='small'
+            size="small"
             onChange={handleInputChange_rotate}
             onBlur={handleBlur_rotate}
             inputProps={{
               step: 1,
               min: -180,
               max: 180,
-              type: "number",
-              "aria-labelledby": "input-slider",
+              type: 'number',
+              'aria-labelledby': 'input-slider',
             }}
           />
         </Stack>
-        <Grid container spacing={0.5} pt={1} alignItems='center'>
+        <Grid container spacing={0.5} pt={1} alignItems="center">
           <Grid item>
-            <RemoveIcon fontSize='small' sx={{ color: colors.grey[600] }} />
+            <RemoveIcon fontSize="small" sx={{ color: colors.grey[600] }} />
           </Grid>
           <Grid item xs>
             <Slider
-              size='small'
+              size="small"
               step={1}
               min={-180}
               max={180}
-              value={typeof value_rotate === "number" ? value_rotate : 0}
+              value={typeof value_rotate === 'number' ? value_rotate : 0}
               onChange={handleSliderChange_rotate}
-              aria-labelledby='input-slider'
+              aria-labelledby="input-slider"
             />
           </Grid>
           <Grid item>
-            <AddIcon fontSize='small' sx={{ color: colors.grey[600] }} />
+            <AddIcon fontSize="small" sx={{ color: colors.grey[600] }} />
           </Grid>
         </Grid>
       </Box>

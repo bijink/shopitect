@@ -2,7 +2,7 @@ import type {
   ProdDetailsTypes,
   ProductTableProps,
   ProductTableRowProps,
-} from "./productTable.types";
+} from './productTable.types';
 
 import {
   Table,
@@ -20,18 +20,18 @@ import {
   tableCellClasses,
   capitalize,
   colors,
-} from "@mui/material";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+} from '@mui/material';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   changeProdTableCollapse,
   selectProdTableCloseCollapse,
-} from "../../redux/slices/prodTableCollapse.slice";
-import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp";
-import Image from "next/image";
-import { ProductDelete_dialog, ProductEdit_dialog } from "../dialogs";
+} from '../../redux/slices/prodTableCollapse.slice';
+import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
+import Image from 'next/image';
+import { ProductDelete_dialog, ProductEdit_dialog } from '../dialogs';
 
 const Row = ({
   rowBgColor,
@@ -60,11 +60,11 @@ const Row = ({
   let time = `${hour}:${minute < 10 ? `0${minute}` : minute}`;
 
   const moreDetails = [
-    { title: "Get Price", value: `₹ ${getPrice}` },
-    { title: "Profit Amount", value: `₹ ${profitAmount}` },
-    { title: "Profit Percentage", value: `${profitPercentage} %` },
-    { title: "Quantity", value: quantity },
-    { title: "Brand", value: capitalize(prodBrand) },
+    { title: 'Get Price', value: `₹ ${getPrice}` },
+    { title: 'Profit Amount', value: `₹ ${profitAmount}` },
+    { title: 'Profit Percentage', value: `${profitPercentage} %` },
+    { title: 'Quantity', value: quantity },
+    { title: 'Brand', value: capitalize(prodBrand) },
   ];
 
   useEffect(() => setCollapseOpen(false), [tableCollapse]);
@@ -73,39 +73,39 @@ const Row = ({
     <>
       <TableRow
         sx={{
-          "& > *": {
+          '& > *': {
             backgroundColor: rowBgColor,
-            borderBottom: "unset",
-            borderTop: "1.05px solid gray",
+            borderBottom: 'unset',
+            borderTop: '1.05px solid gray',
           },
         }}
       >
-        <TableCell component='th' scope='row' align='left'>
+        <TableCell component="th" scope="row" align="left">
           {prodNo}
         </TableCell>
-        <TableCell component='th' scope='row' align='left' sx={{ fontWeight: "bold" }}>
+        <TableCell component="th" scope="row" align="left" sx={{ fontWeight: 'bold' }}>
           {capitalize(prodCodeName)}
         </TableCell>
-        <TableCell component='th' scope='row' align='left' sx={{ fontWeight: "500" }}>
+        <TableCell component="th" scope="row" align="left" sx={{ fontWeight: '500' }}>
           {capitalize(prodName)}
         </TableCell>
         <TableCell>
-          <Avatar variant='rounded'>
+          <Avatar variant="rounded">
             <Image
               alt={`product:${capitalize(prodName)}`}
               src={prodImg}
-              placeholder='blur'
+              placeholder="blur"
               blurDataURL={prodImg}
-              layout='fill'
+              layout="fill"
             />
           </Avatar>
         </TableCell>
-        <TableCell align='left'>{capitalize(prodCategory)}</TableCell>
-        <TableCell align='right' sx={{ fontWeight: "bold" }}>{`₹ ${sellPrice}`}</TableCell>
-        <TableCell align='center'>
+        <TableCell align="left">{capitalize(prodCategory)}</TableCell>
+        <TableCell align="right" sx={{ fontWeight: 'bold' }}>{`₹ ${sellPrice}`}</TableCell>
+        <TableCell align="center">
           <IconButton
-            aria-label='expand row'
-            size='small'
+            aria-label="expand row"
+            size="small"
             onClick={() => setCollapseOpen(!collapseOpen)}
           >
             {collapseOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
@@ -115,33 +115,33 @@ const Row = ({
 
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5}>
-          <Collapse in={collapseOpen} timeout='auto' unmountOnExit>
+          <Collapse in={collapseOpen} timeout="auto" unmountOnExit>
             <Box my={0.5}>
-              <Typography variant='h6' gutterBottom component='div'>
+              <Typography variant="h6" gutterBottom component="div">
                 More Details
               </Typography>
-              <Table size='small' aria-label='purchases'>
+              <Table size="small" aria-label="purchases">
                 <TableBody>
                   {moreDetails.map((obj, index) => (
                     <TableRow key={index}>
                       <TableCell
-                        component='th'
-                        scope='row'
-                        sx={{ fontWeight: "bold", color: colors.grey[700] }}
+                        component="th"
+                        scope="row"
+                        sx={{ fontWeight: 'bold', color: colors.grey[700] }}
                       >
                         {obj.title}
                       </TableCell>
-                      <TableCell align='right'>{obj.value}</TableCell>
+                      <TableCell align="right">{obj.value}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
               <Typography
-                variant='body2'
-                component='div'
+                variant="body2"
+                component="div"
                 pt={1}
-                sx={{ fontSize: "12px" }}
-                color='GrayText'
+                sx={{ fontSize: '12px' }}
+                color="GrayText"
               >
                 {`${date} ${time}`}
               </Typography>
@@ -150,20 +150,20 @@ const Row = ({
         </TableCell>
 
         <TableCell style={{ padding: 0 }} colSpan={1}>
-          <Collapse in={collapseOpen} timeout='auto' unmountOnExit />
+          <Collapse in={collapseOpen} timeout="auto" unmountOnExit />
         </TableCell>
 
         <TableCell style={{ padding: 0 }} colSpan={1}>
-          <Collapse in={collapseOpen} timeout='auto' unmountOnExit>
+          <Collapse in={collapseOpen} timeout="auto" unmountOnExit>
             <Box>
               <Table
-                size='small'
-                aria-label='purchases'
-                sx={{ [`& .${tableCellClasses.root}`]: { borderBottom: "none" } }}
+                size="small"
+                aria-label="purchases"
+                sx={{ [`& .${tableCellClasses.root}`]: { borderBottom: 'none' } }}
               >
                 <TableBody>
                   <TableRow>
-                    <TableCell component='th' scope='row' align='center'>
+                    <TableCell component="th" scope="row" align="center">
                       <ProductEdit_dialog
                         shopUrlName={shopUrlName}
                         prodId={prodId}
@@ -180,7 +180,7 @@ const Row = ({
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell component='th' scope='row' align='center'>
+                    <TableCell component="th" scope="row" align="center">
                       <ProductDelete_dialog shopUrlName={shopUrlName} prodId={prodId} />
                     </TableCell>
                   </TableRow>
@@ -199,34 +199,34 @@ export default function ProductTable({ shopData, products }: ProductTableProps) 
 
   return (
     <TableContainer component={Paper}>
-      <Table aria-label='collapsible table' size='small'>
+      <Table aria-label="collapsible table" size="small">
         <TableHead>
           <TableRow sx={{ backgroundColor: colors.grey[800] }}>
-            <TableCell align='left' sx={{ color: "white" }}>
+            <TableCell align="left" sx={{ color: 'white' }}>
               No.
             </TableCell>
-            <TableCell align='left' sx={{ color: "white" }}>
+            <TableCell align="left" sx={{ color: 'white' }}>
               Code
             </TableCell>
             <TableCell
-              align='left'
-              sx={{ color: "white", paddingTop: "18px", paddingBottom: "18px" }}
+              align="left"
+              sx={{ color: 'white', paddingTop: '18px', paddingBottom: '18px' }}
             >
               Name
             </TableCell>
-            <TableCell align='left' sx={{ color: "white" }}>
+            <TableCell align="left" sx={{ color: 'white' }}>
               Image
             </TableCell>
-            <TableCell align='left' sx={{ color: "white" }}>
+            <TableCell align="left" sx={{ color: 'white' }}>
               Catagory
             </TableCell>
-            <TableCell align='right' sx={{ color: "white" }}>
+            <TableCell align="right" sx={{ color: 'white' }}>
               Sell Price
             </TableCell>
-            <TableCell align='center'>
+            <TableCell align="center">
               <IconButton
-                aria-label='close expanded rows'
-                size='small'
+                aria-label="close expanded rows"
+                size="small"
                 onClick={() => dispatch(changeProdTableCollapse())}
               >
                 <KeyboardDoubleArrowUpIcon />

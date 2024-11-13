@@ -10,48 +10,48 @@ import {
   ListItem,
   colors,
   Stack,
-} from "@mui/material";
-import { ReactNode } from "react";
-import { sidebarWidth } from "./Page.layout";
+} from '@mui/material';
+import { ReactNode } from 'react';
+import { sidebarWidth } from './Page.layout';
 
 const PageSkeleton_layout = ({ children }: { children?: ReactNode }) => {
   return (
     <Box>
       <CssBaseline />
-      <Box display='flex'>
+      <Box display="flex">
         {/* Navbar */}
-        <Box component='header'>
+        <Box component="header">
           <Box sx={{ flexGrow: 1 }}>
-            <AppBar position='fixed' sx={{ zIndex: theme => theme.zIndex.drawer + 1 }}>
+            <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
               <Toolbar>
-                <Stack direction='row' alignItems='center' spacing={1.5}>
-                  <Skeleton variant='circular' width={30} height={30} />
-                  <Skeleton variant='circular' width={40} height={40} />
+                <Stack direction="row" alignItems="center" spacing={1.5}>
+                  <Skeleton variant="circular" width={30} height={30} />
+                  <Skeleton variant="circular" width={40} height={40} />
                   <Skeleton width={200} height={45} />
                 </Stack>
                 <Box sx={{ flexGrow: 1 }} />
                 {/* <Skeleton variant='circular' width={40} height={40} /> */}
-                <Skeleton variant='circular' width={30} height={30} />
+                <Skeleton variant="circular" width={30} height={30} />
               </Toolbar>
             </AppBar>
           </Box>
         </Box>
         {/* Sidenav */}
-        <Box component='aside' display={{ xs: "none", sm: "block" }}>
+        <Box component="aside" display={{ xs: 'none', sm: 'block' }}>
           <Drawer
-            variant='permanent'
+            variant="permanent"
             sx={{
               width: sidebarWidth,
               flexShrink: 0,
-              [`& .MuiDrawer-paper`]: { width: sidebarWidth, boxSizing: "border-box" },
+              [`& .MuiDrawer-paper`]: { width: sidebarWidth, boxSizing: 'border-box' },
             }}
           >
             <Toolbar />
-            <Box sx={{ overflow: "auto" }}>
+            <Box sx={{ overflow: 'auto' }}>
               <List sx={{ padding: 0 }}>
                 {[...Array(3)].map((_, index) => (
                   <ListItem key={index}>
-                    <Skeleton variant='circular' width={31} height={31} sx={{ marginRight: 3 }} />
+                    <Skeleton variant="circular" width={31} height={31} sx={{ marginRight: 3 }} />
                     <Skeleton width={120} height={30} />
                   </ListItem>
                 ))}
@@ -61,14 +61,14 @@ const PageSkeleton_layout = ({ children }: { children?: ReactNode }) => {
         </Box>
         {/* Main-body */}
         {children ? (
-          <Box component='main' flexGrow={1}>
+          <Box component="main" flexGrow={1}>
             <Toolbar />
             <Box p={2}>{children}</Box>
           </Box>
         ) : (
-          <Box component='main' flexGrow={1}>
+          <Box component="main" flexGrow={1}>
             <Toolbar />
-            <Box display='flex' justifyContent='center' p={2}>
+            <Box display="flex" justifyContent="center" p={2}>
               <CircularProgress />
             </Box>
           </Box>

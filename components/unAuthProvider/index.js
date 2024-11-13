@@ -1,3 +1,3 @@
-import UnAuthProvider from "./UnAuthProvider";
+import UnAuthProvider from './UnAuthProvider';
 
 export default UnAuthProvider;

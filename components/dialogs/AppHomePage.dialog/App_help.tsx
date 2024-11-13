@@ -1,11 +1,11 @@
-import * as React from "react";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import { colors, Typography } from "@mui/material";
+import * as React from 'react';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import { colors, Typography } from '@mui/material';
 
 export default function App_help() {
   const [open, setOpen] = React.useState(false);
@@ -31,9 +31,9 @@ export default function App_help() {
   return (
     <div>
       <Typography
-        variant='body2'
+        variant="body2"
         color={colors.blue[700]}
-        sx={{ "&:hover": { cursor: "pointer", textDecoration: "underline" } }}
+        sx={{ '&:hover': { cursor: 'pointer', textDecoration: 'underline' } }}
         onClick={handleClickOpen}
       >
         Help
@@ -42,14 +42,14 @@ export default function App_help() {
       <Dialog
         open={open}
         onClose={handleClose}
-        scroll={"body"}
-        aria-labelledby='scroll-dialog-title'
-        aria-describedby='scroll-dialog-description'
+        scroll={'body'}
+        aria-labelledby="scroll-dialog-title"
+        aria-describedby="scroll-dialog-description"
       >
-        <DialogTitle id='scroll-dialog-title'>Help</DialogTitle>
+        <DialogTitle id="scroll-dialog-title">Help</DialogTitle>
         <DialogContent>
           <DialogContentText
-            id='scroll-dialog-description'
+            id="scroll-dialog-description"
             ref={descriptionElementRef}
             tabIndex={-1}
           >
@@ -73,15 +73,15 @@ export default function App_help() {
             <br />
             eg:
             <Typography
-              component='a'
-              href='https://shopitect.vercel.app/my-shop'
-              target='_blank'
-              rel='noopener noreferrer'
+              component="a"
+              href="https://shopitect.vercel.app/my-shop"
+              target="_blank"
+              rel="noopener noreferrer"
               pl={1}
               color={colors.blue[600]}
               sx={{
-                fontStyle: "italic",
-                "&:hover": { cursor: "pointer", textDecoration: "underline" },
+                fontStyle: 'italic',
+                '&:hover': { cursor: 'pointer', textDecoration: 'underline' },
               }}
             >
               shopitect.vercel.app/my-shop
@@ -91,7 +91,7 @@ export default function App_help() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button sx={{ margin: "0 auto" }} onClick={handleClose}>
+          <Button sx={{ margin: '0 auto' }} onClick={handleClose}>
             ok
           </Button>
         </DialogActions>

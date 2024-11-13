@@ -1,30 +1,29 @@
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import ReportProblemIcon from '@mui/icons-material/ReportProblem';
+import { LoadingButton } from '@mui/lab';
 import {
   Box,
-  IconButton,
-  TextField,
-  Stack,
-  Typography,
   Button,
-  InputAdornment,
+  colors,
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle,
-  colors,
   DialogContentText,
-} from "@mui/material";
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { LoadingButton } from "@mui/lab";
-import { deleteDoc, doc } from "firebase/firestore";
-import { useSession, signOut as signOutProvider, signIn as signInProvider } from "next-auth/react";
-import { collection, onSnapshot } from "firebase/firestore";
-import { database, storage } from "../../config/firebase.config";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { deleteUser, EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
-import { useShop, useUser } from "../../hooks";
-import { deleteObject, ref } from "firebase/storage";
-import ReportProblemIcon from "@mui/icons-material/ReportProblem";
-import { useRouter } from "next/router";
+  DialogTitle,
+  IconButton,
+  InputAdornment,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
+import { deleteUser, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
+import { collection, deleteDoc, doc, onSnapshot } from 'firebase/firestore';
+import { deleteObject, ref } from 'firebase/storage';
+import { signIn as signInProvider, signOut as signOutProvider, useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { useShop, useUser } from '../../hooks';
+import { database, storage } from '../../src/config/firebase.config';
 
 export default function AccountDelete_dialog() {
   const router = useRouter();
@@ -34,8 +33,8 @@ export default function AccountDelete_dialog() {
   const { data: user } = useUser();
   const { data: shop } = useShop(shopAppUrl);
 
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState(session ? session.user.email : "");
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState(session ? session.user.email : '');
   const [prodIds, setProdIds] = useState([] as string[]);
 
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -45,11 +44,11 @@ export default function AccountDelete_dialog() {
   const [loading_delete, setLoading_delete] = useState(false);
 
   const handleDialogOpen = () => {
-    if (sessionStatus === "authenticated") {
+    if (sessionStatus === 'authenticated') {
       setDialogOpen(true);
-      setPassword("");
+      setPassword('');
     } else {
-      signInProvider("google");
+      signInProvider('google');
     }
   };
 
@@ -59,12 +58,12 @@ export default function AccountDelete_dialog() {
   };
 
   function deleteProducts() {
-    return new Promise(resolve => {
-      prodIds.forEach(id => {
+    return new Promise((resolve) => {
+      prodIds.forEach((id) => {
         // console.log(id);
         const imageRef = ref(storage, `/${shop?.urlName}/product-images/PRODUCT_IMG:${id}`);
         deleteObject(imageRef).then(() => {
-          deleteDoc(doc(database, "shops", shop?.urlName!, "products", id)).then(() => {
+          deleteDoc(doc(database, 'shops', shop?.urlName!, 'products', id)).then(() => {
             // console.log('Deleted');
             resolve(null);
           });
@@ -73,13 +72,13 @@ export default function AccountDelete_dialog() {
     });
   }
   function deleteAccount() {
-    return new Promise(resolve => {
-      router.push("/").then(() => {
+    return new Promise((resolve) => {
+      router.push('/').then(() => {
         const imageRef = ref(storage, `/${shop?.urlName}/shop-logo`);
         deleteObject(imageRef).then(() => {
           shop &&
-            deleteDoc(doc(database, "shops", shop.urlName)).then(() => {
-              sessionStorage.removeItem("shop-details");
+            deleteDoc(doc(database, 'shops', shop.urlName)).then(() => {
+              sessionStorage.removeItem('shop-details');
 
               user &&
                 deleteUser(user).then(() => {
@@ -119,7 +118,7 @@ export default function AccountDelete_dialog() {
         setLoading_delete(false);
         setAuthFailed(false);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error.message);
 
         setLoading_delete(false);
@@ -130,9 +129,9 @@ export default function AccountDelete_dialog() {
 
   useEffect(() => {
     shop &&
-      onSnapshot(collection(database, "shops", shop.urlName, "products"), snapshot => {
+      onSnapshot(collection(database, 'shops', shop.urlName, 'products'), (snapshot) => {
         const arr: Array<string> = [];
-        snapshot.forEach(obj => {
+        snapshot.forEach((obj) => {
           arr.push(obj.id);
         });
         // console.log(arr);
@@ -147,10 +146,10 @@ export default function AccountDelete_dialog() {
   return (
     <Box>
       <Button
-        variant='outlined'
-        size='small'
-        color={"error"}
-        sx={{ textTransform: "none" }}
+        variant="outlined"
+        size="small"
+        color={'error'}
+        sx={{ textTransform: 'none' }}
         onClick={handleDialogOpen}
       >
         Delete your account
@@ -158,9 +157,9 @@ export default function AccountDelete_dialog() {
 
       <Dialog open={dialogOpen} onClose={handleDialogClose}>
         <DialogTitle>
-          <Stack direction='row' alignItems='center' spacing={1}>
-            <ReportProblemIcon color='error' />
-            <Typography variant='h5' color='error'>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <ReportProblemIcon color="error" />
+            <Typography variant="h5" color="error">
               Delete this Shop Account?
             </Typography>
           </Stack>
@@ -172,46 +171,46 @@ export default function AccountDelete_dialog() {
               product details.
             </Typography>
             <TextField
-              margin='dense'
-              id='email'
+              margin="dense"
+              id="email"
               fullWidth
-              variant='standard'
-              label='Shop Email Address'
-              size='small'
-              color={inputChange ? "primary" : authFailed ? "error" : "success"}
-              type='email'
-              defaultValue={session ? session.user.email : ""}
+              variant="standard"
+              label="Shop Email Address"
+              size="small"
+              color={inputChange ? 'primary' : authFailed ? 'error' : 'success'}
+              type="email"
+              defaultValue={session ? session.user.email : ''}
               onInput={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
               required
             />
             <TextField
-              margin='dense'
-              id='password'
+              margin="dense"
+              id="password"
               fullWidth
-              variant='standard'
-              label='Password'
-              size='small'
-              type={showPassword ? "text" : "password"}
+              variant="standard"
+              label="Password"
+              size="small"
+              type={showPassword ? 'text' : 'password'}
               value={password}
               onInput={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
               InputProps={{
                 endAdornment: (
-                  <InputAdornment position='end'>
+                  <InputAdornment position="end">
                     <IconButton
-                      aria-label='toggle password visibility'
-                      onClick={() => setShowPassword(prev => !prev)}
-                      edge='end'
+                      aria-label="toggle password visibility"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      edge="end"
                     >
                       {showPassword ? <Visibility /> : <VisibilityOff />}
                     </IconButton>
                   </InputAdornment>
                 ),
               }}
-              color={inputChange ? "primary" : authFailed ? "error" : "success"}
+              color={inputChange ? 'primary' : authFailed ? 'error' : 'success'}
               required
             />
             {!inputChange && authFailed && (
-              <DialogContentText sx={{ color: "red", fontSize: "14px" }} marginTop={"10px"}>
+              <DialogContentText sx={{ color: 'red', fontSize: '14px' }} marginTop={'10px'}>
                 * Wrong email or passward
               </DialogContentText>
             )}
@@ -221,10 +220,10 @@ export default function AccountDelete_dialog() {
               Cancel
             </Button>
             <LoadingButton
-              type='submit'
+              type="submit"
               loading={loading_delete}
-              loadingPosition='center'
-              color='error'
+              loadingPosition="center"
+              color="error"
             >
               Delete
             </LoadingButton>

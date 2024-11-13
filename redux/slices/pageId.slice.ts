@@ -1,12 +1,12 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../store";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from '../store';
 
 const initialState: { value: string } = {
-  value: "",
+  value: '',
 };
 
 const pageIdSlice = createSlice({
-  name: "page-id",
+  name: 'page-id',
   initialState,
 
   reducers: {

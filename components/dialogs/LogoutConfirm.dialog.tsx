@@ -1,18 +1,18 @@
-import type { LogoutConfirmProps } from "./dialogs.types";
+import type { LogoutConfirmProps } from './dialogs.types';
 
-import * as React from "react";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import { colors, MenuItem, Typography } from "@mui/material";
-import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import { useRouter } from "next/router";
-import { auth } from "../../config/firebase.config";
-import { signOut as signOutProvider } from "next-auth/react";
-import { signOut as signOutAccount } from "firebase/auth";
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import { colors, MenuItem, Typography } from '@mui/material';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import { signOut as signOutAccount } from 'firebase/auth';
+import { signOut as signOutProvider } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import * as React from 'react';
+import { auth } from '../../src/config/firebase.config';
 
 export default function LogoutConfirm_dialog({ handleMenuClose }: LogoutConfirmProps) {
   const router = useRouter();
@@ -48,12 +48,12 @@ export default function LogoutConfirm_dialog({ handleMenuClose }: LogoutConfirmP
       <Dialog
         open={open}
         onClose={handleClose}
-        aria-labelledby='alert-dialog-title'
-        aria-describedby='alert-dialog-description'
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id='alert-dialog-title'>{`Log out from ${shopAppUrl}?`}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{`Log out from ${shopAppUrl}?`}</DialogTitle>
         <DialogContent>
-          <DialogContentText id='alert-dialog-description'>
+          <DialogContentText id="alert-dialog-description">
             Are you sure, you want to log out from this app?
           </DialogContentText>
         </DialogContent>
@@ -61,7 +61,7 @@ export default function LogoutConfirm_dialog({ handleMenuClose }: LogoutConfirmP
           <Button sx={{ color: colors.grey[600] }} onClick={handleClose}>
             no
           </Button>
-          <Button color='error' onClick={handleLogout} autoFocus>
+          <Button color="error" onClick={handleLogout} autoFocus>
             yes
           </Button>
         </DialogActions>

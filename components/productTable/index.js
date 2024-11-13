@@ -1,3 +1,3 @@
-import ProductTable from "./ProductTable";
+import ProductTable from './ProductTable';
 
 export default ProductTable;

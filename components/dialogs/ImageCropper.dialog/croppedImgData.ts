@@ -1,11 +1,11 @@
-import { PixelCrop } from "react-image-crop";
-import canvasPreview from "./canvasPreview";
+import { PixelCrop } from 'react-image-crop';
+import canvasPreview from './canvasPreview';
 
-let previewUrl = "";
+let previewUrl = '';
 
 function toBlob(canvas: HTMLCanvasElement, type?: string, quality?: number): Promise<Blob> {
-  return new Promise(resolve => {
-    canvas.toBlob(blob => resolve(blob!), type, quality);
+  return new Promise((resolve) => {
+    canvas.toBlob((blob) => resolve(blob!), type, quality);
   });
 }
 
@@ -18,10 +18,10 @@ export default async function croppedImgData(
   crop: PixelCrop,
   scale = 1,
   rotate = 0,
-  type = "image/png",
-  quality = 1
+  type = 'image/png',
+  quality = 1,
 ) {
-  const canvas = document.createElement("canvas");
+  const canvas = document.createElement('canvas');
   canvasPreview(image, canvas, crop, scale, rotate);
 
   const blob = await toBlob(canvas, type, quality);

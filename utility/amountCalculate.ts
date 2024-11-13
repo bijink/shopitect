@@ -1,12 +1,12 @@
 // *Amount calculation fn to calculate "sellPrice, profitAmount, profitPercentage"
 
 const amountCalculate = (calcMethod: string, inputValue1: string, inputValue2: string) => {
-  let outputValue1: string = "";
-  let outputValue2: string = "";
+  let outputValue1: string = '';
+  let outputValue2: string = '';
 
-  if (calcMethod === "method-1") {
+  if (calcMethod === 'method-1') {
     // *(getPrice, sellPrice) =>> (profitAmount, profitPercentage)
-    if ((inputValue1 && inputValue2) !== "" && inputValue1 !== "0") {
+    if ((inputValue1 && inputValue2) !== '' && inputValue1 !== '0') {
       let getPrice = parseFloat(inputValue1);
       let sellPrice = parseFloat(inputValue2);
 
@@ -18,9 +18,9 @@ const amountCalculate = (calcMethod: string, inputValue1: string, inputValue2: s
       let profitPercentage = profitAmount / (getPrice / 100);
       outputValue2 = profitPercentage.toFixed(2);
     }
-  } else if (calcMethod === "method-2") {
+  } else if (calcMethod === 'method-2') {
     // *(getPrice, profitPercentage) =>> (profitAmount, sellPrice)
-    if ((inputValue1 && inputValue2) !== "" && inputValue1 !== "0") {
+    if ((inputValue1 && inputValue2) !== '' && inputValue1 !== '0') {
       let getPrice = parseFloat(inputValue1);
       let profitPercentage = parseFloat(inputValue2);
 
@@ -32,9 +32,9 @@ const amountCalculate = (calcMethod: string, inputValue1: string, inputValue2: s
       let sellPrice = profitAmount + getPrice;
       outputValue2 = sellPrice.toFixed(2);
     }
-  } else if (calcMethod === "method-3") {
+  } else if (calcMethod === 'method-3') {
     // *(getPrice, profitAmount) =>> (sellPrice, profitPercentage)
-    if ((inputValue1 && inputValue2) !== "" && inputValue1 !== "0") {
+    if ((inputValue1 && inputValue2) !== '' && inputValue1 !== '0') {
       let getPrice = parseFloat(inputValue1);
       let profitAmount = parseFloat(inputValue2);
 
