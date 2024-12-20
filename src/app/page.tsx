@@ -1,4 +1,5 @@
 import LandingPageBg from '@/app/landingPageBg';
+import LandingPageBtn from '@/app/landingPageBtn';
 import LandingPageLogo from '@/app/landingPageLogo';
 import { App_about, App_help } from '@/components/dialogs';
 import GitHubIcon from '@mui/icons-material/GitHub';
@@ -7,20 +8,13 @@ import Container from '@mui/material/Container';
 import MuiLink from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import LandingPageBtn from './landingPageBtn';
 
 export default function Page() {
   return (
     <Box height={'100vh'} position={'relative'} overflow={'hidden'}>
       <LandingPageBg />
-      <Stack justifyContent={'center'} alignItems={'center'}>
-        <Stack
-          alignItems={'center'}
-          spacing={0}
-          pt={24}
-          sx={{ minHeight: '75vh' }}
-          textAlign={'center'}
-        >
+      <Stack justifyContent={'center'} alignItems={'center'} height={'100svh'}>
+        <Stack height={'100%'} justifyContent={'center'} alignItems={'center'} textAlign={'center'}>
           <LandingPageLogo />
           <Typography fontSize={{ xs: '1.5rem', sm: '3rem' }} component={'h1'}>
             Welcome to <b>Shopitect</b>
@@ -29,7 +23,7 @@ export default function Page() {
           <LandingPageBtn />
         </Stack>
         {/*  */}
-        <Box component={'footer'} pt={8}>
+        <Box component={'footer'} py={5}>
           <Container maxWidth={'xs'} sx={{ display: 'flex', justifyContent: 'center' }}>
             <Stack alignItems={'center'} textAlign={'center'}>
               <Stack spacing={1} direction={'row'} justifyContent={'center'} pb={0.5}>
@@ -46,7 +40,7 @@ export default function Page() {
               <Typography variant={'body2'}>
                 Copyright © 2024&nbsp;
                 <MuiLink
-                  href="https://github.com/bijink"
+                  href="https://bijink.github.io"
                   target="_blank"
                   rel="noopener noreferrer"
                   sx={{
