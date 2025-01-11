@@ -11,35 +11,39 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useForm } from '@tanstack/react-form';
-import { signIn } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
-import PageLogo from '../../../../public/image/shopitect-logo_180x180.png';
+import { useEffect, useState } from 'react';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
+interface FormInput {
+  shopnameOrEmail: string;
+  password: string;
+}
 export default function Page() {
   const searchParams = useSearchParams();
   const via = searchParams.get('via');
   const viaRecruiterKey = process.env.viaRecruiterKeys?.split('/') as string[];
-  const inputFocusRef = useRef<HTMLInputElement>(null);
+  // const inputFocusRef = useRef<HTMLInputElement>(null);
   const [showPassword, setShowPassword] = useState(false);
 
   const { data: user, status: userStatus } = useUser();
 
-  const getShop = async () => {
-    const a = await fetch('/api/shop?id=H1hkPSmMwWa0pwjrCSm7GVKEJJD2').then((res) => res.json());
-    const b = await fetch('/api/shop?name=my-shop').then((res) => res.json());
-    console.log({ a, b });
-  };
+  // const getShop = async () => {
+  //   const a = await fetch('/api/shop?id=H1hkPSmMwWa0pwjrCSm7GVKEJJD2').then((res) => res?.json());
+  //   const b = await fetch('/api/shop?name=my-shop').then((res) => res?.json());
+  //   console.log({ a, b });
+  // };
+  // const getShops = async () => {
+  //   const c = await fetch('/api/shop').then((res) => res);
+  //   console.log({ c });
+  // };
+  // useEffect(() => {
+  //   inputFocusRef.current?.focus();
+  // }, []);
   useEffect(() => {
-    inputFocusRef.current?.focus();
-    getShop();
-  }, []);
-  useEffect(() => {
-    console.log(user);
-
+    // console.log(user);
     // user &&
     //   onSnapshot(
     //     query(collection(database, 'shops'), where('accountID', '==', user.uid)),
@@ -73,80 +77,77 @@ export default function Page() {
   //     });
   // };
 
-  const form = useForm({
+  const {
+    control,
+    handleSubmit,
+    getValues,
+    formState: { isSubmitting },
+  } = useForm<FormInput>({
     defaultValues: {
-      email: via === 'recruiter' ? viaRecruiterKey[0] : '',
+      shopnameOrEmail: via === 'recruiter' ? viaRecruiterKey[0] : '',
       password: via === 'recruiter' ? viaRecruiterKey[1] : '',
     },
-    onSubmit: async ({ value }) => {
-      console.log(value);
-      try {
-        // const res = await fetch('/api/auth/login', {
-        //   method: 'POST',
-        //   body: JSON.stringify(value),
-        // }).then((res) => res.json());
-        // console.log('res:: ', res);
-        // await signIn('credentials', {
-        //   username: inputs.username,
-        //   password: inputs.password,
-        //   callbackUrl: '/',
-        // });
-        signIn('google', {
-          redirect: false,
-          // callbackUrl: `/auth/signup`,
-        });
-      } catch (error) {
-        console.log('err:: ', error);
-      }
-    },
   });
+  // useEffect(() => {
+  //   setFocus('shopnameOrEmail');
+  // }, [setFocus]);
 
+  const onSubmit: SubmitHandler<FormInput> = async (data) => {
+    console.log(data);
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }).then((res) => res.json());
+      console.log('res:: ', res);
+
+      // await signIn('credentials', {
+      //   username: data.email,
+      //   password: data.password,
+      //   callbackUrl: '/',
+      // });
+      // signIn('google', {
+      //   redirect: false,
+      //   // callbackUrl: `/auth/signup`,
+      // });
+    } catch (error) {
+      console.log('err:: ', error);
+    }
+  };
   return (
     <Box height={'100vh'} display="flex" justifyContent="center" alignItems="center">
       <Box px={3} py={8} borderRadius={1.5}>
         <Stack spacing={3} alignItems="center">
-          <Image alt="shopitect-logo" src={PageLogo} width={100} height={100} />
+          <Image
+            alt="shopitect-logo"
+            src="/image/shopitect-logo_180x180.png"
+            priority
+            width={100}
+            height={100}
+          />
           <Typography variant="h5" component="div">
             Login
           </Typography>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              form.handleSubmit();
-            }}
-          >
+          <form onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={2}>
-              <form.Field name="email">
-                {(field) => (
-                  <TextField
-                    label="Email"
-                    size="small"
-                    type="email"
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      field.handleChange(e.target.value)
-                    }
-                    inputRef={inputFocusRef}
-                    required
-                  />
+              <Controller
+                name="shopnameOrEmail"
+                control={control}
+                render={({ field }) => (
+                  <TextField label="Shopname or Email" variant="outlined" size="small" {...field} />
                 )}
-              </form.Field>
-              <form.Field name="password">
-                {(field) => (
+              />
+              <Controller
+                name="password"
+                control={control}
+                render={({ field }) => (
                   <TextField
                     label="Password"
+                    variant="outlined"
                     size="small"
                     type={showPassword ? 'text' : 'password'}
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      field.handleChange(e.target.value)
-                    }
-                    required
+                    {...field}
+                    // slotProps={{ inputLabel: { shrink: true } }}
                     slotProps={{
                       input: {
                         endAdornment: (
@@ -156,6 +157,9 @@ export default function Page() {
                               onClick={() => setShowPassword((prev) => !prev)}
                               edge="end"
                               size="small"
+                              sx={{
+                                visibility: getValues('password') ? 'visible' : 'hidden',
+                              }}
                             >
                               {showPassword ? <Visibility /> : <VisibilityOff />}
                             </IconButton>
@@ -165,48 +169,17 @@ export default function Page() {
                     }}
                   />
                 )}
-              </form.Field>
-              {/* {!inputChange && authFailed && (
-                  <Typography variant="body2" component="p" sx={{ color: 'red' }}>
-                    * Wrong email or passward
-                  </Typography>
-                )} */}
+              />
             </Stack>
-
             <Stack direction="row" spacing={2} justifyContent="center" pt={5}>
               <Link href={via === 'recruiter' ? '/?via=recruiter ' : '/'} passHref>
                 <Button variant="contained" size="small" color="error">
                   cancel
                 </Button>
               </Link>
-
-              <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
-                {([canSubmit, isSubmitting]) => (
-                  <LoadingButton
-                    variant="contained"
-                    size="small"
-                    type="submit"
-                    loadingPosition="end"
-                    // endIcon={
-                    //   password === '' || inputChange ? (
-                    //     <LoginIcon />
-                    //   ) : authFailed ? (
-                    //     <CancelIcon />
-                    //   ) : (
-                    //     <CircleIcon sx={{ color: 'transparent' }} />
-                    //   )
-                    // }
-                    // color={
-                    //   password === '' || inputChange ? 'primary' : authFailed ? 'error' : 'success'
-                    // }
-                    // disabled={email == '' || password === ''}
-                    disabled={!canSubmit}
-                    loading={isSubmitting}
-                  >
-                    login
-                  </LoadingButton>
-                )}
-              </form.Subscribe>
+              <LoadingButton type="submit" variant="contained" size="small" loading={isSubmitting}>
+                login
+              </LoadingButton>
             </Stack>
           </form>
         </Stack>

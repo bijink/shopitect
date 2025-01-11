@@ -5,8 +5,7 @@ export async function POST(request: Request) {
   const { email, password } = await request.json();
   try {
     const signInRes = await signInWithEmailAndPassword(auth, email, password);
-    console.log(signInRes.user);
-
+    // console.log(signInRes.user);
     const user = {
       uid: signInRes.user.uid,
       email: signInRes.user.email,

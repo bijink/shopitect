@@ -7,10 +7,16 @@ export default function LandingPageLogo() {
   const [isShaking, setIsShaking] = useState(false);
 
   return (
-    <Box sx={{ position: 'relative', width: '180px', height: '180px' }}>
+    <Box
+      sx={{
+        position: 'relative',
+        width: { xs: '120px', sm: '180px' },
+        height: { xs: '120px', sm: '180px' },
+      }}
+    >
       <motion.img
-        src="./image/shopitect-logo.png"
-        alt="page logo"
+        src="/image/shopitect-logo.png"
+        alt="shopitect-logo"
         animate={{
           opacity: 1,
           x: isShaking ? [-5, 5, -5, 5, 0] : 0,

@@ -22,7 +22,7 @@ export default function Page() {
           <Typography variant={'body1'}>An architect of shop management application</Typography>
           <LandingPageBtn />
         </Stack>
-        {/*  */}
+        {/* FOOTER */}
         <Box component={'footer'} py={5}>
           <Container maxWidth={'xs'} sx={{ display: 'flex', justifyContent: 'center' }}>
             <Stack alignItems={'center'} textAlign={'center'}>
