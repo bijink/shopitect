@@ -4,4 +4,6 @@
 *-lock.json
 *-lock.yaml
 
+/.husky/
+
 /__pages
