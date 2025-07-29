@@ -1,4 +1,7 @@
-import * as React from 'react';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import SearchIcon from '@mui/icons-material/Search';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import {
   Box,
   IconButton,
@@ -13,18 +16,16 @@ import {
   Stack,
 } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
-import SearchIcon from '@mui/icons-material/Search';
 import { useRouter } from 'next/router';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import * as React from 'react';
+
 import { useShop } from '../../hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { selectPageId } from '../../redux/slices/pageId.slice';
 import {
   selectProdSearchInput,
   setProdSearchInput,
 } from '../../redux/slices/prodSearchInput.slice';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import { LogoutConfirm_dialog } from '../dialogs';
 
 const Search = styled('div')(({ theme }) => ({

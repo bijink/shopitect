@@ -1,6 +1,5 @@
 'use client';
 import LoadingButton from '@mui/lab/LoadingButton';
-import Stack from '@mui/material/Stack';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function LandingPageBtn() {
@@ -9,7 +8,7 @@ export default function LandingPageBtn() {
   const via = searchParams.get('via');
 
   return (
-    <Stack direction={'row'} spacing={2} pt={4}>
+    <div direction={'row'} spacing={2} pt={4}>
       <LoadingButton
         variant="contained"
         // color="primary"
@@ -62,6 +61,6 @@ export default function LandingPageBtn() {
       >
         login
       </LoadingButton>
-    </Stack>
+    </div>
   );
 }

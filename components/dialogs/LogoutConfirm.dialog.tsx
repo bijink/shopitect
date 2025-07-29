@@ -1,5 +1,3 @@
-import type { LogoutConfirmProps } from './dialogs.types';
-
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import { colors, MenuItem, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
@@ -9,9 +7,12 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { signOut as signOutAccount } from 'firebase/auth';
-import { signOut as signOutProvider } from 'next-auth/react';
 import { useRouter } from 'next/router';
+import { signOut as signOutProvider } from 'next-auth/react';
 import * as React from 'react';
+
+import type { LogoutConfirmProps } from './dialogs.types';
+
 import { auth } from '../../src/config/firebase.config';
 
 export default function LogoutConfirm_dialog({ handleMenuClose }: LogoutConfirmProps) {

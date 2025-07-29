@@ -19,9 +19,10 @@ import {
 import { deleteUser, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
 import { collection, deleteDoc, doc, onSnapshot } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
-import { signIn as signInProvider, signOut as signOutProvider, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
+import { signIn as signInProvider, signOut as signOutProvider, useSession } from 'next-auth/react';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+
 import { useShop, useUser } from '../../hooks';
 import { database, storage } from '../../src/config/firebase.config';
 

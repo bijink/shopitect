@@ -1,5 +1,4 @@
 'use client';
-import Box from '@mui/material/Box';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 
@@ -7,12 +6,12 @@ export default function LandingPageLogo() {
   const [isShaking, setIsShaking] = useState(false);
 
   return (
-    <Box
-      sx={{
-        position: 'relative',
-        width: { xs: '120px', sm: '180px' },
-        height: { xs: '120px', sm: '180px' },
-      }}
+    <div
+    // sx={{
+    //   position: 'relative',
+    //   width: { xs: '120px', sm: '180px' },
+    //   height: { xs: '120px', sm: '180px' },
+    // }}
     >
       <motion.img
         src="/image/shopitect-logo.png"
@@ -36,6 +35,6 @@ export default function LandingPageLogo() {
           objectFit: 'cover',
         }}
       />
-    </Box>
+    </div>
   );
 }

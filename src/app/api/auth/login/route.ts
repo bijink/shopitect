@@ -1,5 +1,6 @@
-import { auth } from '@/config/firebase.config';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+
+import { auth } from '@/config/firebase.config';
 
 export async function POST(request: Request) {
   const { email, password } = await request.json();

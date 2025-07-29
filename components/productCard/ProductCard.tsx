@@ -1,12 +1,12 @@
-import type { ProdCardProps } from './productCard.types';
-
+import { capitalize, CardActionArea, colors } from '@mui/material';
+import { Box } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { capitalize, CardActionArea, colors } from '@mui/material';
-import { Box } from '@mui/material';
-import { useRouter } from 'next/router';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
+
+import type { ProdCardProps } from './productCard.types';
 
 const ProductCard = ({
   shopUrlName,

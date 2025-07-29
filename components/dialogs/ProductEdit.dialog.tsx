@@ -1,5 +1,3 @@
-import type { ProductEditProps } from './dialogs.types';
-
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import {
@@ -24,6 +22,9 @@ import {
 import { TransitionProps } from '@mui/material/transitions';
 import { doc, updateDoc } from 'firebase/firestore';
 import { ChangeEvent, FormEvent, forwardRef, useEffect, useState } from 'react';
+
+import type { ProductEditProps } from './dialogs.types';
+
 import { useAppDispatch } from '../../redux/hooks';
 import { changeProdTableCollapse } from '../../redux/slices/prodTableCollapse.slice';
 import { setSnackbarState } from '../../redux/slices/snackbarState.slice';

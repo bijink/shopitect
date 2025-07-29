@@ -1,5 +1,6 @@
 import { Box, Typography, Container, Stack } from '@mui/material';
 import { useRouter } from 'next/router';
+
 import { useShop } from '../../hooks';
 
 const Footer = () => {

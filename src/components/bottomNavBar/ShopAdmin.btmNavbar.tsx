@@ -1,3 +1,9 @@
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import CategoryIcon from '@mui/icons-material/Category';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import HomeIcon from '@mui/icons-material/Home';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import {
   Paper,
   BottomNavigation,
@@ -16,21 +22,16 @@ import {
   Typography,
   colors,
 } from '@mui/material';
-import CategoryIcon from '@mui/icons-material/Category';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import HomeIcon from '@mui/icons-material/Home';
-import DashboardIcon from '@mui/icons-material/Dashboard';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
-import { database } from '../../config/firebase.config';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { selectPageId } from '../../redux/slices/pageId.slice';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { changeProdTableCollapse } from '../../redux/slices/prodTableCollapse.slice';
-import { sidebarWidth } from '../../layouts/Page.layout';
+import { useEffect, useState } from 'react';
+
+import { database } from '../../config/firebase.config';
 import { useShop } from '../../hooks';
-import FilterListIcon from '@mui/icons-material/FilterList';
+import { sidebarWidth } from '../../layouts/Page.layout';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { selectPageId } from '../../redux/slices/pageId.slice';
+import { changeProdTableCollapse } from '../../redux/slices/prodTableCollapse.slice';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -65,14 +66,14 @@ export default function ShopAdmin_btmNavbar() {
       onSnapshot(
         query(collection(database, 'shops', shop.urlName, 'products'), orderBy('category')),
         (snapshot) => {
-          let list: Array<string> = [];
+          const list: Array<string> = [];
 
           snapshot.forEach((obj) => {
             list.push(obj.data().category.toLowerCase());
           });
 
-          let uniqueList = Array.from(new Set(list));
-          let sortList = uniqueList.sort();
+          const uniqueList = Array.from(new Set(list));
+          const sortList = uniqueList.sort();
           sortList.unshift('all');
 
           setCategoryList(sortList);

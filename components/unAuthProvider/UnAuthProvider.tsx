@@ -1,6 +1,6 @@
+import { Box, Button, Stack, Typography } from '@mui/material';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { Box, Button, Stack, Typography } from '@mui/material';
 import { signIn as signInProvider } from 'next-auth/react';
 
 const UnAuthProvider = ({ title }: { title: string }) => {

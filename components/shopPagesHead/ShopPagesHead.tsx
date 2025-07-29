@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+
 import { useShop } from '../../hooks';
 
 const ShopPagesHead = ({ title = '' }: { title: string }) => {

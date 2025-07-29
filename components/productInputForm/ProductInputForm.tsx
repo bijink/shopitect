@@ -1,5 +1,3 @@
-import type { ProductInputProps } from './productInput.types';
-
 import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
 import LoadingButton from '@mui/lab/LoadingButton';
 import {
@@ -19,6 +17,9 @@ import {
 import { addDoc, collection, doc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
+
+import type { ProductInputProps } from './productInput.types';
+
 import { useAppDispatch } from '../../redux/hooks';
 import { setSnackbarState } from '../../redux/slices/snackbarState.slice';
 import { database, storage } from '../../src/config/firebase.config';

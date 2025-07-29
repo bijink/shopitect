@@ -1,5 +1,3 @@
-import type { ProductDeleteProps } from './dialogs.types';
-
 import DeleteIcon from '@mui/icons-material/Delete';
 import { LoadingButton } from '@mui/lab';
 import {
@@ -17,6 +15,9 @@ import {
 import { deleteDoc, doc } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
 import { useState } from 'react';
+
+import type { ProductDeleteProps } from './dialogs.types';
+
 import { useAppDispatch } from '../../redux/hooks';
 import { changeProdTableCollapse } from '../../redux/slices/prodTableCollapse.slice';
 import { setSnackbarState } from '../../redux/slices/snackbarState.slice';

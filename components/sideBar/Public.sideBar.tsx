@@ -21,6 +21,7 @@ import {
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+
 import { useShop } from '../../hooks';
 import { sidebarWidth } from '../../layouts/Page.layout';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -55,7 +56,7 @@ export default function Public_sideBar() {
       onSnapshot(
         query(collection(database, 'shops', shop.urlName, 'products'), orderBy('category')),
         (snapshot) => {
-          let list: Array<string> = [];
+          const list: Array<string> = [];
 
           snapshot.forEach((obj) => {
             // console.log(obj.data().category);
@@ -63,8 +64,8 @@ export default function Public_sideBar() {
           });
 
           // let uniqueList = [...new Set(list)];
-          let uniqueList = Array.from(new Set(list));
-          let sortList = uniqueList.sort();
+          const uniqueList = Array.from(new Set(list));
+          const sortList = uniqueList.sort();
           sortList.unshift('all');
 
           setCategoryList(sortList);

@@ -1,6 +1,7 @@
-import { database } from '@/config/firebase.config';
 import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
 import { NextRequest } from 'next/server';
+
+import { database } from '@/config/firebase.config';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;

@@ -1,4 +1,7 @@
-import AppBar from '@mui/material/AppBar';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import InfoIcon from '@mui/icons-material/Info';
+import LoginIcon from '@mui/icons-material/Login';
+import SearchIcon from '@mui/icons-material/Search';
 import {
   Box,
   IconButton,
@@ -9,21 +12,19 @@ import {
   Stack,
   Avatar,
 } from '@mui/material';
+import AppBar from '@mui/material/AppBar';
+import { styled, alpha } from '@mui/material/styles';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { ChangeEvent, FormEvent, useState } from 'react';
+
+import { useShop } from '../../hooks';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { selectPageId } from '../../redux/slices/pageId.slice';
-import InfoIcon from '@mui/icons-material/Info';
-import SearchIcon from '@mui/icons-material/Search';
-import { styled, alpha } from '@mui/material/styles';
 import {
   selectProdSearchInput,
   setProdSearchInput,
 } from '../../redux/slices/prodSearchInput.slice';
-import { ChangeEvent, FormEvent, useState } from 'react';
-import { useShop } from '../../hooks';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import LoginIcon from '@mui/icons-material/Login';
-import Link from 'next/link';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',

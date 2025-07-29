@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternateOutlined';
 import {
   Box,
   Button,
@@ -10,13 +10,14 @@ import {
   DialogTitle,
   IconButton,
 } from '@mui/material';
+import Image from 'next/image';
+import React, { useState, useRef } from 'react';
 import ReactCrop, { centerCrop, makeAspectCrop, Crop, PixelCrop } from 'react-image-crop';
-import useDebounceEffect from './useDebounceEffect';
+
 import canvasPreview from './canvasPreview';
 import croppedImgData from './croppedImgData';
 import InputSlider from './InputSlider';
-import Image from 'next/image';
-import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternateOutlined';
+import useDebounceEffect from './useDebounceEffect';
 
 import 'react-image-crop/dist/ReactCrop.css';
 
@@ -239,7 +240,7 @@ export default function ImageCropper({
           <Button onClick={handleClose}>cancel</Button>
           <Button
             onClick={() => {
-              handleClose(), getCroppedImgData();
+              (handleClose(), getCroppedImgData());
             }}
           >
             crop

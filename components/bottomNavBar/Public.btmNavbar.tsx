@@ -22,6 +22,7 @@ import {
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+
 import { useShop } from '../../hooks';
 import { sidebarWidth } from '../../layouts/Page.layout';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -62,14 +63,14 @@ export default function Public_btmNavbar() {
       onSnapshot(
         query(collection(database, 'shops', shop.urlName, 'products'), orderBy('category')),
         (snapshot) => {
-          let list: Array<string> = [];
+          const list: Array<string> = [];
 
           snapshot.forEach((obj) => {
             list.push(obj.data().category.toLowerCase());
           });
 
-          let uniqueList = Array.from(new Set(list));
-          let sortList = uniqueList.sort();
+          const uniqueList = Array.from(new Set(list));
+          const sortList = uniqueList.sort();
           sortList.unshift('all');
 
           setCategoryList(sortList);

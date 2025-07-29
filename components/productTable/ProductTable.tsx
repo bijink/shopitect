@@ -1,9 +1,6 @@
-import type {
-  ProdDetailsTypes,
-  ProductTableProps,
-  ProductTableRowProps,
-} from './productTable.types';
-
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import {
   Table,
   TableContainer,
@@ -21,16 +18,20 @@ import {
   capitalize,
   colors,
 } from '@mui/material';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
+
+import type {
+  ProdDetailsTypes,
+  ProductTableProps,
+  ProductTableRowProps,
+} from './productTable.types';
+
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   changeProdTableCollapse,
   selectProdTableCloseCollapse,
 } from '../../redux/slices/prodTableCollapse.slice';
-import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
-import Image from 'next/image';
 import { ProductDelete_dialog, ProductEdit_dialog } from '../dialogs';
 
 const Row = ({
@@ -54,10 +55,10 @@ const Row = ({
 
   const tableCollapse = useAppSelector(selectProdTableCloseCollapse);
 
-  let date = createdAt.toDate().toUTCString().slice(0, 16);
-  let minute = createdAt.toDate().getMinutes();
-  let hour = createdAt.toDate().getHours();
-  let time = `${hour}:${minute < 10 ? `0${minute}` : minute}`;
+  const date = createdAt.toDate().toUTCString().slice(0, 16);
+  const minute = createdAt.toDate().getMinutes();
+  const hour = createdAt.toDate().getHours();
+  const time = `${hour}:${minute < 10 ? `0${minute}` : minute}`;
 
   const moreDetails = [
     { title: 'Get Price', value: `₹ ${getPrice}` },
