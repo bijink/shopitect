@@ -31,9 +31,9 @@ import { signIn as signInProvider, useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
-import { ImageCropper } from '../components/dialogs';
-import { useAppDispatch } from '../redux/hooks';
-import { setAppPageId } from '../redux/slices/pageId.slice';
+import { ImageCropper } from '../__components/dialogs';
+import { useAppDispatch } from '../__redux/hooks';
+import { setAppPageId } from '../__redux/slices/pageId.slice';
 import { auth, database, storage } from '../src/config/firebase.config';
 
 const Create_app: NextPage = () => {

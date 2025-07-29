@@ -12,10 +12,8 @@
     "format:fix": "prettier --config prettier.config.cli.mjs --write .",
     "prepare": "husky"
   },
-  "prettier": "@bijink/prettier-config",
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",
-    "@tailwindcss/postcss": "^4.1.11",
     "chart.js": "^4.5.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -23,7 +21,6 @@
     "lucide-react": "^0.533.0",
     "next": "^15.4.4",
     "nprogress": "^0.2.0",
-    "postcss": "^8.5.6",
     "react": "^19.1.1",
     "react-chartjs-2": "^5.3.0",
     "react-dom": "^19.1.1",
@@ -31,8 +28,7 @@
     "react-image-crop": "^11.0.10",
     "react-redux": "^9.2.0",
     "sharp": "^0.34.3",
-    "tailwind-merge": "^3.3.1",
-    "tailwindcss": "^4.1.11"
+    "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
     "@bijink/prettier-config": "^1.2.1",
@@ -40,6 +36,7 @@
     "@commitlint/config-conventional": "^19.8.1",
     "@eslint/eslintrc": "^3.3.1",
     "@hookform/devtools": "^4.4.0",
+    "@tailwindcss/postcss": "^4.1.11",
     "@types/node": "^24.1.0",
     "@types/nprogress": "^0.2.3",
     "@types/react": "^19.1.8",
@@ -50,8 +47,10 @@
     "eslint-config-prettier": "^10.1.8",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.2",
+    "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.6.14",
+    "tailwindcss": "^4.1.11",
     "tw-animate-css": "^1.3.6",
     "typescript": "^5.8.3"
   }

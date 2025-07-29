@@ -12,7 +12,7 @@ import '../styles/globals.css';
 import createEmotionCache from '../utility/createEmotionCache';
 
 import { Provider } from 'react-redux';
-import { store } from '../redux/store';
+import { store } from '../__redux/store';
 
 import { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';

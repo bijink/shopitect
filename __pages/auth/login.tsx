@@ -21,7 +21,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
-import { useUser } from '../../hooks';
+import { useUser } from '../../__hooks';
 import { auth, database } from '../../src/config/firebase.config';
 
 const LoginConfirm = () => {

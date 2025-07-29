@@ -6,8 +6,8 @@ import { signOut as signOutFromProvider, useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import UnAuthProvider from '../../components/unAuthProvider';
-import { useUser } from '../../hooks';
+import UnAuthProvider from '../../__components/unAuthProvider';
+import { useUser } from '../../__hooks';
 import { database } from '../../src/config/firebase.config';
 
 const SignupConfirm = () => {

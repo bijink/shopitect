@@ -2,22 +2,22 @@
 import type { NextPage } from 'next';
 
 import { useRouter } from 'next/router';
-import ShopPagesHead from '../../../components/shopPagesHead';
-import { useShop } from '../../../hooks';
-import { PageSkeleton_layout, Page_layout } from '../../../layouts';
+import ShopPagesHead from '../../../__components/shopPagesHead';
+import { useShop } from '../../../__hooks';
+import { PageSkeleton_layout, Page_layout } from '../../../__layouts';
 import Forbidden from '../../403';
 import NotFound from '../../404';
 import { useEffect } from 'react';
-import { useAppDispatch } from '../../../redux/hooks';
-import { setAppPageId } from '../../../redux/slices/pageId.slice';
+import { useAppDispatch } from '../../../__redux/hooks';
+import { setAppPageId } from '../../../__redux/slices/pageId.slice';
 import {
   ProductAdd_page,
   ProductTable_page,
   ProductView_page,
-} from '../../../dynamicPages/productPage';
-import { Public_navBar, ShopAdmin_navBar } from '../../../components/navBar';
-import { Public_sideBar, ShopAdmin_sideBar } from '../../../components/sideBar';
-import { Public_btmNavbar, ShopAdmin_btmNavbar } from '../../../components/bottomNavBar';
+} from '../../../__dynamicPages/productPage';
+import { Public_navBar, ShopAdmin_navBar } from '../../../__components/navBar';
+import { Public_sideBar, ShopAdmin_sideBar } from '../../../__components/sideBar';
+import { Public_btmNavbar, ShopAdmin_btmNavbar } from '../../../__components/bottomNavBar';
 
 const ProductPages: NextPage = () => {
   const router = useRouter();

@@ -1,21 +1,21 @@
 // *shopApp homePage
 import type { NextPage } from 'next';
-import type { ProdDetailsTypes } from '../../types/pages/shopHomePage.types';
+import type { ProdDetailsTypes } from '../../__types/pages/shopHomePage.types';
 
 import { Box, colors, Pagination, Skeleton, Stack, Typography } from '@mui/material';
 import { collection, DocumentData, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { Public_btmNavbar, ShopAdmin_btmNavbar } from '../../components/bottomNavBar';
-import { Public_navBar, ShopAdmin_navBar } from '../../components/navBar';
-import ProductCard from '../../components/productCard';
-import { Public_sideBar, ShopAdmin_sideBar } from '../../components/sideBar';
-import { useShop } from '../../hooks';
-import { Page_layout, PageSkeleton_layout } from '../../layouts';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { setAppPageId } from '../../redux/slices/pageId.slice';
-import { selectProdSearchInput } from '../../redux/slices/prodSearchInput.slice';
+import { Public_btmNavbar, ShopAdmin_btmNavbar } from '../../__components/bottomNavBar';
+import { Public_navBar, ShopAdmin_navBar } from '../../__components/navBar';
+import ProductCard from '../../__components/productCard';
+import { Public_sideBar, ShopAdmin_sideBar } from '../../__components/sideBar';
+import { useShop } from '../../__hooks';
+import { Page_layout, PageSkeleton_layout } from '../../__layouts';
+import { useAppDispatch, useAppSelector } from '../../__redux/hooks';
+import { setAppPageId } from '../../__redux/slices/pageId.slice';
+import { selectProdSearchInput } from '../../__redux/slices/prodSearchInput.slice';
 import { database } from '../../src/config/firebase.config';
 import NotFound from '../404';
 

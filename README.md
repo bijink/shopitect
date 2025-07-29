@@ -5,7 +5,7 @@
 Shopitect is an app that generates shop management applications. Mostly useful for small-scale shops for managing their product details.
 
 <div align="center" >
-<img src="./public/readme-img/app-home-page.webp" width="500px" />
+<img src="./__public/readme-img/app-home-page.webp" width="500px" />
 </div>
 <br/>
 
@@ -17,7 +17,7 @@ Each shop app has a unique URL name (Shop Url Name) that is added when creating 
 ###### Shop Url Name in Create page :-
 
 <div align="center" >
-<img src="./public/readme-img/create-page.webp" width="500px" />
+<img src="./__public/readme-img/create-page.webp" width="500px" />
 </div>
 <br/>
 
@@ -37,8 +37,8 @@ Generated shop apps are simple apps that can store the details of products in th
 ###### (1) Product Add page, (2) Product Table page :-
 
 <div align="center" >
-<img src="./public/readme-img/product-add-page.webp" width="500px" />
-<img src="./public/readme-img/product-table-page.webp" width="500px" />
+<img src="./__public/readme-img/product-add-page.webp" width="500px" />
+<img src="./__public/readme-img/product-table-page.webp" width="500px" />
 </div>
 <br/>
 <br/>
@@ -48,7 +48,7 @@ This shop app can also use as a small e-commerce website to simply show the deta
 ###### Shop Home page view to shop Clints :-
 
 <div align="center" >
-<img src="./public/readme-img/shop-public-home-page.webp" width="500px" />
+<img src="./__public/readme-img/shop-public-home-page.webp" width="500px" />
 </div>
 <br/>
 <br/>

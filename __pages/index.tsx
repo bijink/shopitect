@@ -10,10 +10,10 @@ import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { App_about, App_help } from '../components/dialogs';
-import { useUser } from '../hooks';
-import { useAppDispatch } from '../redux/hooks';
-import { setAppPageId } from '../redux/slices/pageId.slice';
+import { App_about, App_help } from '../__components/dialogs';
+import { useUser } from '../__hooks';
+import { useAppDispatch } from '../__redux/hooks';
+import { setAppPageId } from '../__redux/slices/pageId.slice';
 import { auth } from '../src/config/firebase.config';
 
 const Home: NextPage = () => {
