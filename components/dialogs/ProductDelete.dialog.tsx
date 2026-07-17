@@ -13,14 +13,14 @@ import {
   colors,
 } from "@mui/material";
 import { deleteDoc, doc } from "firebase/firestore";
-import { database, storage } from "../../config/firebase.config";
+import { database } from "../../config/firebase.config";
 import { useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { ref, deleteObject } from "firebase/storage";
 import { useAppDispatch } from "../../redux/hooks";
 import { changeProdTableCollapse } from "../../redux/slices/prodTableCollapse.slice";
 import { LoadingButton } from "@mui/lab";
 import { setSnackbarState } from "../../redux/slices/snackbarState.slice";
+import deleteFromR2 from "../../utility/deleteFromCloudflareR2";
 
 export default function ProductDelete_dialog({ shopUrlName, prodId }: ProductDeleteProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -40,26 +40,19 @@ export default function ProductDelete_dialog({ shopUrlName, prodId }: ProductDel
     setLoading_remove(true);
     dispatch(changeProdTableCollapse());
 
-    const imageRef = ref(storage, `/${shopUrlName}/product-images/PRODUCT_IMG:${prodId}`);
-    await deleteObject(imageRef)
-      .then(() => {
-        deleteDoc(doc(database, "shops", shopUrlName, "products", prodId)).then(() => {
-          handleDialogClose();
-          setLoading_remove(false);
-          dispatch(
-            setSnackbarState({
-              id: "prod_remove",
-              open: true,
-              message: "Product successfully removed...",
-            })
-          );
-        });
-        // File deleted successfully
-      })
-      .catch(error => {
-        // Uh-oh, an error occurred!
-        console.error(error.messageh);
-      });
+    const key = `${shopUrlName}/product-images/PRODUCT_IMG:${prodId}`;
+    await deleteFromR2(key);
+    deleteDoc(doc(database, "shops", shopUrlName, "products", prodId)).then(() => {
+      handleDialogClose();
+      setLoading_remove(false);
+      dispatch(
+        setSnackbarState({
+          id: "prod_remove",
+          open: true,
+          message: "Product successfully removed...",
+        })
+      );
+    });
   };
 
   return (

@@ -24,7 +24,7 @@ import {
   where,
 } from "firebase/firestore";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
-import { database, auth, storage } from "../config/firebase.config";
+import { database, auth } from "../config/firebase.config";
 import PublishRoundedIcon from "@mui/icons-material/PublishRounded";
 import { useRouter } from "next/router";
 import { signIn as signInProvider, useSession } from "next-auth/react";
@@ -33,8 +33,8 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import Head from "next/head";
 import { setAppPageId } from "../redux/slices/pageId.slice";
 import { useAppDispatch } from "../redux/hooks";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { ImageCropper } from "../components/dialogs";
+import uploadToR2 from "../utility/uploadToCloudflareR2";
 
 const Create_app: NextPage = () => {
   const router = useRouter();
@@ -94,25 +94,22 @@ const Create_app: NextPage = () => {
               accountID: auth.currentUser?.uid,
               createdAt: serverTimestamp(),
               about: "",
-            }).then(() => {
-              const logoRef = ref(storage, `/${shopUrlName}/shop-logo`);
-              uploadBytes(logoRef, shopLogo!).then(() => {
-                getDownloadURL(logoRef).then(url => {
-                  updateDoc(doc(database, "shops", shopUrlName), {
-                    logoUrl: url,
-                  }).then(() => {
-                    setShopName("");
-                    setShopUrlName("");
-                    setShopCategory("");
-                    setShopOwnerName("");
-                    setShopAddress("");
-                    setShopLogo(null);
+            }).then(async () => {
+              const key = `${shopUrlName}/shop-logo`;
+              const url = await uploadToR2(shopLogo! as File, key);
+              await updateDoc(doc(database, "shops", shopUrlName), {
+                logoUrl: url,
+              }).then(() => {
+                setShopName("");
+                setShopUrlName("");
+                setShopCategory("");
+                setShopOwnerName("");
+                setShopAddress("");
+                setShopLogo(null);
 
-                    setLoading(false);
-                    router.push(`/${shopUrlName}`).then(() => {
-                      router.reload();
-                    });
-                  });
+                setLoading(false);
+                router.push(`/${shopUrlName}`).then(() => {
+                  router.reload();
                 });
               });
             });

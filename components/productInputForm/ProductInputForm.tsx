@@ -15,15 +15,15 @@ import {
   FormLabel,
   styled,
 } from "@mui/material";
-import { database, storage } from "../../config/firebase.config";
+import { database } from "../../config/firebase.config";
 import { addDoc, collection, doc, serverTimestamp, updateDoc } from "firebase/firestore";
 import LoadingButton from "@mui/lab/LoadingButton";
 import PublishRoundedIcon from "@mui/icons-material/PublishRounded";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import amountCalculate from "../../utility/amountCalculate";
 import Snackbars from "../snackbars";
 import { useAppDispatch } from "../../redux/hooks";
 import { setSnackbarState } from "../../redux/slices/snackbarState.slice";
+import uploadToR2 from "../../utility/uploadToCloudflareR2";
 
 const StyledTypography = styled(Typography)(({ theme }) => ({
   padding: "3.2px 8px",
@@ -110,39 +110,36 @@ const ProductInputForm = ({ shopData }: ProductInputProps) => {
         profitAmount: parseFloat(profitAmountInput),
         profitPercentage: parseFloat(profitPercentageInput),
         createdAt: serverTimestamp(),
-      }).then(res => {
-        const imageRef = ref(storage, `/${shopData?.urlName}/product-images/PRODUCT_IMG:${res.id}`);
-        uploadBytes(imageRef, prodImage!).then(() => {
-          getDownloadURL(imageRef).then(url => {
-            updateDoc(doc(database, "shops", shopData?.urlName, "products", res.id), {
-              imageUrl: url,
-            })
-              .then(() => {
-                dispatch(
-                  setSnackbarState({
-                    id: "prod_add",
-                    open: true,
-                    message: "Product successfully added...",
-                  })
-                );
-
-                setProdName("");
-                setProdCodeName("");
-                setProdCategory("");
-                setProdBrand("");
-                setQuantity("");
-                setGetPriceInput("");
-                setSellPriceInput("");
-                setProfitAmountInput("");
-                setProfitPercentageInput("");
-                setProdImage(null);
+      }).then(async res => {
+        const key = `${shopData?.urlName}/product-images/PRODUCT_IMG:${res.id}`;
+        const url = await uploadToR2(prodImage!, key);
+        await updateDoc(doc(database, "shops", shopData?.urlName, "products", res.id), {
+          imageUrl: url,
+        })
+          .then(() => {
+            dispatch(
+              setSnackbarState({
+                id: "prod_add",
+                open: true,
+                message: "Product successfully added...",
               })
-              .then(() => {
-                setLoading(false);
-                setCalcuInputDisabled(false);
-              });
+            );
+
+            setProdName("");
+            setProdCodeName("");
+            setProdCategory("");
+            setProdBrand("");
+            setQuantity("");
+            setGetPriceInput("");
+            setSellPriceInput("");
+            setProfitAmountInput("");
+            setProfitPercentageInput("");
+            setProdImage(null);
+          })
+          .then(() => {
+            setLoading(false);
+            setCalcuInputDisabled(false);
           });
-        });
       });
     } else {
       setLoading(false);
