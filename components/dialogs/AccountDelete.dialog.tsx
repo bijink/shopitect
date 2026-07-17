@@ -18,13 +18,13 @@ import { LoadingButton } from "@mui/lab";
 import { deleteDoc, doc } from "firebase/firestore";
 import { useSession, signOut as signOutProvider, signIn as signInProvider } from "next-auth/react";
 import { collection, onSnapshot } from "firebase/firestore";
-import { database, storage } from "../../config/firebase.config";
+import { database } from "../../config/firebase.config";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { deleteUser, EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
 import { useShop, useUser } from "../../hooks";
-import { deleteObject, ref } from "firebase/storage";
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import { useRouter } from "next/router";
+import deleteFromR2 from "../../utility/deleteFromCloudflareR2";
 
 export default function AccountDelete_dialog() {
   const router = useRouter();
@@ -59,38 +59,28 @@ export default function AccountDelete_dialog() {
   };
 
   function deleteProducts() {
-    return new Promise(resolve => {
-      prodIds.forEach(id => {
-        // console.log(id);
-        const imageRef = ref(storage, `/${shop?.urlName}/product-images/PRODUCT_IMG:${id}`);
-        deleteObject(imageRef).then(() => {
-          deleteDoc(doc(database, "shops", shop?.urlName!, "products", id)).then(() => {
-            // console.log('Deleted');
-            resolve(null);
-          });
-        });
-      });
-    });
+    return Promise.all(
+      prodIds.map(async id => {
+        const key = `${shop?.urlName}/product-images/PRODUCT_IMG:${id}`;
+        await deleteFromR2(key);
+        await deleteDoc(doc(database, "shops", shop?.urlName!, "products", id));
+      })
+    );
   }
   function deleteAccount() {
-    return new Promise(resolve => {
-      router.push("/").then(() => {
-        const imageRef = ref(storage, `/${shop?.urlName}/shop-logo`);
-        deleteObject(imageRef).then(() => {
-          shop &&
-            deleteDoc(doc(database, "shops", shop.urlName)).then(() => {
-              sessionStorage.removeItem("shop-details");
-
-              user &&
-                deleteUser(user).then(() => {
-                  // signOutProvider({ callbackUrl: '/' }).then(() => {
-                  signOutProvider({ redirect: false }).then(() => {
-                    resolve(null);
-                  });
-                });
-            });
-        });
-      });
+    return new Promise(async resolve => {
+      await router.push("/");
+      const key = `${shop?.urlName}/shop-logo`;
+      await deleteFromR2(key);
+      if (shop) {
+        await deleteDoc(doc(database, "shops", shop.urlName));
+        sessionStorage.removeItem("shop-details");
+        if (user) {
+          await deleteUser(user);
+          await signOutProvider({ redirect: false });
+        }
+      }
+      resolve(null);
     });
   }
 

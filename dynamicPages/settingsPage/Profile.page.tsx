@@ -3,13 +3,13 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useAppDispatch } from "../../redux/hooks";
 import { setAppShopDetailsAsync } from "../../redux/slices/shopDetails.slice";
 import { collection, doc, onSnapshot, query, updateDoc, where } from "firebase/firestore";
-import { database, storage } from "../../config/firebase.config";
+import { database } from "../../config/firebase.config";
 import { LoadingButton } from "@mui/lab";
 import { useRouter } from "next/router";
 import UpdateIcon from "@mui/icons-material/Update";
 import { useShop } from "../../hooks";
 import { ImageCropper } from "../../components/dialogs";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import uploadToR2 from "../../utility/uploadToCloudflareR2";
 
 const Profile_page = () => {
   const router = useRouter();
@@ -32,8 +32,6 @@ const Profile_page = () => {
     e.preventDefault();
     setLoading(true);
 
-    const logoRef = ref(storage, `/${shop?.urlName!}/shop-logo`);
-
     if (shopLogo) {
       await updateDoc(doc(database, "shops", shop?.urlName!), {
         name: shopName,
@@ -42,15 +40,13 @@ const Profile_page = () => {
         address: shopAddress,
         about: shopAbout,
       })
-        .then(() => {
-          uploadBytes(logoRef, shopLogo!).then(() => {
-            getDownloadURL(logoRef).then(url => {
-              updateDoc(doc(database, "shops", shop?.urlName!), {
-                logoUrl: url,
-              }).then(() => {
-                setLoading(false);
-              });
-            });
+        .then(async () => {
+          const key = `${shop?.urlName!}/shop-logo`;
+          const url = await uploadToR2(shopLogo! as File, key);
+          updateDoc(doc(database, "shops", shop?.urlName!), {
+            logoUrl: url,
+          }).then(() => {
+            setLoading(false);
           });
         })
         .catch(err => {
