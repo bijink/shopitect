@@ -1,7 +1,10 @@
 module.exports = {
   reactStrictMode: true,
   images: {
-    domains: ["pub-e458559aa2f54b4e9af790b2458f6b5e.r2.dev"],
+    domains: [
+      "pub-e458559aa2f54b4e9af790b2458f6b5e.r2.dev", //dev
+      "pub-1348ad3ee56d4fd096e3037a9019b430.r2.dev", //prod
+    ],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
