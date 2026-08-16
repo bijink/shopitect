@@ -1,5 +1,5 @@
-import NextAuth from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
+import NextAuth from 'next-auth'
+import GoogleProvider from 'next-auth/providers/google'
 
 const handler = NextAuth({
   // Configure one or more authentication providers
@@ -28,6 +28,6 @@ const handler = NextAuth({
   //     return true; // Do different verification for other providers that don't have `email_verified`
   //   },
   // },
-});
+})
 
-export { handler as GET, handler as POST };
+export { handler as GET, handler as POST }

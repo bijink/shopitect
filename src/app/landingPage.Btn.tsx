@@ -1,11 +1,11 @@
-"use client";
+'use client'
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export default function LandingPageBtn() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const via = searchParams.get("via");
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const via = searchParams.get('via')
 
   return (
     <div className="flex space-x-2 pt-4">
@@ -23,7 +23,7 @@ export default function LandingPageBtn() {
         //   }
         // }}
         onClick={() => {
-          router.push("/signup");
+          router.push('/signup')
         }}
         // loading={loading_signup}
         // disabled={userStatus === 'loading'}
@@ -47,7 +47,7 @@ export default function LandingPageBtn() {
         //   }
         // }}
         onClick={() => {
-          router.push(via === "recruiter" ? "/login?via=recruiter" : "/login");
+          router.push(via === 'recruiter' ? '/login?via=recruiter' : '/login')
         }}
         // loading={loading_login}
         // disabled={userStatus === 'loading'}
@@ -55,5 +55,5 @@ export default function LandingPageBtn() {
         login
       </button>
     </div>
-  );
+  )
 }

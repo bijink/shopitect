@@ -1,6 +1,6 @@
-import Image from "next/image";
-import LandingPageBtn from "./landingPage.Btn";
-import LandingPageBg from "./landingPageBg";
+import Image from 'next/image'
+import LandingPageBtn from './landingPage.Btn'
+import LandingPageBg from './landingPageBg'
 
 export default function Home() {
   return (
@@ -47,5 +47,5 @@ export default function Home() {
         </div>
       </div>
     </div>
-  );
+  )
 }
