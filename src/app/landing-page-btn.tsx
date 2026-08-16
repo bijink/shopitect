@@ -1,15 +1,31 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { useRouter } from 'next/navigation'
 
 export default function LandingPageBtn() {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const via = searchParams.get('via')
 
   return (
     <div className="flex space-x-2 pt-4">
-      <button
+      <Button
+        className="bg-[#1895e4] hover:bg-[#1da6ee] cursor-pointer rounded-md"
+        onClick={() => {
+          router.push('/signup')
+        }}
+      >
+        Signup
+      </Button>
+      <Button
+        className="bg-[#f57a1f] hover:bg-[#f68a1d] cursor-pointer rounded-md"
+        onClick={() => {
+          router.push('/login')
+        }}
+      >
+        Login
+      </Button>
+
+      {/* <button
         className="bg-[#1895e4] hover:bg-[#1da6ee]"
         // onClick={() => {
         //   if (!loading_login) {
@@ -29,8 +45,8 @@ export default function LandingPageBtn() {
         // disabled={userStatus === 'loading'}
       >
         signup
-      </button>
-      <button
+      </button> */}
+      {/* <button
         className="bg-[#f57a1f] hover:bg-[#f68a1d]"
         // sx={{
         //   bgcolor: userStatus === 'authenticated' ? colors.green[700] : colors.teal[600],
@@ -53,7 +69,7 @@ export default function LandingPageBtn() {
         // disabled={userStatus === 'loading'}
       >
         login
-      </button>
+      </button> */}
     </div>
   )
 }

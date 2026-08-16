@@ -1,6 +1,6 @@
 import Image from 'next/image'
-import LandingPageBtn from './landingPage.Btn'
-import LandingPageBg from './landingPageBg'
+import LandingPageBg from './landing-page-bg'
+import LandingPageBtn from './landing-page-btn'
 
 export default function Home() {
   return (
@@ -8,7 +8,6 @@ export default function Home() {
       <LandingPageBg />
       <div className="flex flex-col justify-center items-center space-y-8">
         <div className="flex flex-col items-center space-y-0 pt-24 min-h-[75vh] text-center">
-          {/* <LandingPageLogo /> */}
           <Image
             src="/image/shopitect-logo.png"
             alt="shopitect logo"
