@@ -1,29 +1,28 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function LandingPageBtn() {
-  const router = useRouter()
-
   return (
     <div className="flex space-x-2 pt-4">
-      <Button
-        className="bg-[#1895e4] hover:bg-[#1da6ee] cursor-pointer rounded-md"
-        onClick={() => {
-          router.push('/signup')
+      <Link
+        href="/signup"
+        className="w-fit h-fit py-1 px-2.5 text-white bg-[#1895e4] hover:bg-[#1da6ee] cursor-pointer rounded-md"
+        onNavigate={() => {
+          console.log('Navigating...')
         }}
       >
         Signup
-      </Button>
-      <Button
-        className="bg-[#f57a1f] hover:bg-[#f68a1d] cursor-pointer rounded-md"
-        onClick={() => {
-          router.push('/login')
+      </Link>
+      <Link
+        href="/signin"
+        className="w-fit h-fit py-1 px-2.5 text-white bg-[#f57a1f] hover:bg-[#f68a1d] cursor-pointer rounded-md"
+        onNavigate={() => {
+          console.log('Navigating...')
         }}
       >
-        Login
-      </Button>
+        Signin
+      </Link>
 
       {/* <button
         className="bg-[#1895e4] hover:bg-[#1da6ee]"

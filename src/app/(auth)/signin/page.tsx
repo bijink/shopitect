@@ -1,5 +1,69 @@
-export default function Page() {
-  return <></>
+'use client'
+
+import { Separator } from '@/components/ui/separator'
+import { FormFields } from './form-fields'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+
+export default function SigninPage() {
+  const router = useRouter()
+
+  return (
+    <>
+      <p className="text-2xl pb-4">Signin</p>
+      <div className="flex flex-col space-y-5">
+        <div className="w-full flex space-x-2">
+          <div className="w-full">
+            <Button
+              variant="outline"
+              className="rounded-md w-full cursor-pointer"
+              onClick={() => {
+                router.push('/home')
+              }}
+            >
+              <Image
+                src="/svg/google.svg"
+                alt="google-icon"
+                width={48}
+                height={48}
+                className="w-5"
+              />
+              <p>Google</p>
+            </Button>
+          </div>
+          <div className="w-full">
+            <Button
+              variant="outline"
+              className="rounded-md w-full cursor-pointer"
+              onClick={() => {
+                router.push('/home')
+              }}
+            >
+              <Image
+                src="/svg/facebook.svg"
+                alt="facebook-icon"
+                width={48}
+                height={48}
+                className="w-5"
+              />
+              <p>Facebook</p>
+            </Button>
+          </div>
+        </div>
+        <div className="flex flex-row items-center w-full space-x-4">
+          <div className="w-full">
+            <Separator />
+          </div>
+          <p className="text-gray-400 text-sm">OR</p>
+          <div className="w-full">
+            <Separator />
+          </div>
+        </div>
+        <FormFields />
+      </div>
+    </>
+  )
 }
 
 // "use client";
@@ -81,7 +145,7 @@ export default function Page() {
 //   //   onSubmit: async ({ value }) => {
 //   //     console.log(value);
 //   //     try {
-//   //       // const res = await fetch('/api/auth/login', {
+//   //       // const res = await fetch('/api/auth/Signin', {
 //   //       //   method: 'POST',
 //   //       //   body: JSON.stringify(value),
 //   //       // }).then((res) => res.json());
@@ -120,7 +184,7 @@ export default function Page() {
 //         <Stack spacing={3} alignItems="center">
 //           <Image alt="shopitect-logo" src={PageLogo} width={100} height={100} />
 //           <Typography variant="h5" component="div">
-//             Login
+//             Signin
 //           </Typography>
 //           <form
 //             onSubmit={(e) => {
@@ -211,7 +275,7 @@ export default function Page() {
 //                     loadingPosition="end"
 //                     // endIcon={
 //                     //   password === '' || inputChange ? (
-//                     //     <LoginIcon />
+//                     //     <SigninIcon />
 //                     //   ) : authFailed ? (
 //                     //     <CancelIcon />
 //                     //   ) : (
@@ -225,7 +289,7 @@ export default function Page() {
 //                     disabled={!canSubmit}
 //                     loading={isSubmitting}
 //                   >
-//                     login
+//                     Signin
 //                   </LoadingButton>
 //                 )}
 //               </form.Subscribe>
